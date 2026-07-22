@@ -62,7 +62,16 @@ class NettyNetworkManager(viewmodel: RoomViewmodel) : NetworkManager(viewmodel) 
                     // 10000-char limit); a smaller cap overflows the decoder and loops reconnects.
                     pipeline.addLast("framer", DelimiterBasedFrameDecoder(65536, *Delimiters.lineDelimiter()))
                     pipeline.addLast(StringDecoder())
-                    pipeline.addLast(StringEncoder())
+                    // transmitPacket already appends the protocol-mandated \r\n, so this
+                    // encoder must NOT add a second line separator (default StringEncoder
+                    // adds \n, which would create a spurious empty frame on the wire).
+                    // Use a plain encoder that just converts String→ByteBuf with no
+                    // delimiter.
+                    pipeline.addLast(object : io.netty.handler.codec.MessageToMessageEncoder<String>() {
+                        override fun encode(ctx: ChannelHandlerContext?, msg: String, out: MutableList<Any>) {
+                            out.add(io.netty.buffer.Unpooled.copiedBuffer(msg, java.nio.charset.StandardCharsets.UTF_8))
+                        }
+                    })
                     pipeline.addLast(object : SimpleChannelInboundHandler<String>() {
                         override fun userEventTriggered(ctx: ChannelHandlerContext?, evt: Any?) {
                             super.userEventTriggered(ctx, evt)

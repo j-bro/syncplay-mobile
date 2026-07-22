@@ -26,7 +26,7 @@ static inline mpv_node make_node_str(const char *s)
 }
 
 jni_func(jobject, grabThumbnail, jint dimension) {
-    CHECK_MPV_INIT();
+    CHECK_MPV_INIT_RET(nullptr);
 
     mpv_node result{};
     {

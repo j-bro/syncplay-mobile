@@ -150,8 +150,8 @@ class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attr
     private fun observeProperties() {
         data class Property(val name: String, val format: Int = MPV_FORMAT_NONE)
         val p = arrayOf(
-            Property("time-pos", MPV_FORMAT_INT64),
-            Property("duration", MPV_FORMAT_INT64),
+            Property("time-pos", MPV_FORMAT_DOUBLE),
+            Property("duration", MPV_FORMAT_DOUBLE),
             Property("pause", MPV_FORMAT_FLAG),
             Property("paused-for-cache", MPV_FORMAT_FLAG),
             Property("speed"),
@@ -182,8 +182,8 @@ class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attr
         set(value) = MPVLib.setPropertyBoolean("pause", value)
 
     var timePos: Int?
-        get() = MPVLib.getPropertyInt("time-pos")
-        set(progress) = MPVLib.setPropertyInt("time-pos", progress!!)
+        get() = MPVLib.getPropertyDouble("time-pos")?.toLong()?.toInt()
+        set(progress) = MPVLib.setPropertyDouble("time-pos", (progress ?: 0).toDouble())
 
     val hwdecActive: String
         get() = MPVLib.getPropertyString("hwdec-current") ?: "no"

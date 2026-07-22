@@ -57,7 +57,14 @@ actual class ServerNetworkEngine actual constructor(
                     val pipeline = ch.pipeline()
                     pipeline.addLast("framer", DelimiterBasedFrameDecoder(65536, *Delimiters.lineDelimiter()))
                     pipeline.addLast("decoder", StringDecoder(StandardCharsets.UTF_8))
-                    pipeline.addLast("encoder", StringEncoder(StandardCharsets.UTF_8))
+                    // sendFn already appends \r\n, so this encoder must NOT add a second
+                    // line separator. Use a plain encoder that converts String→ByteBuf
+                    // with no delimiter.
+                    pipeline.addLast("encoder", object : io.netty.handler.codec.MessageToMessageEncoder<String>() {
+                        override fun encode(ctx: ChannelHandlerContext?, msg: String, out: MutableList<Any>) {
+                            out.add(io.netty.buffer.Unpooled.copiedBuffer(msg, StandardCharsets.UTF_8))
+                        }
+                    })
                     pipeline.addLast("handler", object : SimpleChannelInboundHandler<String>() {
 
                         override fun channelActive(ctx: ChannelHandlerContext) {

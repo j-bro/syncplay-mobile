@@ -36,6 +36,9 @@ class PingService {
      */
     fun receiveMessage(timestamp: Double?, senderRtt: Double) {
         if (timestamp == null) return
+        // Reject timestamps that are clearly not epoch-seconds values
+        // (e.g. 0 sent when the server hasn't primed the ping echo yet).
+        if (timestamp < 1_500_000_000.0) return
         rtt = generateTimestampMillis() / 1000.0 - timestamp
         if (rtt < 0 || senderRtt < 0) return
 

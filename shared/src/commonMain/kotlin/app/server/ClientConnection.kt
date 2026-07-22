@@ -88,11 +88,14 @@ class ClientConnection(
         // server's single thread, matching PC's single-reactor model.
         server.onServerThread {
             try {
+                // The server must tolerate malformed or empty lines just like the Python
+                // reference server does: a spurious empty frame (e.g. from a double line
+                // delimiter) or a corrupted payload must NOT drop the connection. Log it
+                // and continue — every other protocol message still flows.
                 val message = syncplayJson.decodeFromString(WireMessageDeserializer, jsonString)
                 message.dispatch(this)
             } catch (e: SerializationException) {
-                loggy("Server: failed to decode line '$jsonString' — ${e.message}")
-                dropWithError("Failed to parse message")
+                loggy("Server: skipping unparseable line '$jsonString' — ${e.message}")
             }
         }
     }
@@ -143,7 +146,13 @@ class ClientConnection(
             val clientRtt = ping.clientRtt ?: 0.0
             clientLatencyCalculation = ping.clientLatencyCalculation ?: 0.0
             clientLatencyCalculationArrivalTime = currentTimeSeconds()
-            pingService.receiveMessage(latencyCalc, clientRtt)
+            // Guard against obviously bogus timestamps (e.g. 0 sent when the
+            // client has no server time to echo yet). A zero or tiny timestamp
+            // makes rtt = currentTime - 0 ≈ epoch_seconds, which balloons
+            // forwardDelay and adds ~1.78e9 to every position thereafter.
+            if (latencyCalc > 1_500_000_000.0) {
+                pingService.receiveMessage(latencyCalc, clientRtt)
+            }
         }
 
         if (serverIgnoringOnTheFly == 0) {

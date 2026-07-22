@@ -302,7 +302,10 @@ class MpvImpl(vm: RoomViewmodel) : PlayerImpl(vm, MpvEngine) {
     override suspend fun injectVideoFileImpl(location: MediaFileLocation.Local) {
         installMpvSubfontIfNeeded()
         ctx.resolveUri(location.file.uri)?.let {
-            if (isInitialized) MPVLib.destroy()
+            if (isInitialized) {
+                MPVLib.destroy()
+                mpvView.holder.removeCallback(mpvView)
+            }
             mpvView.initialize(ctx.filesDir.path, ctx.cacheDir.path)
             mpvObserverAttach()
             mpvView.playFile(it)
@@ -311,7 +314,10 @@ class MpvImpl(vm: RoomViewmodel) : PlayerImpl(vm, MpvEngine) {
 
     override suspend fun injectVideoURLImpl(location: MediaFileLocation.Remote) {
         installMpvSubfontIfNeeded()
-        if (isInitialized) MPVLib.destroy()
+        if (isInitialized) {
+            MPVLib.destroy()
+            mpvView.holder.removeCallback(mpvView)
+        }
         mpvView.initialize(ctx.filesDir.path, ctx.cacheDir.path)
         mpvObserverAttach()
         mpvView.playFile(location.url)
@@ -424,10 +430,12 @@ class MpvImpl(vm: RoomViewmodel) : PlayerImpl(vm, MpvEngine) {
         observer = object : MPVLib.EventObserver {
             override fun eventProperty(property: String) {}
 
-            override fun eventProperty(property: String, value: Long) {
+            override fun eventProperty(property: String, value: Long) {}
+
+            override fun eventProperty(property: String, value: Double) {
                 when (property) {
-                    "time-pos" -> mpvPos = value * 1000
-                    "duration" -> playerManager.timeFullMillis.value = value * 1000
+                    "time-pos" -> mpvPos = (value * 1000.0).toLong()
+                    "duration" -> playerManager.timeFullMillis.value = (value * 1000.0).toLong()
                 }
             }
 
@@ -440,7 +448,6 @@ class MpvImpl(vm: RoomViewmodel) : PlayerImpl(vm, MpvEngine) {
             }
 
             override fun eventProperty(property: String, value: String) {}
-            override fun eventProperty(property: String, value: Double) {}
 
             override fun event(eventId: Int) {
                 when (eventId) {
