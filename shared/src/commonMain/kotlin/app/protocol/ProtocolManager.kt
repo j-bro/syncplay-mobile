@@ -62,7 +62,10 @@ class ProtocolManager(val viewmodel: RoomViewmodel) : AbstractManager(viewmodel)
      * PC's `MINIMUM_REWIND_THRESHOLD = 3`, so values below 3 wouldn't be valid if this
      * ever becomes user-configurable.
      */
-    val rewindThreshold = 4L
+    // When the local player is ahead of the room by more than this many seconds,
+    // force a corrective rewind. PC uses 4 s which allows noticeable drift on LAN;
+    // 1 s keeps mobile clients tighter without causing seek storms.
+    val rewindThreshold = 1L
 
     /**
      * Timestamp of the last received global state update, used for sync timing. A `null` value
@@ -472,16 +475,16 @@ class ProtocolManager(val viewmodel: RoomViewmodel) : AbstractManager(viewmodel)
         const val SYNCPLAY_LEGACY_VERSION = "1.2.255"
 
         /** Playback drift threshold in seconds before a corrective seek is triggered. */
-        const val SEEK_THRESHOLD = 1L
+        const val SEEK_THRESHOLD = 0.5
 
         /** Playback speed used to gradually catch up when ahead of others. */
         const val SLOWDOWN_RATE = 0.95
 
         /** Time difference (seconds) at which slowdown kicks in. */
-        const val SLOWDOWN_THRESHOLD = 1.5
+        const val SLOWDOWN_THRESHOLD = 0.5
 
         /** Time difference (seconds) at which speed reverts to normal. */
-        const val SLOWDOWN_RESET_THRESHOLD = 0.1
+        const val SLOWDOWN_RESET_THRESHOLD = 0.05
 
         /** Time difference (seconds, negative/behind) at which fastforward detection starts. */
         const val FASTFORWARD_BEHIND_THRESHOLD = 1.75

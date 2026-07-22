@@ -49,7 +49,12 @@ data class ServerConfig(
         const val MAX_ROOM_NAME_LENGTH = 35
         const val MAX_FILENAME_LENGTH = 250
         const val PROTOCOL_TIMEOUT_SECONDS = 12.5
-        const val SERVER_STATE_INTERVAL_MS = 1000L
+        // How often the server broadcasts authoritative room state to each watcher.
+        // The PC reference server uses 1000 ms, which caps sync precision at ±1 second.
+        // Mobile-to-mobile (typically LAN) benefits from a tighter interval without the
+        // bandwidth concerns of WAN. 200 ms keeps sync within ~200 ms at the cost of
+        // 5× the State packets — still negligible on LAN.
+        const val SERVER_STATE_INTERVAL_MS = 200L
 
         fun generateSalt(): String {
             val chars = ('A'..'Z') + ('a'..'z')

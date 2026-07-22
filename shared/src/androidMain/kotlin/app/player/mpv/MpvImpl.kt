@@ -54,7 +54,7 @@ class MpvImpl(vm: RoomViewmodel) : PlayerImpl(vm, MpvEngine) {
     private lateinit var ctx: Context
     override val supportsChapters: Boolean = true
     override val supportsScreenshot: Boolean = true
-    override val trackerJobInterval: Duration = 500.milliseconds
+    override val trackerJobInterval: Duration = 100.milliseconds
 
     override fun initialize() {
         ctx = mpvView.context.applicationContext
