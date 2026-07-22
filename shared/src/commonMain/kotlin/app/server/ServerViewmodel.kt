@@ -13,8 +13,13 @@ import app.utils.platformCallback
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -22,6 +27,16 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel for the server hosting screen: owns server lifecycle, editable config, and the
  * observable state the UI binds to. Independent of [app.room.RoomViewmodel] and client state.
+ *
+ * ## Lifecycle note
+ *
+ * The server runs in a **companion-object [CoroutineScope]** ([serverProcessScope]) so it
+ * survives ViewModel recreation (e.g. when the user navigates away and back). The scope is
+ * only cancelled when the user explicitly presses Stop or when the platform's server service
+ * (foreground service on Android) is destroyed.
+ *
+ * This means [onCleared] does NOT stop the server — the server outlives this ViewModel.
+ * The UI simply re-attaches to the already-running server on re-entry.
  */
 class ServerViewmodel(
     val backStack: MutableList<Screen>
@@ -36,7 +51,7 @@ class ServerViewmodel(
     val disableReady = mutableStateOf(false)
 
     // --- Server state ---
-    val serverStatus = MutableStateFlow<ServerStatus>(ServerStatus.Stopped)
+    val serverStatus = MutableStateFlow(ServerStatus.Stopped)
     val connectedClients = MutableStateFlow(0)
     val deviceIpAddress = mutableStateOf<String?>(null)
     /** Public IP fetched from external service, or null if unavailable/still loading. */
@@ -46,8 +61,16 @@ class ServerViewmodel(
     /** Server event log entries for UI display. */
     val serverLogs = mutableStateListOf<ServerLogEntry>()
 
-    private var _server: SyncplayServer? = null
-    private var _engine: ServerNetworkEngine? = null
+    // --- Re-attach to an already-running server ---
+
+    init {
+        // If the server is already running in the companion scope (e.g. user
+        // navigated away and came back, or the service restarted this ViewModel),
+        // re-attach our state flows to the live server.
+        if (isServerRunning) {
+            attachToRunningServer()
+        }
+    }
 
     fun startServer() {
         if (serverStatus.value == ServerStatus.Running) return
@@ -70,10 +93,17 @@ class ServerViewmodel(
 
         serverStatus.value = ServerStatus.Starting
 
-        viewModelScope.launch(Dispatchers.IO) {
+        // Launch the server in the companion-object scope so it survives
+        // ViewModel clearing (navigation pop, Activity recreation, etc.)
+        serverProcessScope.launch(Dispatchers.IO) {
             try {
-                val server = SyncplayServer(config, viewModelScope)
+                // Cancel any previous server instance
+                _server?.shutdown()
+                _engine?.stop()
+
+                val server = SyncplayServer(config, serverProcessScope)
                 _server = server
+                isServerRunning = true
 
                 launch {
                     server.serverLog.collect { entries ->
@@ -89,7 +119,7 @@ class ServerViewmodel(
                     }
                 }
 
-                val engine = ServerNetworkEngine(server, viewModelScope)
+                val engine = ServerNetworkEngine(server, serverProcessScope)
                 _engine = engine
 
                 engine.startListening(portInt)
@@ -112,27 +142,57 @@ class ServerViewmodel(
                 loggy("Server: Failed to start: ${e.stackTraceToString()}")
                 addLog("Failed to start: ${e.message}")
                 serverStatus.value = ServerStatus.Error
+                isServerRunning = false
             }
         }
     }
 
     fun stopServer() {
-        viewModelScope.launch(Dispatchers.IO) {
+        // Stop through the platform callback first (stops foreground service on
+        // Android), then tear down the server scope.
+        platformCallback.serverServiceStop()
+
+        serverProcessScope.launch(Dispatchers.IO) {
             try {
                 _server?.shutdown()
                 _engine?.stop()
                 _server = null
                 _engine = null
-                serverStatus.value = ServerStatus.Stopped
-                connectedClients.value = 0
-                deviceIpAddress.value = null
-                publicIpAddress.value = null
-                publicIpLoading.value = false
-                platformCallback.serverServiceStop()
-                addLog("Server stopped")
             } catch (e: Exception) {
                 loggy("Server: Error stopping: ${e.message}")
-                addLog("Error stopping: ${e.message}")
+            }
+        }
+
+        // Cancel the process scope to clean up any lingering coroutines,
+        // then recreate it so a future startServer() works.
+        serverProcessScope.cancel()
+        serverScopeJob = SupervisorJob()
+        serverProcessScope = CoroutineScope(serverScopeJob + CoroutineName("ServerProcess"))
+
+        isServerRunning = false
+        serverStatus.value = ServerStatus.Stopped
+        connectedClients.value = 0
+        deviceIpAddress.value = null
+        publicIpAddress.value = null
+        publicIpLoading.value = false
+        serverLogs.clear()
+        addLog("Server stopped")
+    }
+
+    private fun attachToRunningServer() {
+        val server = _server ?: return
+        serverStatus.value = ServerStatus.Running
+
+        viewModelScope.launch {
+            server.serverLog.collect { entries ->
+                for (entry in entries.drop(serverLogs.size)) {
+                    serverLogs.add(entry)
+                }
+            }
+        }
+        viewModelScope.launch {
+            server.connectedClients.collect { count ->
+                connectedClients.value = count
             }
         }
     }
@@ -146,11 +206,43 @@ class ServerViewmodel(
         )
     }
 
+    /**
+     * IMPORTANT: Does NOT stop the server. The server runs in [serverProcessScope]
+     * which outlives this ViewModel. The server only stops when the user explicitly
+     * presses Stop or when the platform's server service shuts down.
+     */
     override fun onCleared() {
         super.onCleared()
-        _server?.shutdown()
-        _engine?.stop()
-        platformCallback.serverServiceStop()
+        // No-op: the server outlives the ViewModel.
+        // It's stopped by stopServer() or when the foreground service is destroyed.
+    }
+
+    companion object {
+        /** Job backing [serverProcessScope]. Replaced on stop/restart. */
+        @Volatile
+        private var serverScopeJob = SupervisorJob()
+
+        /**
+         * Process-level scope for the server. Coroutines launched here survive
+         * ViewModel clearing and Activity recreation. Cancelled only when the
+         * user explicitly stops the server.
+         */
+        @Volatile
+        var serverProcessScope = CoroutineScope(serverScopeJob + CoroutineName("ServerProcess"))
+            private set
+
+        /** Reference to the running server (null when stopped). */
+        @Volatile
+        private var _server: SyncplayServer? = null
+
+        /** Reference to the running network engine (null when stopped). */
+        @Volatile
+        private var _engine: ServerNetworkEngine? = null
+
+        /** Whether the server is currently running in [serverProcessScope]. */
+        @Volatile
+        var isServerRunning: Boolean = false
+            private set
     }
 }
 
