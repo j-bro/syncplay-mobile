@@ -11,6 +11,7 @@ import app.protocol.ProtocolManager.Companion.FASTFORWARD_THRESHOLD
 import app.protocol.ProtocolManager.Companion.SLOWDOWN_RATE
 import app.protocol.ProtocolManager.Companion.SLOWDOWN_RESET_THRESHOLD
 import app.protocol.ProtocolManager.Companion.SLOWDOWN_THRESHOLD
+import app.protocol.ProtocolManager.Companion.SPEEDUP_RATE
 import app.protocol.WireMessage
 import app.protocol.WireMessageHandler
 import app.protocol.models.User
@@ -29,6 +30,7 @@ import org.jetbrains.compose.resources.getString
 import syncplaymobile.shared.generated.resources.Res
 import syncplaymobile.shared.generated.resources.room_not_ready_set_by
 import syncplaymobile.shared.generated.resources.room_ready_set_by
+import kotlin.math.abs
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 
@@ -196,17 +198,38 @@ class RoomServerMessageHandler(private val viewmodel: RoomViewmodel) : WireMessa
                     protocol.behindFirstDetected = null
                 }
 
-                /* Slow down to cover time difference */
+                /* Subtle speed adjustment for tight audio sync. When ahead, slow down;
+                 * when behind, speed up. The rewind threshold (0.5 s) provides a wide
+                 * enough band that these gentle corrections converge before a disruptive
+                 * seek is needed. Chat messages make corrections visible for debugging. */
                 if (doSeek != true && !paused) {
                     if (Preferences.SYNC_SLOWDOWN.value()) {
+                        // Ahead → slow down to let others catch up
                         if (diff > SLOWDOWN_THRESHOLD && !protocol.speedChanged) {
                             if (setBy != null && setBy != session.currentUsername) {
                                 withContext(Dispatchers.Main) { viewmodel.player.setSpeed(SLOWDOWN_RATE) }
                                 protocol.speedChanged = true
+                                dispatcher.broadcastMessage(
+                                    isChat = false
+                                ) { "Slowing to ${SLOWDOWN_RATE}× (ahead by ${(diff * 1000).toLong()}ms)" }
                             }
-                        } else if (protocol.speedChanged && diff < SLOWDOWN_RESET_THRESHOLD) {
+                        }
+                        // Behind → speed up to catch up (only if enabled in room prefs)
+                        else if (diff < -SLOWDOWN_THRESHOLD && !protocol.speedChanged
+                            && Preferences.SYNC_SPEEDUP.value()) {
+                            if (setBy != null && setBy != session.currentUsername) {
+                                withContext(Dispatchers.Main) { viewmodel.player.setSpeed(SPEEDUP_RATE) }
+                                protocol.speedChanged = true
+                                dispatcher.broadcastMessage(
+                                    isChat = false
+                                ) { "Speeding to ${SPEEDUP_RATE}× (behind by ${(-diff * 1000).toLong()}ms)" }
+                            }
+                        }
+                        // Close enough → reset to normal speed
+                        else if (protocol.speedChanged && abs(diff) < SLOWDOWN_RESET_THRESHOLD) {
                             withContext(Dispatchers.Main) { viewmodel.player.setSpeed(1.0) }
                             protocol.speedChanged = false
+                            dispatcher.broadcastMessage(isChat = false) { "Speed back to 1.0×" }
                         }
                     } else if (protocol.speedChanged) {
                         withContext(Dispatchers.Main) { viewmodel.player.setSpeed(1.0) }

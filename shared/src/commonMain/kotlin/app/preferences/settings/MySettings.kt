@@ -72,6 +72,7 @@ import app.preferences.Preferences.SYNC_DONT_SLOW_WITH_ME
 import app.preferences.Preferences.SYNC_FASTFORWARD
 import app.preferences.Preferences.SYNC_REWIND
 import app.preferences.Preferences.SYNC_SLOWDOWN
+import app.preferences.Preferences.SYNC_SPEEDUP
 import app.preferences.Preferences.TLS_ENABLE
 import app.preferences.Preferences.TRUSTED_DOMAINS
 import app.preferences.Preferences.UNPAUSE_ACTION
@@ -155,6 +156,7 @@ val INROOM_SYNC = SettingCategory(
     +SYNC_DONT_SLOW_WITH_ME
     +SYNC_FASTFORWARD
     +SYNC_SLOWDOWN
+    +SYNC_SPEEDUP
     +SYNC_REWIND
 }
 

@@ -478,13 +478,16 @@ class ProtocolManager(val viewmodel: RoomViewmodel) : AbstractManager(viewmodel)
         const val SEEK_THRESHOLD = 0.5
 
         /** Playback speed used to gradually catch up when ahead of others. */
-        const val SLOWDOWN_RATE = 0.95
+        const val SLOWDOWN_RATE = 0.97
 
-        /** Time difference (seconds) at which slowdown kicks in. */
-        const val SLOWDOWN_THRESHOLD = 0.5
+        /** Playback speed used to gradually catch up when behind others. */
+        const val SPEEDUP_RATE = 1.03
+
+        /** Time difference (seconds) at which slowdown/speedup kicks in. */
+        const val SLOWDOWN_THRESHOLD = 0.06
 
         /** Time difference (seconds) at which speed reverts to normal. */
-        const val SLOWDOWN_RESET_THRESHOLD = 0.05
+        const val SLOWDOWN_RESET_THRESHOLD = 0.03
 
         /** Time difference (seconds, negative/behind) at which fastforward detection starts. */
         const val FASTFORWARD_BEHIND_THRESHOLD = 1.75

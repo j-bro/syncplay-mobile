@@ -335,6 +335,8 @@
     <string name="uisetting_sync_rewind_summary">When others are significantly behind (12+ seconds), your player will rewind to match their position.</string>
     <string name="uisetting_sync_dont_slow_with_me_title">Never slow down or rewind others</string>
     <string name="uisetting_sync_dont_slow_with_me_summary">When you are lagging behind, others will not be slowed down or rewound to match you. Experimental.</string>
+    <string name="uisetting_sync_speedup_title">Speed up when slightly behind</string>
+    <string name="uisetting_sync_speedup_summary">When you are slightly behind others, your playback speed will be increased to catch up. Disable if devices fight each other.</string>
 
     <!-- UI Settings Categories -->
     <string name="uisetting_categ_chat_colors">Chat colors</string>

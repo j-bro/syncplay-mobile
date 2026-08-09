@@ -242,6 +242,8 @@ import syncplaymobile.shared.generated.resources.uisetting_sync_rewind_summary
 import syncplaymobile.shared.generated.resources.uisetting_sync_rewind_title
 import syncplaymobile.shared.generated.resources.uisetting_sync_slowdown_summary
 import syncplaymobile.shared.generated.resources.uisetting_sync_slowdown_title
+import syncplaymobile.shared.generated.resources.uisetting_sync_speedup_summary
+import syncplaymobile.shared.generated.resources.uisetting_sync_speedup_title
 import syncplaymobile.shared.generated.resources.uisetting_system_color_summary
 import syncplaymobile.shared.generated.resources.uisetting_system_color_title
 import syncplaymobile.shared.generated.resources.uisetting_timestamp_color_title
@@ -527,6 +529,11 @@ object Preferences {
     val SYNC_DONT_SLOW_WITH_ME = Pref("pref_inroom_sync_dont_slow_with_me", false) {
         title = Res.string.uisetting_sync_dont_slow_with_me_title
         summary = Res.string.uisetting_sync_dont_slow_with_me_summary
+        icon = Icons.Filled.Speed
+    }
+    val SYNC_SPEEDUP = Pref("pref_inroom_sync_speedup", true) {
+        title = Res.string.uisetting_sync_speedup_title
+        summary = Res.string.uisetting_sync_speedup_summary
         icon = Icons.Filled.Speed
     }
 

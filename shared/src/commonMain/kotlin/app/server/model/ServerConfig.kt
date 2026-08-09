@@ -54,7 +54,7 @@ data class ServerConfig(
         // Mobile-to-mobile (typically LAN) benefits from a tighter interval without the
         // bandwidth concerns of WAN. 200 ms keeps sync within ~200 ms at the cost of
         // 5× the State packets — still negligible on LAN.
-        const val SERVER_STATE_INTERVAL_MS = 200L
+        const val SERVER_STATE_INTERVAL_MS = 100L
 
         fun generateSalt(): String {
             val chars = ('A'..'Z') + ('a'..'z')

@@ -57,4 +57,5 @@ syncplay-pc-src-master
 *.py
 
 #we should also hide claude hidden dir which is used by Claude Code
+apks/
 .claude
