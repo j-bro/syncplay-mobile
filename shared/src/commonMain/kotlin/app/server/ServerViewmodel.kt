@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.Screen
+import app.discovery.LanServiceAdvertiser
 import app.server.model.ServerConfig
 import app.server.network.ServerNetworkEngine
 import app.utils.getDeviceIpAddress
@@ -129,6 +130,16 @@ class ServerViewmodel(
                 serverIpAddress = ip
                 addLog("Server started on port $portInt")
 
+                // Advertise on the LAN so other devices can auto-discover us.
+                try {
+                    val adv = LanServiceAdvertiser()
+                    _advertiser = adv
+                    adv.advertise("Synkplay (${ip ?: "localhost"})", portInt)
+                    addLog("Advertising on LAN via mDNS")
+                } catch (e: Exception) {
+                    loggy("Server: mDNS advertise failed: ${e.message}")
+                }
+
                 launch {
                     publicIpLoading.value = true
                     publicIpAddress.value = try {
@@ -164,6 +175,8 @@ class ServerViewmodel(
                 loggy("Server: Error stopping: ${e.message}")
             }
         }
+        _advertiser?.stop()
+        _advertiser = null
 
         // Cancel the process scope to clean up any lingering coroutines,
         // then recreate it so a future startServer() works.
@@ -242,6 +255,11 @@ class ServerViewmodel(
         @Volatile
         private var _engine: ServerNetworkEngine? = null
 
+        /** Advertises the running server on the LAN via mDNS/Bonjour so other
+         *  devices can auto-discover it in the server dropdown. */
+        @Volatile
+        private var _advertiser: LanServiceAdvertiser? = null
+
         /** Whether the server is currently running in [serverProcessScope]. */
         @Volatile
         var isServerRunning: Boolean = false
@@ -265,6 +283,8 @@ class ServerViewmodel(
                     loggy("Server: Error stopping from companion: ${e.message}")
                 }
             }
+            _advertiser?.stop()
+            _advertiser = null
             serverProcessScope.cancel()
             serverScopeJob = SupervisorJob()
             serverProcessScope = CoroutineScope(serverScopeJob + CoroutineName("ServerProcess"))

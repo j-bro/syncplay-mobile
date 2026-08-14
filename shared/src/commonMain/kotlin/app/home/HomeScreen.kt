@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -39,7 +40,9 @@ import androidx.compose.material3.SplitButtonDefaults
 import androidx.compose.material3.SplitButtonLayout
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,6 +63,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import app.LocalGlobalViewmodel
 import app.Screen
+import app.discovery.LanDiscovery
+import app.discovery.LanServer
 import app.home.components.HomeAnimatedEngineButtonGroup
 import app.home.components.HomeTextField
 import app.home.components.HomeTopBar
@@ -120,6 +125,14 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
         withContext(Dispatchers.IO) {
             savedConfig = JoinConfig.savedConfig()
         }
+    }
+
+    // LAN auto-discovery via mDNS/NSD
+    val lanDiscovery = remember { LanDiscovery() }
+    val discoveredServers by lanDiscovery.discoveredServers.collectAsState()
+    DisposableEffect(null) {
+        lanDiscovery.startDiscovery()
+        onDispose { lanDiscovery.stopDiscovery() }
     }
 
     // Consume any pending shortcut (iOS cold-start Quick Actions)
@@ -321,6 +334,44 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                                                     serverPassword = ""
                                                     selectedServer = entry
                                                 }
+                                                expanded.value = false
+                                            }
+                                        )
+                                    }
+                                }
+
+                                // Auto-discovered servers on the LAN (mDNS)
+                                if (discoveredServers.isNotEmpty()) {
+                                    DropdownMenuItem(
+                                        text = { Text("── Discovered on LAN ──", color = Color.Gray) },
+                                        onClick = {},
+                                        enabled = false
+                                    )
+                                    discoveredServers.forEach { srv ->
+                                        DropdownMenuItem(
+                                            text = {
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                                                ) {
+                                                    Icon(
+                                                        Icons.Filled.Dns,
+                                                        contentDescription = null,
+                                                        tint = MaterialTheme.colorScheme.primary,
+                                                        modifier = Modifier.padding(end = 8.dp).size(18.dp)
+                                                    )
+                                                    Column {
+                                                        Text(srv.name, color = Color.White, fontSize = 14.sp)
+                                                        Text(srv.address, color = Color.White.copy(alpha = 0.6f), fontSize = 12.sp)
+                                                    }
+                                                }
+                                            },
+                                            onClick = {
+                                                serverAddress = srv.host
+                                                serverPort = srv.port.toString()
+                                                serverIsPublic = false
+                                                serverPassword = ""
+                                                selectedServer = srv.address
                                                 expanded.value = false
                                             }
                                         )
