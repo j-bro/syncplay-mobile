@@ -71,6 +71,26 @@ class ServerViewmodel(
         if (isServerRunning) {
             attachToRunningServer()
         }
+
+        // Observe companion-level server lifecycle so that an external stop
+        // (e.g. the notification Stop button calling stopServerFromCompanion) is
+        // reflected in this instance's UI state without needing to recreate the VM.
+        viewModelScope.launch {
+            isServerRunningFlow.collect { running ->
+                if (!running) {
+                    if (serverStatus.value == ServerStatus.Running ||
+                        serverStatus.value == ServerStatus.Starting) {
+                        serverStatus.value = ServerStatus.Stopped
+                        connectedClients.value = 0
+                        deviceIpAddress.value = null
+                        serverIpAddress = null
+                        publicIpAddress.value = null
+                        publicIpLoading.value = false
+                        addLog("Server stopped")
+                    }
+                }
+            }
+        }
     }
 
     fun startServer() {
@@ -104,7 +124,7 @@ class ServerViewmodel(
 
                 val server = SyncplayServer(config, serverProcessScope)
                 _server = server
-                isServerRunning = true
+                _isServerRunning.value = true
 
                 launch {
                     server.serverLog.collect { entries ->
@@ -155,7 +175,7 @@ class ServerViewmodel(
                 loggy("Server: Failed to start: ${e.stackTraceToString()}")
                 addLog("Failed to start: ${e.message}")
                 serverStatus.value = ServerStatus.Error
-                isServerRunning = false
+                _isServerRunning.value = false
             }
         }
     }
@@ -184,7 +204,7 @@ class ServerViewmodel(
         serverScopeJob = SupervisorJob()
         serverProcessScope = CoroutineScope(serverScopeJob + CoroutineName("ServerProcess"))
 
-        isServerRunning = false
+        _isServerRunning.value = false
         serverStatus.value = ServerStatus.Stopped
         connectedClients.value = 0
         deviceIpAddress.value = null
@@ -260,10 +280,13 @@ class ServerViewmodel(
         @Volatile
         private var _advertiser: LanServiceAdvertiser? = null
 
-        /** Whether the server is currently running in [serverProcessScope]. */
-        @Volatile
-        var isServerRunning: Boolean = false
-            private set
+        /** Whether the server is currently running in [serverProcessScope].
+         *  Backed by a [StateFlow] so live [ServerViewmodel] instances can
+         *  observe external stops (e.g. notification Stop button) and
+         *  reconcile their UI state. */
+        private val _isServerRunning = MutableStateFlow(false)
+        val isServerRunningFlow: StateFlow<Boolean> = _isServerRunning
+        val isServerRunning: Boolean get() = _isServerRunning.value
 
         /** The LAN IP address the server is listening on (set on start, cleared on stop). */
         @Volatile
@@ -288,7 +311,7 @@ class ServerViewmodel(
             serverProcessScope.cancel()
             serverScopeJob = SupervisorJob()
             serverProcessScope = CoroutineScope(serverScopeJob + CoroutineName("ServerProcess"))
-            isServerRunning = false
+            _isServerRunning.value = false
             serverIpAddress = null
         }
     }
