@@ -1,5 +1,6 @@
 package app.server
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -56,12 +57,20 @@ class SyncplayServerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Stop action from notification button
+        if (intent?.action == ACTION_STOP) {
+            ServerViewmodel.stopServerFromCompanion()
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+            return START_NOT_STICKY
+        }
+
         val port = intent?.getIntExtra(EXTRA_PORT, 8999) ?: 8999
 
         if (ServerViewmodel.isServerRunning) {
-            // Server is alive in the companion scope — show the live notification
-            // and observe client count for updates.
-            startForeground(NOTIFICATION_ID, buildNotification(port, 0))
+            val ip = ServerViewmodel.serverIpAddress
+            val ipText = if (ip != null) "$ip:$port" else "port $port"
+            startForeground(NOTIFICATION_ID, buildNotification(ipText, 0))
 
             observerJob?.cancel()
             observerJob = serviceScope.launch {
@@ -107,19 +116,34 @@ class SyncplayServerService : Service() {
         super.onDestroy()
     }
 
-    private fun buildNotification(port: Int, clients: Int) =
-        NotificationCompat.Builder(this, CHANNEL_ID)
+    private fun buildNotification(addr: String, clients: Int): Notification {
+        val openIntent = PendingIntent.getActivity(
+            this, 0,
+            Intent(this, SyncplayActivity::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        // Stop action: re-enter onStartCommand with ACTION_STOP
+        val stopIntent = PendingIntent.getService(
+            this, 1,
+            Intent(this, SyncplayServerService::class.java).setAction(ACTION_STOP),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("${BuildConfig.APP_NAME} Server")
-            .setContentText("Running on port $port${if (clients > 0) " - $clients client(s)" else ""}")
+            .setContentText("Running at $addr${if (clients > 0) " - $clients client(s)" else ""}")
+            .setContentIntent(openIntent)
+            .addAction(0, "Stop", stopIntent)
             .setSilent(true)
             .setOngoing(true)
             .build()
+    }
 
     companion object {
         const val CHANNEL_ID = "syncplay_server"
         const val NOTIFICATION_ID = 2
         const val EXTRA_PORT = "extra_port"
         const val EXTRA_CLIENTS = "extra_clients"
+        const val ACTION_STOP = "com.yuroyami.syncplay.STOP_SERVER"
     }
 }

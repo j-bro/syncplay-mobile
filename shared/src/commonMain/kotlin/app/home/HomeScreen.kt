@@ -21,6 +21,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Api
 import androidx.compose.material.icons.filled.Widgets
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Dns
 import androidx.compose.material.icons.outlined.Lan
 import androidx.compose.material.icons.outlined.MeetingRoom
 import androidx.compose.material.icons.outlined.PersonPin
@@ -41,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -63,6 +66,7 @@ import app.home.components.HomeTopBar
 import app.home.components.PopupDidYaKnow.DidYaKnowPopup
 import app.preferences.Preferences.NEVER_SHOW_TIPS
 import app.preferences.Preferences.PLAYER_ENGINE
+import app.preferences.Preferences.RECENT_SERVERS
 import app.preferences.set
 import app.preferences.value
 import app.preferences.watchPref
@@ -110,6 +114,7 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
     ExitRoomMode()
 
     var savedConfig by remember { mutableStateOf<JoinConfig?>(null) }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(null) {
         withContext(Dispatchers.IO) {
@@ -235,6 +240,8 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                             string = stringResource(Res.string.connect_server, appName)
                         )
 
+                        val recentServers by remember { mutableStateOf(RECENT_SERVERS.value()) }
+
                         ExposedDropdownMenuBox(
                             expanded = expanded.value,
                             onExpandedChange = {
@@ -250,7 +257,6 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                             )
 
                             val customServerLabel = stringResource(Res.string.connect_enter_custom_server)
-                            val hostServerLabel = stringResource(Res.string.connect_host_own_server)
                             val servers = officialServers + customServerLabel
                             ExposedDropdownMenu(
                                 modifier = Modifier.background(color = MaterialTheme.colorScheme.tertiaryContainer),
@@ -258,7 +264,8 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                                 onDismissRequest = {
                                     expanded.value = false
                                 }) {
-                                servers.forEach { server ->
+                                // Official servers
+                                officialServers.forEach { server ->
                                     DropdownMenuItem(
                                         text = {
                                             Text(server.replace("151.80.32.178", "syncplay.pl"), color = Color.White)
@@ -266,22 +273,61 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                                         onClick = {
                                             selectedServer = server
                                             expanded.value = false
-
-                                            if (server != servers[5]) {
-                                                serverAddress = "syncplay.pl"
-                                                serverPort =
-                                                    selectedServer.substringAfter("syncplay.pl:")
-                                                serverIsPublic = true
-                                                serverPassword = ""
-                                            } else {
-                                                serverIsPublic = false
-                                                serverAddress = ""
-                                                serverPort = ""
-                                            }
+                                            serverAddress = "syncplay.pl"
+                                            serverPort = selectedServer.substringAfter("syncplay.pl:")
+                                            serverIsPublic = true
+                                            serverPassword = ""
                                         }
                                     )
                                 }
 
+                                // Recent custom servers (with delete)
+                                val recentList = recentServers.toList()
+                                if (recentList.isNotEmpty()) {
+                                    DropdownMenuItem(
+                                        text = { Text("── Recent ──", color = Color.Gray) },
+                                        onClick = {},
+                                        enabled = false
+                                    )
+                                    recentList.forEach { entry ->
+                                        DropdownMenuItem(
+                                            text = {
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                                                ) {
+                                                    Text(entry, color = Color.White, modifier = Modifier.weight(1f))
+                                                    Icon(
+                                                        imageVector = Icons.Filled.Close,
+                                                        contentDescription = "Remove",
+                                                        tint = Color.White.copy(alpha = 0.6f),
+                                                        modifier = Modifier.clickable {
+                                                            scope.launch(Dispatchers.IO) {
+                                                                val updated = RECENT_SERVERS.value().toMutableSet()
+                                                                updated.remove(entry)
+                                                                RECENT_SERVERS.set(updated)
+                                                            }
+                                                        }
+                                                    )
+                                                }
+                                            },
+                                            onClick = {
+                                                val parts = entry.split(":")
+                                                if (parts.size == 2) {
+                                                    serverAddress = parts[0]
+                                                    serverPort = parts[1]
+                                                    serverIsPublic = false
+                                                    serverPassword = ""
+                                                    selectedServer = entry
+                                                }
+                                                expanded.value = false
+                                            }
+                                        )
+                                    }
+                                }
+
+                                // Enter custom server
                                 DropdownMenuItem(
                                     text = {
                                         Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
@@ -291,15 +337,31 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                                                 tint = Color.White,
                                                 modifier = Modifier.padding(end = 8.dp)
                                             )
-                                            Text(hostServerLabel, color = Color.White)
+                                            Text(customServerLabel, color = Color.White)
                                         }
                                     },
                                     onClick = {
                                         expanded.value = false
-                                        globalViewmodel.backstack.add(Screen.ServerHost)
+                                        serverIsPublic = false
+                                        serverAddress = ""
+                                        serverPort = ""
+                                        selectedServer = customServerLabel
                                     }
                                 )
                             }
+                        }
+
+                        // Separate Host Your Own Server button
+                        androidx.compose.material3.OutlinedButton(
+                            onClick = { globalViewmodel.backstack.add(Screen.ServerHost) },
+                            modifier = Modifier.fillMaxWidth(0.75f)
+                        ) {
+                            Icon(
+                                Icons.Filled.Dns,
+                                contentDescription = null,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                            Text(stringResource(Res.string.connect_host_own_server))
                         }
 
                         AnimatedVisibility(
@@ -409,6 +471,21 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                                         if (errorMessage != null) {
                                             viewmodel.snackIt(getString(errorMessage))
                                             return@launch
+                                        }
+
+                                        // Persist custom server to recent list
+                                        if (!serverIsPublic && serverAddress.isNotBlank() && serverPort.isNotBlank()) {
+                                            val entry = "${serverAddress}:${serverPort}"
+                                            val recent = RECENT_SERVERS.value().toMutableSet()
+                                            recent.remove(entry) // Move to front
+                                            recent.add(entry)
+                                            if (recent.size > 10) {
+                                                // Keep most recent 10
+                                                val trimmed = recent.toList().takeLast(10).toSet()
+                                                RECENT_SERVERS.set(trimmed)
+                                            } else {
+                                                RECENT_SERVERS.set(recent)
+                                            }
                                         }
 
                                         viewmodel.joinRoom(

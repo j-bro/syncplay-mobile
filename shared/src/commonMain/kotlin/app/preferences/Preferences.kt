@@ -312,6 +312,8 @@ object Preferences {
     /** ------------ Miscellaneous -------------*/
     val USER_ID = Pref<String?>("misc_user_id", null)
     val JOIN_CONFIG = Pref<String?>("misc_join_config", null)
+    /** Recently used custom servers ("ip:port" entries), max 10. Not shown in settings UI. */
+    val RECENT_SERVERS = Pref<Set<String>>("misc_recent_servers", emptySet())
     val PLAYER_ENGINE = Pref("misc_player_engine", availablePlatformPlayerEngines.first { it.isDefault }.name)
     val GESTURES = Pref("misc_gestures", true)
     val CURRENT_THEME = Pref("misc_current_theme", defaultTheme.asString())

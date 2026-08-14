@@ -124,7 +124,9 @@ class ServerViewmodel(
 
                 engine.startListening(portInt)
                 serverStatus.value = ServerStatus.Running
-                deviceIpAddress.value = getDeviceIpAddress()
+                val ip = getDeviceIpAddress()
+                deviceIpAddress.value = ip
+                serverIpAddress = ip
                 addLog("Server started on port $portInt")
 
                 launch {
@@ -173,6 +175,7 @@ class ServerViewmodel(
         serverStatus.value = ServerStatus.Stopped
         connectedClients.value = 0
         deviceIpAddress.value = null
+        serverIpAddress = null
         publicIpAddress.value = null
         publicIpLoading.value = false
         serverLogs.clear()
@@ -243,6 +246,31 @@ class ServerViewmodel(
         @Volatile
         var isServerRunning: Boolean = false
             private set
+
+        /** The LAN IP address the server is listening on (set on start, cleared on stop). */
+        @Volatile
+        var serverIpAddress: String? = null
+            private set
+
+        /** Stops the server from outside a ViewModel (e.g. from notification action). */
+        fun stopServerFromCompanion() {
+            if (!isServerRunning) return
+            serverProcessScope.launch(Dispatchers.IO) {
+                try {
+                    _server?.shutdown()
+                    _engine?.stop()
+                    _server = null
+                    _engine = null
+                } catch (e: Exception) {
+                    loggy("Server: Error stopping from companion: ${e.message}")
+                }
+            }
+            serverProcessScope.cancel()
+            serverScopeJob = SupervisorJob()
+            serverProcessScope = CoroutineScope(serverScopeJob + CoroutineName("ServerProcess"))
+            isServerRunning = false
+            serverIpAddress = null
+        }
     }
 }
 
