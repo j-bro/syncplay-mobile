@@ -35,6 +35,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media3.session.MediaController
 import app.home.HomeViewmodel
 import app.home.JoinConfig
+import app.Screen
 import app.player.Playback
 import app.player.SyncplayMediaSessionService
 import app.player.exo.ExoImpl
@@ -279,7 +280,41 @@ class SyncplayActivity : ComponentActivity() {
         }
 
         /** Maybe there is a shortcut intent */
-        if (intent?.getBooleanExtra("quickLaunch", false) == true) {
+        maybeNavigateFromIntent(intent)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        maybeNavigateFromIntent(intent)
+    }
+
+    /**
+     * Inspects [intent] extras and either joins a room (shortcuts) or opens the
+     * Host Server screen (notification tap). Safe to call from both onCreate
+     * and onNewIntent; no-ops when the relevant extras are absent.
+     */
+    private fun maybeNavigateFromIntent(intent: Intent?) {
+        if (intent == null) return
+
+        // Notification "tap to open" -> navigate to the Host Server screen.
+        if (intent.getBooleanExtra(SyncplayServerService.EXTRA_OPEN_SERVER_HOST, false)) {
+            if (::globalViewmodel.isInitialized) {
+                val backstack = globalViewmodel.backstack
+                // Avoid stacking duplicates.
+                if (backstack.lastOrNull() != Screen.ServerHost) {
+                    backstack.add(Screen.ServerHost)
+                }
+            }
+            return
+        }
+
+        // Shortcut intent -> join a room directly.
+        if (intent.getBooleanExtra("quickLaunch", false)) {
             intent.apply {
                 val config = JoinConfig(
                     user = getStringExtra("name") ?: "",
@@ -293,10 +328,6 @@ class SyncplayActivity : ComponentActivity() {
                     homeViewmodel?.joinRoom(config)
                 }
             }
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 

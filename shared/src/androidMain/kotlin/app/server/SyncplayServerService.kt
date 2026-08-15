@@ -89,7 +89,9 @@ class SyncplayServerService : Service() {
             // Show a notification telling the user to reopen the app.
             val reopenIntent = PendingIntent.getActivity(
                 this, 0,
-                Intent(this, SyncplayActivity::class.java),
+                Intent(this, SyncplayActivity::class.java).apply {
+                    putExtra(EXTRA_OPEN_SERVER_HOST, true)
+                },
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             val notification = NotificationCompat.Builder(this, CHANNEL_ID)
@@ -119,7 +121,10 @@ class SyncplayServerService : Service() {
     private fun buildNotification(addr: String, clients: Int): Notification {
         val openIntent = PendingIntent.getActivity(
             this, 0,
-            Intent(this, SyncplayActivity::class.java),
+            Intent(this, SyncplayActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                putExtra(EXTRA_OPEN_SERVER_HOST, true)
+            },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         // Stop action: re-enter onStartCommand with ACTION_STOP
@@ -145,5 +150,7 @@ class SyncplayServerService : Service() {
         const val EXTRA_PORT = "extra_port"
         const val EXTRA_CLIENTS = "extra_clients"
         const val ACTION_STOP = "com.yuroyami.syncplay.STOP_SERVER"
+        /** Intent extra that tells the Activity to navigate to the Host Server screen. */
+        const val EXTRA_OPEN_SERVER_HOST = "extra_open_server_host"
     }
 }
