@@ -277,6 +277,13 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                                 onDismissRequest = {
                                     expanded.value = false
                                 }) {
+                                // Public servers header
+                                DropdownMenuItem(
+                                    text = { Text("── Public ──", color = Color.Gray) },
+                                    onClick = {},
+                                    enabled = false
+                                )
+
                                 // Official servers
                                 officialServers.forEach { server ->
                                     DropdownMenuItem(

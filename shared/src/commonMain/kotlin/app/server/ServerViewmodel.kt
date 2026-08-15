@@ -54,10 +54,12 @@ class ServerViewmodel(
     // --- Server state ---
     val serverStatus = MutableStateFlow(ServerStatus.Stopped)
     val connectedClients = MutableStateFlow(0)
-    val deviceIpAddress = mutableStateOf<String?>(null)
-    /** Public IP fetched from external service, or null if unavailable/still loading. */
-    val publicIpAddress = mutableStateOf<String?>(null)
-    val publicIpLoading = mutableStateOf(false)
+    /** Local/LAN IP — companion-backed so it persists across VM recreation. */
+    val deviceIpAddress get() = _deviceIpAddress
+    /** Public IP — companion-backed so it persists across VM recreation. */
+    val publicIpAddress get() = _publicIpAddress
+    /** Whether the public IP is still being fetched — companion-backed. */
+    val publicIpLoading get() = _publicIpLoading
 
     /** Server event log entries for UI display. */
     val serverLogs = mutableStateListOf<ServerLogEntry>()
@@ -293,6 +295,12 @@ class ServerViewmodel(
         var serverIpAddress: String? = null
             private set
 
+        /** Companion-backed UI state so it survives ViewModel recreation
+         *  (e.g. leaving and returning to the Host Server screen). */
+        val _deviceIpAddress = mutableStateOf<String?>(null)
+        val _publicIpAddress = mutableStateOf<String?>(null)
+        val _publicIpLoading = mutableStateOf(false)
+
         /** Stops the server from outside a ViewModel (e.g. from notification action). */
         fun stopServerFromCompanion() {
             if (!isServerRunning) return
@@ -313,6 +321,9 @@ class ServerViewmodel(
             serverProcessScope = CoroutineScope(serverScopeJob + CoroutineName("ServerProcess"))
             _isServerRunning.value = false
             serverIpAddress = null
+            _deviceIpAddress.value = null
+            _publicIpAddress.value = null
+            _publicIpLoading.value = false
         }
     }
 }
