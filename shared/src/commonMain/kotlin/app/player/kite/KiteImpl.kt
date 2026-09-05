@@ -457,6 +457,9 @@ internal class KiteImpl(
             TrackType.AUDIO -> TrackKind.Audio
             TrackType.SUBTITLE -> TrackKind.Subtitle
         }
+        // The language pass in analyzeTracks skips a type with a recorded pick. Without this
+        // record it re-selected the preferred-language track right after every pick, off included.
+        playerManager.currentTrackChoices.remember(type, track)
         // A null track means "none", which the engine spells as a null id. Anything that is not
         // one of ours cannot be resolved to a stream, so it is treated the same way rather than
         // guessed at.
