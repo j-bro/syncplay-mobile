@@ -62,8 +62,13 @@ import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material.icons.filled.Web
 import androidx.compose.material.icons.filled.BlurOff
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
 import androidx.datastore.preferences.core.edit
 import app.theme.defaultTheme
@@ -93,12 +98,28 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import app.preferences.settings.SETTINGS_GLOBAL
+import app.theme.Type
+import app.theme.palette
 import app.uicomponents.CHAT_COLOR_FOLLOWS_THEME
+import app.uicomponents.controls.AccentAction
+import app.uicomponents.controls.Text
+import app.uicomponents.frames.Modal
+import app.uicomponents.frames.ModalSize
 
 /**
  * Centralized preference definitions with type safety
  */
 object Preferences {
+
+    /**
+     * Touch this to be sure every preference exists.
+     *
+     * A Kotlin object initialises on first access, and every [Pref] registers itself as it is
+     * constructed. Anything that reads [PrefRegistry] before this object has been touched sees
+     * an empty registry, which is how export first came back with nothing at all.
+     */
+    fun ensureAllRegistered() = Unit
+
     const val SYNKPLAY_PREFS = "syncplayprefs.preferences_pb"
 
     /** ------------ Miscellaneous -------------*/
@@ -970,12 +991,22 @@ object Preferences {
         extraConfig = PrefExtraConfig.ShowComposable(
             composable = {
                 val scope = rememberCoroutineScope { Dispatchers.IO }
+                var result by remember { mutableStateOf<String?>(null) }
+                val done = strings.settingsExportDone
+                val failed = strings.settingsFileError
                 val saver = rememberFileSaverLauncher(dialogSettings = FileKitDialogSettings.createDefault()) { file ->
-                    scope.launch { file?.write(buildSettingsBackup().encodeToByteArray()) }
+                    if (file == null) return@rememberFileSaverLauncher
+                    scope.launch {
+                        // Writing a file can fail for a dozen reasons, and silence looks
+                        // exactly like success.
+                        result = runCatching { file.write(buildSettingsBackup().encodeToByteArray()) }
+                            .fold(onSuccess = { done }, onFailure = { failed })
+                    }
                 }
                 LaunchedEffect(null) {
                     saver.launch(suggestedName = "${appName}Settings", extension = "json")
                 }
+                OutcomeModal(result) { result = null }
             }
         )
     }
@@ -992,22 +1023,34 @@ object Preferences {
         extraConfig = PrefExtraConfig.ShowComposable(
             composable = {
                 val scope = rememberCoroutineScope { Dispatchers.IO }
+                var result by remember { mutableStateOf<String?>(null) }
+                val s = strings
                 val picker = rememberFilePickerLauncher(type = FileKitType.File(listOf("json"))) { file ->
                     if (file == null) return@rememberFilePickerLauncher
                     scope.launch {
-                        val (values, outcome) = readSettingsBackup(file.readString())
+                        val raw = runCatching { file.readString() }.getOrNull()
+                        if (raw == null) {
+                            result = s.settingsFileError
+                            return@launch
+                        }
+                        val (values, outcome) = readSettingsBackup(raw)
                         if (outcome.error != null) {
                             loggy("Settings import refused: ${outcome.error}")
+                            result = s.settingsImportRefused(outcome.error)
                             return@launch
                         }
                         // One transaction: a half-applied settings file is worse than none.
-                        datastore.edit { preferences ->
-                            values.forEach { (pref, value) -> preferences[pref.anyKey] = value }
-                        }
+                        val wrote = runCatching {
+                            datastore.edit { preferences ->
+                                values.forEach { (pref, value) -> preferences[pref.anyKey] = value }
+                            }
+                        }.isSuccess
                         loggy("Settings imported: ${outcome.applied} applied, ${outcome.skipped} skipped")
+                        result = if (wrote) s.settingsImportDone(outcome.applied, outcome.skipped) else s.settingsFileError
                     }
                 }
                 LaunchedEffect(null) { picker.launch() }
+                OutcomeModal(result) { result = null }
             }
         )
     }
@@ -1136,5 +1179,24 @@ object Preferences {
                 }
             }
         )
+    }
+}
+
+/**
+ * A one-line answer to "did that work?".
+ *
+ * Import and export used to write their outcome to the log and nothing else, so a refused file
+ * and a successful one looked identical: the sheet closed and the settings were whatever they
+ * were.
+ */
+@Composable
+private fun OutcomeModal(text: String?, onDismiss: () -> Unit) {
+    Modal(
+        open = text != null,
+        onDismiss = onDismiss,
+        size = ModalSize.Ask,
+        actions = { AccentAction(strings.okay, onClick = onDismiss) },
+    ) {
+        Text(text.orEmpty(), style = Type.note, color = palette.ink)
     }
 }

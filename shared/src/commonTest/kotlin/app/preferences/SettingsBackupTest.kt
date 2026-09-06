@@ -71,4 +71,38 @@ class SettingsBackupTest {
         assertEquals(55, byName["pref_inroom_sync_rewind_threshold"])
         assertEquals("Always", byName["pref_unpause_action"])
     }
+
+    @Test
+    fun a_slider_value_outside_its_range_is_skipped() {
+        val raw = """{"version":1,"app":"Synkplay","values":{"pref_inroom_sync_rewind_threshold":"-2147483648"}}"""
+        val (values, outcome) = readSettingsBackup(raw)
+        assertTrue(values.isEmpty(), "a number outside its slider is not a setting the row could ever produce")
+        assertEquals(1, outcome.skipped)
+    }
+
+    @Test
+    fun an_unknown_choice_is_skipped() {
+        // Writing this would leave the unpause gate matching none of its branches.
+        val raw = """{"version":1,"app":"Synkplay","values":{"pref_unpause_action":"typo"}}"""
+        val (values, outcome) = readSettingsBackup(raw)
+        assertTrue(values.isEmpty())
+        assertEquals(1, outcome.skipped)
+    }
+
+    @Test
+    fun a_real_choice_still_comes_back() {
+        val raw = """{"version":1,"app":"Synkplay","values":{"pref_unpause_action":"Always"}}"""
+        val (values, outcome) = readSettingsBackup(raw)
+        assertEquals(1, outcome.applied)
+        assertEquals("Always", values.values.single())
+    }
+
+    @Test
+    fun engine_rows_and_nested_colours_are_exportable_but_actions_are_not() {
+        val keys = exportableSettings().map { it.key }.toSet()
+        assertTrue(Preferences.KITE_COMPOSE_RENDERER.key in keys, "an engine's own row is still a setting")
+        assertTrue(Preferences.COLOR_TIMESTAMP.key in keys, "a colour behind a nested editor is still a setting")
+        assertTrue(Preferences.EXPORT_SETTINGS.key !in keys, "a button is not a setting")
+        assertTrue("misc_user_id" !in keys)
+    }
 }

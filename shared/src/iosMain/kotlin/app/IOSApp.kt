@@ -5,10 +5,15 @@ package app
 import androidx.compose.ui.window.ComposeUIViewController
 import app.home.HomeViewmodel
 import app.room.RoomViewmodel
+import app.utils.flushLogs
 import app.utils.loggy
 import app.utils.platformCallback
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.setUnhandledExceptionHook
+import kotlin.native.terminateWithUnhandledException
+import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSOperationQueue
 import platform.UIKit.NSLayoutConstraint
@@ -116,13 +121,26 @@ fun SyncplayController(): UIViewController {
 
 private var backgroundObserversInstalled = false
 
-/** The trace reaches the log file before the runtime terminates the process; there was no hook at all. */
+/**
+ * The trace reaches the log file before the process dies.
+ *
+ * Two things had to be added to the hook. The log writer is asynchronous, so returning straight
+ * after queueing a line meant the trace was often still in the queue when the process went away.
+ * And installing a hook at all stops the runtime terminating: it hands the exception to the hook
+ * and returns, so the app carried on in whatever state the crash left it in.
+ */
 @OptIn(ExperimentalNativeApi::class)
 private fun installCrashHook() {
     setUnhandledExceptionHook { throwable ->
         loggy("Uncaught Kotlin exception: ${throwable.stackTraceToString()}")
+        // A bounded moment to land the trace; a crash report is worth a second and a half.
+        runCatching { runBlocking { withTimeout(CRASH_LOG_FLUSH_TIMEOUT) { flushLogs() } } }
+        terminateWithUnhandledException(throwable)
     }
 }
+
+/** Long enough for the writer to land a stack trace, short enough not to hang a dying process. */
+private val CRASH_LOG_FLUSH_TIMEOUT = 1500.milliseconds
 
 /**
  * The root view controller never disappears when the app is sent to the background, so the

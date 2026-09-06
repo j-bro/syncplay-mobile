@@ -19,6 +19,7 @@ import app.uicomponents.controls.Icon
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,7 +39,7 @@ import app.subtitles.SubtitleDownloadResult
 import app.subtitles.SubtitleResult
 import app.subtitles.SubtitleSearch
 import app.subtitles.SubtitleSearchOutcome
-import app.subtitles.subtitleSearchLanguages
+import app.subtitles.subtitleSearchLanguageCodes
 import app.theme.Space
 import app.theme.Type
 import app.theme.palette
@@ -54,6 +55,7 @@ import app.uicomponents.controls.RowValue
 import app.uicomponents.controls.SearchGlyph
 import app.uicomponents.frames.Modal
 import app.uicomponents.frames.ModalSize
+import app.utils.localizedLanguageName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
@@ -84,8 +86,18 @@ fun SubtitleSearchModal(open: Boolean, onDismiss: () -> Unit) {
 
     /* The language filter persists (default English); "all" drops the filter entirely. */
     val languageCode by SUBTITLE_SEARCH_LANG.watchPref()
-    val languageName = remember(languageCode) {
-        subtitleSearchLanguages.firstOrNull { it.second == languageCode }?.first ?: languageCode.uppercase()
+    val appLanguage = Localization.lyricist.state.collectAsState().value.languageTag
+    val allLanguages = strings.roomSubsAllLanguages
+    /* Named in the display language, and sorted in it too: an alphabetical list of English
+     * names is not alphabetical once the names are French. */
+    val languages = remember(appLanguage, allLanguages) {
+        listOf("all" to allLanguages) +
+            subtitleSearchLanguageCodes
+                .map { it to (localizedLanguageName(it, appLanguage) ?: it.uppercase()) }
+                .sortedBy { it.second }
+    }
+    val languageName = remember(languages, languageCode) {
+        languages.firstOrNull { it.first == languageCode }?.second ?: languageCode.uppercase()
     }
 
     /* One search in flight: a language change or a retyped query cancels the previous one, so
@@ -223,7 +235,7 @@ fun SubtitleSearchModal(open: Boolean, onDismiss: () -> Unit) {
         size = ModalSize.Panel,
         inset = false,
     ) {
-        subtitleSearchLanguages.forEach { (name, code) ->
+        languages.forEach { (code, name) ->
             ListRow(
                 selected = code == languageCode,
                 onClick = {

@@ -63,6 +63,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.unit.dp
 import app.klipy.KlipyMedia
 import app.klipy.KlipyMediaType
@@ -206,6 +207,8 @@ fun GifPanel(
     isHUDVisible: Boolean = true,
 ) {
     val p = palette
+    // Read once, outside the grid: a tile with no title still needs a name to be spoken.
+    val untitledGif = strings.roomGifUntitled
     var selectedType by remember { mutableStateOf(KlipyMediaType.GIF) }
     var selectedSource by remember { mutableStateOf(GifSource.TRENDING) }
     val results = remember { mutableStateListOf<KlipyMedia>() }
@@ -326,6 +329,13 @@ fun GifPanel(
                                 .fillMaxWidth()
                                 .aspectRatio(1f)
                                 .clip(Radius.tightShape)
+                                /* The name goes on the tile, not on the image inside it: on iOS
+                                 * the image is a native view the Compose accessibility bridge
+                                 * cannot reach, so the whole grid read as unlabelled buttons. */
+                                .semantics(mergeDescendants = true) {
+                                    contentDescription = media.title.ifBlank { untitledGif }
+                                    role = Role.Button
+                                }
                                 .combinedClickable(onClick = { send(media) }, onLongClick = { longPressed = media }),
                         ) {
                             if (!loaded && isHUDVisible) Box(Modifier.matchParentSize().shimmer())

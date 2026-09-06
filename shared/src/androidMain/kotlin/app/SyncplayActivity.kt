@@ -199,19 +199,31 @@ class SyncplayActivity : ComponentActivity() {
         val ip = intent.getStringExtra("serverip") ?: ""
         val port = intent.getIntExtra("serverport", JoinConfig().port)
 
-        val ours = runCatching {
+        /* The saved shortcut is the authority, not the intent. It has to still exist and still
+         * be enabled, and what we join with comes out of it: the caller supplied the id we look
+         * up, so letting the caller also supply the fields would make the check decorative.
+         * Erasing shortcuts leaves the pinned ones on the launcher, greyed out; tapping one
+         * used to join anyway. */
+        val saved = runCatching {
             ShortcutManagerCompat.getShortcuts(
                 this,
                 ShortcutManagerCompat.FLAG_MATCH_DYNAMIC or ShortcutManagerCompat.FLAG_MATCH_PINNED,
-            ).any { it.id == "$name$room$ip$port" }
-        }.getOrDefault(false)
+            ).firstOrNull { it.id == "$name$room$ip$port" && it.isEnabled }
+        }.getOrNull()
 
-        if (!ours) {
-            loggy("Ignored a quick-launch intent that matches no shortcut of ours")
+        if (saved == null) {
+            loggy("Ignored a quick-launch intent that matches no enabled shortcut of ours")
             return null
         }
+        val extras = saved.intent.extras ?: return null
         return InviteLink.sanitize(
-            JoinConfig(user = name, room = room, ip = ip, port = port, pw = intent.getStringExtra("serverpw") ?: "")
+            JoinConfig(
+                user = extras.getString("name") ?: "",
+                room = extras.getString("room") ?: "",
+                ip = extras.getString("serverip") ?: "",
+                port = extras.getInt("serverport", JoinConfig().port),
+                pw = extras.getString("serverpw") ?: "",
+            )
         )
     }
 

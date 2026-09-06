@@ -664,6 +664,13 @@
     <string name="action_close">Close</string>
     <string name="stepper_previous">Previous</string>
     <string name="stepper_next">Next</string>
+    <string name="home_settings_were_reset">Settings could not be read and were reset.</string>
+    <string name="settings_import_done">%1$d settings applied, %2$d skipped.</string>
+    <string name="settings_import_refused">Not imported: %1$s</string>
+    <string name="settings_export_done">Settings saved.</string>
+    <string name="settings_file_error">The file could not be read or written.</string>
+    <string name="room_gif_untitled">GIF</string>
+    <string name="room_subs_all_languages">All languages</string>
     <string name="action_clear">Clear</string>
     <!-- Engine picker (design overhaul) -->
     <!-- Home revisions -->

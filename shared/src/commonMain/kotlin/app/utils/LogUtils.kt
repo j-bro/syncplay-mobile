@@ -1,5 +1,7 @@
 package app.utils
 
+import SyncplayMobile.shared.KiteBuildConfig
+
 import co.touchlab.kermit.Logger
 import io.ktor.client.plugins.logging.Logger as KtorLogger
 import kotlinx.atomicfu.locks.SynchronizedObject
@@ -94,11 +96,12 @@ private fun writeBatch(batch: List<LogEntry>) {
  * consumer.
  */
 fun loggy(s: Any?) {
-    val string = if (s is Exception) {
+    val raw = if (s is Exception) {
         s.stackTraceToString()
     } else {
         s.toString()
     }
+    val string = redactSecrets(raw, knownSecrets)
 
     /* Always print to console (iOS: Xcode console, Android: logcat), including in release builds
      * so runtime errors stay visible. The queued file write preserves logs for export from settings. */
@@ -195,4 +198,24 @@ object KtorLoggyLogger : KtorLogger {
     override fun log(message: String) {
         loggy("[ktor] $message")
     }
+}
+
+/**
+ * Masks every occurrence of the given secrets.
+ *
+ * The log is exportable from settings, and a service key reaches it through more paths than can
+ * be found one at a time: Klipy's key is part of the URL, so it is in every request line Ktor
+ * prints. Masking at the one place every line passes through is the only version of this that
+ * stays true as the code changes.
+ *
+ * Short values are skipped: masking a two-letter secret would eat the log.
+ */
+fun redactSecrets(text: String, secrets: List<String>): String =
+    secrets.filter { it.length >= MIN_MASKABLE_SECRET }.fold(text) { acc, secret -> acc.replace(secret, "***") }
+
+/** Below this a value is too common to mask without destroying the log around it. */
+private const val MIN_MASKABLE_SECRET = 8
+
+private val knownSecrets: List<String> by lazy {
+    listOf(KiteBuildConfig.KLIPY_API_KEY, KiteBuildConfig.OPENSUBTITLES_API_KEY)
 }

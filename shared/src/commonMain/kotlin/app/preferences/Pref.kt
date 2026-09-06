@@ -29,6 +29,8 @@ class Pref<T>(
     val default: T,
     settingConfigLambda: (SettingConfig.() -> Unit)? = null
 ) {
+    init { PrefRegistry.register(this) }
+
     val config: SettingConfig? by lazy {
         settingConfigLambda?.let {
             SettingConfig().apply(it)
@@ -48,6 +50,22 @@ class Pref<T>(
     fun Render() {
         SettingEntry(this).Render()
     }
+}
+
+/**
+ * Every [Pref] ever constructed.
+ *
+ * Export used to walk the two settings screens, which meant a preference reachable only through
+ * an engine's own category, or through a colour editor nested inside a row, was never written to
+ * the file and silently did not travel. What a preference is has nothing to do with where its row
+ * happens to be drawn.
+ */
+object PrefRegistry {
+    private val all = mutableListOf<Pref<*>>()
+
+    fun register(pref: Pref<*>) { all += pref }
+
+    fun snapshot(): List<Pref<*>> = all.toList()
 }
 
 /**

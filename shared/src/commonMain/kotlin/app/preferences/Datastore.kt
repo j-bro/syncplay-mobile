@@ -4,8 +4,10 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +41,17 @@ private val preferencesLoaded = CompletableDeferred<Unit>()
 private var cachedStateFlow: StateFlow<Preferences>? = null
 
 /**
+ * Non-null when the settings on disk could not be used and the app is running on defaults.
+ *
+ * Set from two places: the corruption handler, which is the usual one, and the first read, for a
+ * failure the handler does not cover. The store is read once, blocking, behind the splash, so
+ * before this existed an unreadable file threw there on every launch, with nothing on screen to
+ * say why and no way out but reinstalling.
+ */
+var preferencesLoadFailure: Throwable? = null
+    internal set
+
+/**
  * Hot [StateFlow] of all preferences, collected once and shared for the whole process.
  *
  * The first read comes off disk, and the first caller pays for it. That caller used to be the
@@ -50,7 +63,12 @@ val datastoreStateFlow: StateFlow<Preferences>
     get() = cachedStateFlow ?: datastore.data.stateIn(
         scope = datastoreScope,
         started = SharingStarted.Eagerly,
-        initialValue = runBlocking { datastore.data.first() },
+        initialValue = runBlocking {
+            runCatching { datastore.data.first() }.getOrElse { failure ->
+                preferencesLoadFailure = failure
+                emptyPreferences()
+            }
+        },
     ).also {
         cachedStateFlow = it
         preferencesLoaded.complete(Unit)
@@ -77,6 +95,7 @@ suspend fun awaitPreferences() = preferencesLoaded.await()
  */
 fun resetPreferencesForTesting() {
     cachedStateFlow = null
+    preferencesLoadFailure = null
 }
 
 /**
@@ -90,12 +109,18 @@ val LocalPrefsState = staticCompositionLocalOf<State<Preferences>> {
 }
 
 /**
- * Builds the preference [DataStore] at [producePath]. No corruption handler, no migrations.
+ * Builds the preference [DataStore] at [producePath]. No migrations.
+ *
+ * A file the parser rejects is replaced by an empty store rather than thrown from. Losing
+ * settings is bad; a permanent crash on launch is worse, and it is what the alternative gave.
  */
 fun createDataStore(
     producePath: () -> String,
 ): DataStore<Preferences> = PreferenceDataStoreFactory.createWithPath(
-    corruptionHandler = null,
+    corruptionHandler = ReplaceFileCorruptionHandler { failure ->
+        preferencesLoadFailure = failure
+        emptyPreferences()
+    },
     migrations = emptyList(),
     produceFile = { producePath().toPath() },
 )

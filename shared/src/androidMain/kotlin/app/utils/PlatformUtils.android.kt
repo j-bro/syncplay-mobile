@@ -57,7 +57,9 @@ actual val httpClient: HttpClient by lazy {
          * JSON API hosts so that 100KB+ image-tile bodies don't drown the log. */
         install(Logging) {
             logger = app.utils.KtorLoggyLogger
-            level = LogLevel.ALL
+            // A whole request line carries the URL, and the Klipy key lives in the URL. Full
+            // bodies are a debugging tool, not something to ship.
+            level = if (KiteBuildConfig.IS_DEBUG) LogLevel.ALL else LogLevel.INFO
             sanitizeHeader { header -> header == "Api-Key" || header == HttpHeaders.Authorization }
             filter { request -> request.url.host.startsWith("api.") }
         }

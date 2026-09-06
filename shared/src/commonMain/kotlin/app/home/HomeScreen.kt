@@ -88,6 +88,7 @@ import app.preferences.Preferences.PLAYER_ENGINE
 import app.preferences.Preferences.SERVER_PASSWORD
 import app.preferences.Preferences.SERVER_PORT
 import app.preferences.Preferences.TIPS_SHOWN_COUNT
+import app.preferences.preferencesLoadFailure
 import app.preferences.set
 import app.preferences.value
 import app.preferences.watchPref
@@ -111,6 +112,7 @@ import app.uicomponents.controls.Text
 import app.uicomponents.controls.controlStates
 import app.uicomponents.controls.pressFeedback
 import app.uicomponents.frames.NoticeHost
+import app.uicomponents.frames.NoticeSeverity
 import app.utils.ExitRoomMode
 import app.utils.Platform
 import app.utils.availablePlatformPlayerEngines
@@ -196,6 +198,15 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
     // A pending shortcut joins once, on arrival, through the same caps as the form.
     LaunchedEffect(Unit) {
         consumePendingShortcut()?.let { viewmodel.joinRoom(it.sanitised()) }
+    }
+
+    // The settings file could not be read and the app is running on defaults. Said once, here,
+    // because otherwise the only sign is that every preference is suddenly back to new.
+    val settingsWereReset = strings.homeSettingsWereReset
+    LaunchedEffect(Unit) {
+        if (preferencesLoadFailure != null) {
+            viewmodel.notices.post(settingsWereReset, NoticeSeverity.Warn, holdMs = 6000L)
+        }
     }
 
     val didYaKnowPopup = remember { mutableStateOf(false) }

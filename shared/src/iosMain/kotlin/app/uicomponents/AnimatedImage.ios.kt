@@ -48,6 +48,7 @@ import platform.ImageIO.kCGImagePropertyGIFDictionary
 import platform.ImageIO.kCGImagePropertyGIFUnclampedDelayTime
 import platform.ImageIO.kCGImagePropertyPNGDictionary
 import kotlinx.cinterop.useContents
+import platform.CoreGraphics.CGImageRelease
 import platform.UIKit.UIImage
 import platform.UIKit.UIImageView
 import platform.UIKit.UIViewContentMode
@@ -214,7 +215,9 @@ private fun decodeAnimatedImage(bytes: ByteArray): UIImage? {
             /* Static image — single frame */
             val cgImage = CGImageSourceCreateImageAtIndex(source, 0u, null)
             CFRelease(source)
-            return@usePinned cgImage?.let { UIImage.imageWithCGImage(it) }
+            // A Create call hands over a reference. UIImage retains its own, so ours has to go
+            // back or every image decoded leaks one CGImage for the life of the process.
+            return@usePinned cgImage?.let { UIImage.imageWithCGImage(it).also { _ -> CGImageRelease(it) } }
         }
 
         /* Animated image — extract every frame and sum per-frame delays for total duration. */
@@ -224,6 +227,7 @@ private fun decodeAnimatedImage(bytes: ByteArray): UIImage? {
         for (i in 0 until frameCount) {
             val cgImage = CGImageSourceCreateImageAtIndex(source, i.toULong(), null) ?: continue
             frames.add(UIImage.imageWithCGImage(cgImage))
+            CGImageRelease(cgImage)
             totalDuration += readFrameDelaySeconds(source, i.toULong())
         }
         CFRelease(source)

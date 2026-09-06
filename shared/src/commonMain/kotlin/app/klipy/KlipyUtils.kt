@@ -109,7 +109,7 @@ object KlipyUtils {
         limit: Int = 24,
         page: Int = 1
     ): KlipyPagedResult {
-        loggy("KlipyUtils.recents → type=$type limit=$limit page=$page customerId=$customerId baseUrl=$BASE_URL")
+        loggy("KlipyUtils.recents → type=$type limit=$limit page=$page")
         return try {
             val result = when (type) {
                 KlipyMediaType.GIF -> klipy.recentGifs(customerId = customerId, perPage = limit, page = page)
