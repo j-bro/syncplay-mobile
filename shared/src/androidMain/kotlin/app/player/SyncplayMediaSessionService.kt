@@ -20,6 +20,21 @@ import app.utils.loggy
 @UnstableApi
 class SyncplayMediaSessionService : MediaSessionService() {
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Joining starts this service directly, without a MediaController binding. That path
+        // never calls onGetSession, so register the room before Media3 watches for playback.
+        val session = RoomMediaSessionHolder.session
+        sessions.filter { it !== session }.forEach(::removeSession)
+        if (session != null) addSession(session)
+
+        // Keep Media3's media-button and notification start-intent handling.
+        super.onStartCommand(intent, flags, startId)
+        if (session == null) stopSelf(startId)
+
+        // The room and its player cannot be restored after process death.
+        return START_NOT_STICKY
+    }
+
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? =
         RoomMediaSessionHolder.session
 
@@ -33,6 +48,8 @@ class SyncplayMediaSessionService : MediaSessionService() {
     }
 
     override fun onDestroy() {
+        // Detach this service's controllers; the room still owns the session and the engine.
+        sessions.forEach(::removeSession)
         loggy("Media session service destroyed")
         super.onDestroy()
     }

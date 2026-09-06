@@ -3,6 +3,7 @@ package app.desktop
 import app.PlatformCallback
 import app.home.HomeViewmodel
 import app.home.JoinConfig
+import app.room.RoomViewmodel
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.util.Locale
@@ -38,7 +39,7 @@ object DesktopPlatformCallback : PlatformCallback {
     /** No desktop OS lets an app set screen brightness; the room hides the swipe rather than fake a readout. */
     override val supportsBrightness: Boolean get() = false
 
-    override fun mediaSessionInitialize() {}
+    override fun mediaSessionInitialize(viewmodel: RoomViewmodel) {}
 
     override fun mediaSessionFinalize() {}
 

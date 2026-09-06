@@ -51,14 +51,15 @@ internal class AndroidPlatformCallback(
         // behind it is whichever engine the room built.
         val player = RoomMediaSessionPlayer(viewmodel, android.os.Looper.getMainLooper())
         RoomMediaSessionHolder.install(MediaSession.Builder(appContext, player).build())
-        a.startForegroundService(Intent(a, SyncplayMediaSessionService::class.java))
+        // The room starts with an idle player. Media3 promotes the service when playback starts;
+        // startForegroundService here would arm Android's deadline before there is anything to play.
+        a.startService(Intent(a, SyncplayMediaSessionService::class.java))
     }
 
     @OptIn(androidx.media3.common.util.UnstableApi::class)
     override fun mediaSessionFinalize() {
         RoomMediaSessionHolder.clear()
-        val a = activity ?: return
-        a.stopService(Intent(a, SyncplayMediaSessionService::class.java))
+        appContext.stopService(Intent(appContext, SyncplayMediaSessionService::class.java))
     }
 
     override fun serverServiceStart(port: Int) {
