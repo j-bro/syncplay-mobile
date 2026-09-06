@@ -149,14 +149,25 @@ fun Modifier.shimmer(): Modifier {
     val phase by transition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(1400, easing = LinearEasing), RepeatMode.Restart),
+        animationSpec = infiniteRepeatable(tween(2400, easing = LinearEasing), RepeatMode.Restart),
         label = "shimmerPhase",
     )
     val base = p.ink.copy(alpha = 0.06f)
     val lit = p.ink.copy(alpha = 0.14f)
     return drawBehind {
-        val w = size.width
-        val x = (phase * 2f - 0.5f) * w
-        drawRect(Brush.linearGradient(listOf(base, lit, base), start = Offset(x - w / 2, 0f), end = Offset(x + w / 2, size.height)))
+        val (start, end) = shimmerSweep(phase, size.width, size.height)
+        drawRect(Brush.linearGradient(listOf(base, lit, base), start = start, end = end))
     }
+}
+
+/**
+ * Where the light band's gradient starts and ends at [phase] in 0..1. The band runs diagonally,
+ * so a corner sits inside it long after the band's centre has left the tile; starting and ending
+ * one full diagonal reach past the edges is what keeps the wrap from phase 1 to 0 invisible.
+ */
+internal fun shimmerSweep(phase: Float, width: Float, height: Float): Pair<Offset, Offset> {
+    if (width <= 0f) return Offset.Zero to Offset(0f, height)
+    val reach = (width * width + height * height) / width
+    val startX = -reach + phase * 2f * reach
+    return Offset(startX, 0f) to Offset(startX + width, height)
 }

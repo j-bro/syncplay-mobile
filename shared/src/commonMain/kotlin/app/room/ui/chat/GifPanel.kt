@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -57,6 +59,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -106,7 +109,7 @@ import syncplaymobile.shared.generated.resources.room_gif_tab_trending
 import app.uicomponents.controls.touchTarget
 
 /** Source shown while the composer is empty; typed text becomes a search over the chosen type. */
-private enum class GifSource { TRENDING, RECENTS, FAVORITES }
+internal enum class GifSource { TRENDING, RECENTS, FAVORITES }
 
 /**
  * The type switch: a 14 x 30dp track with a knob that sits up for GIFs and down for stickers,
@@ -116,7 +119,8 @@ private enum class GifSource { TRENDING, RECENTS, FAVORITES }
 private fun TypeSwitch(gifs: Boolean, onChange: (gifs: Boolean) -> Unit) {
     val p = palette
     val source = remember { MutableInteractionSource() }
-    val trackHeight = 30.dp
+    // The track grows with the text beside it, or two lines of large type clip against it.
+    val trackHeight = 30.dp * LocalDensity.current.fontScale.coerceIn(1f, 2f)
     val knob = 10.dp
     val knobY by animateDpAsState(if (gifs) 2.dp else trackHeight - knob - 2.dp, Motion.move(), label = "knob")
     val gifLabel = stringResource(Res.string.room_gif_tab_gifs)
@@ -124,7 +128,7 @@ private fun TypeSwitch(gifs: Boolean, onChange: (gifs: Boolean) -> Unit) {
 
     Row(
         modifier = Modifier
-            .height(Space.rowCompact)
+            .heightIn(min = Space.rowCompact)
             .clip(Radius.controlShape)
             .clickable(interactionSource = source, indication = null, role = Role.Switch) { Feedback.tick(); onChange(!gifs) }
             .touchTarget()
@@ -143,6 +147,59 @@ private fun TypeSwitch(gifs: Boolean, onChange: (gifs: Boolean) -> Unit) {
         Column(Modifier.height(trackHeight), verticalArrangement = Arrangement.SpaceBetween) {
             Text(gifLabel, style = Type.group, color = if (gifs) p.accent else p.inkDim, maxLines = 1)
             Text(stickerLabel, style = Type.group, color = if (gifs) p.inkDim else p.accent, maxLines = 1)
+        }
+    }
+}
+
+/** Under this drawer width the switch and the source row stack; a phone's chat column lands here. */
+private val HEADER_ONE_ROW_MIN = 340.dp
+
+/**
+ * The type switch and the source row. One row when there is room for both; stacked when there
+ * is not, so the three source labels keep their words instead of shrinking against the hairlines.
+ */
+@Composable
+internal fun GifDrawerHeader(
+    type: KlipyMediaType,
+    onType: (KlipyMediaType) -> Unit,
+    source: GifSource,
+    onSource: (GifSource) -> Unit,
+) {
+    val sources = GifSource.entries
+    val switch: @Composable () -> Unit = {
+        TypeSwitch(gifs = type == KlipyMediaType.GIF) { gifs -> onType(if (gifs) KlipyMediaType.GIF else KlipyMediaType.STICKER) }
+    }
+    val segmented: @Composable (Modifier) -> Unit = { m ->
+        Segmented(
+            options = listOf(
+                stringResource(Res.string.room_gif_tab_trending),
+                stringResource(Res.string.room_gif_tab_recents),
+                stringResource(Res.string.room_gif_tab_favorites),
+            ),
+            selected = sources.indexOf(source),
+            onSelect = { onSource(sources[it]) },
+            modifier = m,
+            autoSize = true,
+        )
+    }
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
+        if (maxWidth < HEADER_ONE_ROW_MIN) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = Space.gap, vertical = Space.gapTight),
+                verticalArrangement = Arrangement.spacedBy(Space.gapTight),
+            ) {
+                switch()
+                segmented(Modifier.fillMaxWidth())
+            }
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = Space.gap, vertical = Space.gapTight),
+                horizontalArrangement = Arrangement.spacedBy(Space.gap),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                switch()
+                segmented(Modifier.weight(1f))
+            }
         }
     }
 }
@@ -233,27 +290,12 @@ fun GifPanel(
     }
 
     Column(modifier.surface(Tier.Panel, Radius.panelShape)) {
-        val sources = listOf(GifSource.TRENDING, GifSource.RECENTS, GifSource.FAVORITES)
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = Space.gap, vertical = Space.gapTight),
-            horizontalArrangement = Arrangement.spacedBy(Space.gap),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            TypeSwitch(gifs = selectedType == KlipyMediaType.GIF) { gifs ->
-                selectedType = if (gifs) KlipyMediaType.GIF else KlipyMediaType.STICKER
-            }
-            Segmented(
-                options = listOf(
-                    stringResource(Res.string.room_gif_tab_trending),
-                    stringResource(Res.string.room_gif_tab_recents),
-                    stringResource(Res.string.room_gif_tab_favorites),
-                ),
-                selected = sources.indexOf(selectedSource),
-                onSelect = { selectedSource = sources[it] },
-                modifier = Modifier.weight(1f),
-                autoSize = true,
-            )
-        }
+        GifDrawerHeader(
+            type = selectedType,
+            onType = { selectedType = it },
+            source = selectedSource,
+            onSource = { selectedSource = it },
+        )
         Rule()
 
         Box(Modifier.fillMaxSize()) {
@@ -286,8 +328,10 @@ fun GifPanel(
                     items(results, key = { it.id }) { media ->
                         /* Fixed width and height on the tile: an empty UIImageView reports zero
                          * size and Compose never re-measures UIKit interop after the image loads.
-                         * Alpha is a parameter for the same interop reason. The tile shimmers
-                         * until the image reports itself loaded. */
+                         * Alpha is a parameter for the same interop reason and follows the HUD
+                         * only: at alpha 0 Android composes no image at all, so gating it on
+                         * "loaded" meant the load never started and the shimmer never left. The
+                         * shimmer sits under the image until the image reports itself loaded. */
                         var loaded by remember(media.id) { mutableStateOf(false) }
                         Box(
                             Modifier
@@ -301,7 +345,7 @@ fun GifPanel(
                                 url = media.previewUrl,
                                 contentDescription = media.title.ifBlank { null },
                                 contentScale = ContentScale.Crop,
-                                alpha = if (isHUDVisible && loaded) 1f else 0f,
+                                alpha = if (isHUDVisible) 1f else 0f,
                                 onLoaded = { loaded = true },
                                 modifier = Modifier.matchParentSize(),
                             )
