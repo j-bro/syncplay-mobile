@@ -16,6 +16,10 @@ on:
         description: 'Upload IPA to App Store / TestFlight'
         type: boolean
         default: true
+      build_desktop:
+        description: 'Build the desktop installers and attach them to the release'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -24,8 +28,8 @@ permissions:
 # A moving tag is a moving dependency: whoever controls it can change what runs here, and a
 # reproducible build cannot depend on something that changes underneath it (issue #105).
 env:
-  # Skip `brew update` — slow and rarely needed since the macos runner image
-  # ships current Homebrew + a recent formula snapshot.
+  # Skip `brew update`: slow and rarely needed, since the macos runner image
+  # ships current Homebrew and a recent formula snapshot.
   HOMEBREW_NO_AUTO_UPDATE: 1
   HOMEBREW_NO_INSTALL_CLEANUP: 1
   # Gradle daemon adds overhead in single-invocation CI steps.
@@ -33,12 +37,11 @@ env:
 
 jobs:
   # ───────────────────────────────────────────────────────────────────────────
-  # Android Full Build (exoOnly=false) → 4 ABI APKs + 1 universal + 1 AAB
-  # ───────────────────────────────────────────────────────────────────────────
   # One gate for the whole release. Every build waits on it, so nothing reaches a store
   # unless the checks that are supposed to guard the upload have already passed.
+  # ───────────────────────────────────────────────────────────────────────────
   verify:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
@@ -47,11 +50,18 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+
       - uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947 # v4
 
+      # The gates read sources and metadata; they do not need the full flavor, and the exoOnly
+      # model configures the Android app without the NDK.
       - name: Verify release gates
-        run: ./gradlew qualityGates detekt
+        run: ./gradlew qualityGates detekt -PexoOnly=true
 
+  # ───────────────────────────────────────────────────────────────────────────
+  # Android full build (exoOnly=false) → 1 universal APK + 1 AAB
+  # ───────────────────────────────────────────────────────────────────────────
   build-android-full:
     needs: verify
     runs-on: macos-latest
@@ -115,7 +125,7 @@ jobs:
           key: mpv-libs-${{ runner.os }}-${{ hashFiles('buildscripts/mpv_*.sh', 'buildscripts/include/*.sh', 'buildscripts/scripts/*.sh', 'gradle.properties', 'buildSrc/src/main/kotlin/AppConfig.kt') }}
 
       # Required by the MPV build chain. Skipped entirely when MPV libs are
-      # cached — no need to bootstrap the toolchain for a no-op task.
+      # cached: no need to bootstrap the toolchain for a no-op task.
       - name: Install native build dependencies
         if: steps.mpv-cache.outputs.cache-hit != 'true'
         run: brew install automake autoconf libtool pkg-config nasm meson
@@ -127,28 +137,32 @@ jobs:
 
       - name: Create local.properties
         run: |
-          cat > local.properties <<EOF
+          cat > local.properties <<EOP
           sdk.dir=$ANDROID_HOME
           keystore.keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
           keystore.keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
           keystore.storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           yuroyami.keyKlipyApi=${{ secrets.KLIPY_API_KEY }}
-          EOF
+          EOP
 
-      # Two Gradle invocations — assembleFullRelease builds the per-ABI APKs
-      # (4 splits + 1 universal) with `splits.abi` enabled; bundleFullRelease
-      # builds the AAB with splits disabled. Mixing both in one invocation is
-      # explicitly unsupported by androidApp/build.gradle.kts (see the comment
-      # at `isBuildingBundle`) — splits get switched off and only the universal
-      # APK ships, which is the bug that produced a single 115 MB universal in
-      # an earlier release. The trade-off is paying configuration twice.
-      - name: Build APKs (per-ABI splits + universal)
-        run: ./gradlew assembleFullRelease
+      # One invocation. The ABI splits that used to keep the APK and the AAB in separate
+      # invocations are gone (0.24.0): the full flavor ships one universal APK, and the AAB
+      # lets Play serve each phone only its own libraries.
+      - name: Build APK and AAB
+        run: ./gradlew assembleFullRelease bundleFullRelease
 
-      - name: Build AAB
-        run: ./gradlew bundleFullRelease
+      # The release notes carry this table; it is generated here because this job has the
+      # whole build configured and the release job has no Android SDK.
+      - name: Write the dependency table for the release notes
+        run: ./gradlew -q printDependencyTable | grep '^|' | tee dependencies.md
 
-      - name: Upload APKs
+      - name: Upload dependency table
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-dependencies
+          path: dependencies.md
+
+      - name: Upload APK
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: android-full-apks
@@ -196,13 +210,13 @@ jobs:
 
       - name: Create local.properties
         run: |
-          cat > local.properties <<EOF
+          cat > local.properties <<EOP
           sdk.dir=$ANDROID_HOME
           keystore.keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
           keystore.keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
           keystore.storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           yuroyami.keyKlipyApi=${{ secrets.KLIPY_API_KEY }}
-          EOF
+          EOP
 
       - name: Build APK
         # -PexoOnly=true selects the exo-only flavor (overrides the gradle.properties default).
@@ -219,9 +233,11 @@ jobs:
 
   # ───────────────────────────────────────────────────────────────────────────
   # Desktop → one installer per host OS. jpackage can only build for the OS it
-  # runs on, so this is a matrix rather than one job.
+  # runs on, so this is a matrix rather than one job. Off by default until the
+  # desktop app is ready to ship; the release does not wait on it.
   # ───────────────────────────────────────────────────────────────────────────
   build-desktop:
+    if: inputs.build_desktop
     needs: verify
     strategy:
       fail-fast: false
@@ -251,7 +267,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947 # v4
 
       # Nothing native is downloaded for desktop any more: the only engine is KitePlayer and its
-      # decoder rides inside the KiteCodec jar.
+      # decoder rides inside the KiteFFmpeg jar.
       - name: Build installer
         run: ./gradlew :desktopApp:${{ matrix.task }}
 
@@ -263,11 +279,13 @@ jobs:
           path: ${{ matrix.path }}
 
   # ───────────────────────────────────────────────────────────────────────────
-  # iOS Build → Archive + IPA + App Store upload
+  # iOS Build → Archive + IPA
   # ───────────────────────────────────────────────────────────────────────────
   build-ios:
     needs: verify
     runs-on: macos-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
@@ -284,9 +302,9 @@ jobs:
 
       - name: Create local.properties
         run: |
-          cat > local.properties <<EOF
+          cat > local.properties <<EOP
           yuroyami.keyKlipyApi=${{ secrets.KLIPY_API_KEY }}
-          EOF
+          EOP
 
       # Stamp the iOS version from the kiteConfig { } block into the Xcode project
       # BEFORE xcodebuild reads it. KiteConfig only rewrites the pbxproj when
@@ -309,14 +327,14 @@ jobs:
           echo "iOS version stamped: $VERSION (build $VERSION_CODE)"
 
       # CocoaPods caches at three levels:
-      # 1. ~/.cocoapods/repos — the trunk spec repo (slow to refresh from CDN)
-      # 2. ~/Library/Caches/CocoaPods — downloaded pod sources
-      # 3. iosApp/Pods — installed Pods tree, restored as a unit to skip
+      # 1. ~/.cocoapods/repos, the trunk spec repo (slow to refresh from CDN)
+      # 2. ~/Library/Caches/CocoaPods, downloaded pod sources
+      # 3. iosApp/Pods, the installed Pods tree, restored as a unit to skip
       #    framework extraction
       #
       # `pod install` always runs (cheap with sources cached) so the generated
-      # files inside Pods/ — xcfilelist inputs/outputs, .xcconfig, manifest,
-      # Pods.xcodeproj — are regenerated to match the installed CocoaPods/Xcode
+      # files inside Pods/ (xcfilelist inputs/outputs, .xcconfig, manifest,
+      # Pods.xcodeproj) are regenerated to match the installed CocoaPods/Xcode
       # versions on the runner. Caching `iosApp/Pods` alone and skipping
       # `pod install` is fragile: the cached tree carries over generated
       # artifacts from an older CocoaPods version, and the new Xcode then fails
@@ -354,7 +372,7 @@ jobs:
       # Always run pod install so the xcfilelist/xcconfig/manifest under
       # iosApp/Pods/Target Support Files match the runner's current CocoaPods
       # version. With sources cached this is ~30s.
-      # --repo-update only on cold start — refreshing the spec repo from CDN
+      # --repo-update only on cold start: refreshing the spec repo from CDN
       # is the slow part and not needed when the lock hasn't changed.
       - name: Install CocoaPods dependencies
         working-directory: ./iosApp
@@ -406,19 +424,6 @@ jobs:
             -authenticationKeyID $APP_STORE_CONNECT_API_KEY_ID \
             -authenticationKeyIssuerID $APP_STORE_CONNECT_ISSUER_ID
 
-      - name: Upload to App Store
-        if: inputs.deploy_app_store
-        env:
-          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-        run: |
-          xcrun altool --upload-app \
-            --type ios \
-            --file $RUNNER_TEMP/build/*.ipa \
-            --apiKey $APP_STORE_CONNECT_API_KEY_ID \
-            --apiIssuer $APP_STORE_CONNECT_ISSUER_ID \
-            --apiPrivateKey ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
-
       - name: Rename IPA
         id: ipa
         run: |
@@ -437,17 +442,87 @@ jobs:
           path: ${{ steps.ipa.outputs.ipa_path }}
 
   # ───────────────────────────────────────────────────────────────────────────
-  # Create GitHub Release + Upload artifacts + Update AltStore + Play Store
+  # Store uploads. Each is its own job so a store refusing the build is visible
+  # on its own line and never stops the GitHub release from being cut.
+  # ───────────────────────────────────────────────────────────────────────────
+  upload-app-store:
+    if: inputs.deploy_app_store
+    needs: build-ios
+    runs-on: macos-latest
+    steps:
+      - name: Download IPA
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: ios-ipa
+          path: ipa
+
+      - name: Setup App Store Connect API key
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+        run: |
+          mkdir -p ~/private_keys
+          echo -n "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 --decode > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
+
+      - name: Upload to App Store
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          xcrun altool --upload-app \
+            --type ios \
+            --file ipa/*.ipa \
+            --apiKey $APP_STORE_CONNECT_API_KEY_ID \
+            --apiIssuer $APP_STORE_CONNECT_ISSUER_ID \
+            --apiPrivateKey ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
+
+  upload-play-store:
+    if: inputs.deploy_play_store
+    needs: build-android-full
+    runs-on: ubuntu-latest
+    steps:
+      # The checkout is for the What's New directory Play reads.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Download AAB
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: android-aab
+          path: aab
+
+      - name: Upload AAB to Google Play
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
+          packageName: com.yuroyami.syncplay
+          releaseFiles: aab/*.aab
+          # Was hardcoded to beta while the README told users Play carried the same build.
+          track: ${{ inputs.play_track }}
+          status: completed
+          whatsNewDirectory: fastlane/metadata/android/en-US/changelogs
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # The GitHub release: the files, the notes, and the AltStore feed. Waits on the
+  # builds only; a skipped desktop build is fine, a store upload is not its concern.
   # ───────────────────────────────────────────────────────────────────────────
   release:
-    needs: [build-android-full, build-android-exo, build-desktop, build-ios]
+    needs: [build-android-full, build-android-exo, build-ios, build-desktop]
+    if: >-
+      ${{ !cancelled()
+          && needs.build-android-full.result == 'success'
+          && needs.build-android-exo.result == 'success'
+          && needs.build-ios.result == 'success'
+          && (needs.build-desktop.result == 'success' || needs.build-desktop.result == 'skipped') }}
     runs-on: ubuntu-latest
     env:
       VERSION: ${{ needs.build-android-full.outputs.version }}
       VERSION_CODE: ${{ needs.build-android-full.outputs.version_code }}
       IOS_MIN_VERSION: ${{ needs.build-android-full.outputs.ios_min_version }}
     steps:
+      # The whole history, because the notes measure the changelog from the previous tag.
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
 
       - name: Download all artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
@@ -457,60 +532,50 @@ jobs:
       - name: List artifacts
         run: find artifacts -type f | sort
 
-      # ── Google Play Store ──────────────────────────────────────────────────
-      - name: Upload AAB to Google Play
-        if: inputs.deploy_play_store
-        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1
-        with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
-          packageName: com.yuroyami.syncplay
-          releaseFiles: artifacts/android-aab/*.aab
-          # Was hardcoded to beta while the README told users Play carried the same build.
-          track: ${{ inputs.play_track }}
-          status: completed
-          whatsNewDirectory: fastlane/metadata/android/en-US/changelogs
-
-      # ── GitHub Release ─────────────────────────────────────────────────────
       - name: Collect release files
         run: |
           mkdir -p release-files
           cp artifacts/android-full-apks/*.apk release-files/
           cp artifacts/android-exo-apk/*.apk release-files/
           cp artifacts/ios-ipa/*.ipa release-files/
-          # The desktop app has been packageable for a long time and shipped nowhere.
           cp artifacts/desktop-macos/*.dmg release-files/ 2>/dev/null || echo "no macOS installer"
           cp artifacts/desktop-windows/*.msi release-files/ 2>/dev/null || echo "no Windows installer"
           cp artifacts/desktop-linux/*.deb release-files/ 2>/dev/null || echo "no Linux installer"
           echo "Release files:"
           ls -lh release-files/
 
-      # The notes come from CHANGELOG.md, which is written for people who use the app.
-      # --generate-notes would list commit subjects instead.
-      - name: Extract release notes
+      # Three sections: the downloads table, the changelog since the previous release folded
+      # under a click, and the dependency table. CHANGELOG.md is written for people who use
+      # the app; --generate-notes would list commit subjects instead.
+      - name: Write the release notes
         run: |
-          awk -v ver="## ${VERSION}" '
-            $0 == ver { found = 1; next }
-            found && /^## / { exit }
-            found { print }
-          ' CHANGELOG.md > release-notes.md
-          if [ ! -s release-notes.md ]; then
-            echo "::error::CHANGELOG.md has no section for ${VERSION}" >&2
-            exit 1
-          fi
-          cat release-notes.md
+          bash .github/scripts/release-body.sh release-files artifacts/release-dependencies/dependencies.md
+          cat release-body.md
 
-      - name: Create GitHub Release
+      # A re-run of the same version replaces the files and the notes instead of failing on
+      # the tag that already exists.
+      - name: Create or update the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "v${VERSION}" \
-            --title "v${VERSION}" \
-            --notes-file release-notes.md \
-            release-files/*
+          if gh release view "v${VERSION}" --json id >/dev/null 2>&1; then
+            echo "Release v${VERSION} exists: replacing its files and notes."
+            gh release upload "v${VERSION}" release-files/* --clobber
+            gh release edit "v${VERSION}" --title "v${VERSION}" --notes-file release-body.md
+          else
+            gh release create "v${VERSION}" \
+              --title "v${VERSION}" \
+              --notes-file release-body.md \
+              release-files/*
+          fi
 
-      # ── AltStore JSON ──────────────────────────────────────────────────────
+      # AltStore JSON
       - name: Update AltStore source JSON
         run: |
+          if jq -e --arg ver "$VERSION" 'any(.apps[0].versions[]; .version == $ver)' altstore_yuroyami.json >/dev/null; then
+            echo "AltStore feed already lists $VERSION"
+            exit 0
+          fi
           IPA_SIZE=$(stat -c%s "release-files/synkplay-${VERSION}-ios.ipa" 2>/dev/null || stat -f%z "release-files/synkplay-${VERSION}-ios.ipa")
           DATE=$(date -u +"%Y-%m-%dT%H:%M:%S+00:00")
 

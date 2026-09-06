@@ -15,10 +15,11 @@ import javax.inject.Inject
 
 /**
  * androidReleaseAll: builds every shippable Android artifact into AndroidAppOutput/
- * (5 full ABI-split APKs + 1 exoOnly universal APK + 1 full AAB) via THREE isolated
- * `./gradlew` sub-builds. Three processes are mandatory: -PexoOnly flips the whole
- * project model (one flavor per invocation), and ABI splits + AAB can't share a task
- * graph (AGP issuetracker 402800800). Full rationale: CLAUDE.md "Release artifacts".
+ * (1 full universal APK + 1 exoOnly universal APK + 1 full AAB) via TWO isolated
+ * `./gradlew` sub-builds. Two processes are mandatory: -PexoOnly flips the whole project
+ * model, so there is one flavor per invocation. The full APK and the AAB share one
+ * invocation now that there are no ABI splits (that was what kept them apart, AGP
+ * issuetracker 402800800). Full rationale: CLAUDE.md "Release artifacts".
  */
 abstract class AndroidReleaseAllTask @Inject constructor(
     private val execOps: ExecOperations,
@@ -61,14 +62,11 @@ abstract class AndroidReleaseAllTask @Inject constructor(
     fun run() {
         val v = versionName.get()
 
-        logger.lifecycle("androidReleaseAll: [1/3] full release APKs (ABI-split)...")
-        gradle(":androidApp:assembleFullRelease", "-PexoOnly=false")
+        logger.lifecycle("androidReleaseAll: [1/2] full release APK and AAB...")
+        gradle(":androidApp:assembleFullRelease", ":androidApp:bundleFullRelease", "-PexoOnly=false")
 
-        logger.lifecycle("androidReleaseAll: [2/3] exoOnly release APK...")
+        logger.lifecycle("androidReleaseAll: [2/2] exoOnly release APK...")
         gradle(":androidApp:assembleExoOnlyRelease", "-PexoOnly=true")
-
-        logger.lifecycle("androidReleaseAll: [3/3] full release AAB...")
-        gradle(":androidApp:bundleFullRelease", "-PexoOnly=false")
 
         /* Fresh output dir; copy only THIS version's files (build dirs keep stale
          * older-version APKs around because the artifact name changes per release). */
@@ -152,7 +150,7 @@ abstract class AndroidReleaseAllTask @Inject constructor(
     }
 }
 
-private const val EXPECTED_APKS = 6
+private const val EXPECTED_APKS = 2
 
 /** Registers `androidReleaseAll` on the root project. [version] comes from the
  *  root kiteConfig { } block: buildSrc compiles before plugins apply, so it
@@ -160,7 +158,7 @@ private const val EXPECTED_APKS = 6
 fun Project.registerAndroidReleaseAllTask(version: String) {
     tasks.register<AndroidReleaseAllTask>("androidReleaseAll") {
         group = "syncplay"
-        description = "Build all release APKs (full ABI-split + exoOnly) plus the full-flavor AAB into AndroidAppOutput/."
+        description = "Build the two release APKs (full universal + exoOnly) plus the full-flavor AAB into AndroidAppOutput/."
 
         // Real work happens in nested builds whose outputs Gradle can't track from here.
         outputs.upToDateWhen { false }

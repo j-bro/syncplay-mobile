@@ -1,17 +1,11 @@
-Sync
+New look: the whole app was redrawn, with a home form, a room rail and a settings console.
 
-- Fixed the phantom pause: an engine stopping on its own no longer pauses the room.
-- The room shows when it is waiting for video.
-- Audio and subtitle picks survive a reload.
+Players: KitePlayer, a new experimental engine, joins ExoPlayer and mpv. VLC on Android is gone.
 
-Room
+Sync: the phantom pause is fixed, track picks survive a reload, the room shows when it waits for video.
 
-- Chat colours follow the theme; timestamps follow your clock.
-- Volume and brightness work without a swipe. You can mute someone.
+Room: chat colours follow the theme, mute someone, slash commands, invite links.
 
-Connection
+Connection: TLS checks the server's certificate; reconnects back off.
 
-- TLS now checks the server's certificate.
-- Reconnects back off instead of hammering the server.
-
-Invite links: share a room, open one to join.
+Switch the app's language in settings, no restart.

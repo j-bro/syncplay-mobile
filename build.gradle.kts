@@ -134,6 +134,7 @@ kiteConfig {
 }
 
 registerAndroidReleaseAllTask(kiteConfig.version.get())
+registerDependencyTableTask()
 
 /**
  * Static analysis, aimed at this codebase. The rule set in `config/detekt/detekt.yml` is almost

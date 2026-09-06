@@ -502,24 +502,16 @@ private fun Project.releaseVersionCode(): String {
  * `checkDocVersions` fails when they have drifted; `updateDocVersions` fixes them.
  */
 private fun Project.registerDocVersionGates(): List<TaskProvider<*>> {
-    val catalog = file("gradle/libs.versions.toml")
-    val properties = file("gradle.properties")
-    val wrapper = file("gradle/wrapper/gradle-wrapper.properties")
     val doc = file("CLAUDE.md")
 
     fun rendered(): String {
-        val versions = Regex("""^([A-Za-z0-9_-]+)\s*=\s*"([^"]+)"""", RegexOption.MULTILINE)
-            .findAll(catalog.readText().substringAfter("[versions]").substringBefore("["))
-            .associate { it.groupValues[1] to it.groupValues[2] }
-        val props = Regex("""^([A-Za-z0-9_.-]+)\s*=\s*(.+)$""", RegexOption.MULTILINE)
-            .findAll(properties.readText())
-            .associate { it.groupValues[1].trim() to it.groupValues[2].trim() }
+        // The same reader the release page's dependency table uses, so the two cannot disagree.
+        val tools = ToolVersions(projectDir)
+        val versions = tools.catalog
 
         fun v(name: String) = versions[name] ?: "?"
-        fun p(name: String) = props[name] ?: "?"
-        // Gradle's own version lives in the wrapper, not the catalog.
-        val gradleVersion = Regex("""gradle-([0-9.]+)-bin\.zip""")
-            .find(wrapper.readText())?.groupValues?.get(1) ?: "?"
+        fun p(name: String) = tools.props[name] ?: "?"
+        val gradleVersion = tools.gradle
 
         return buildString {
             appendLine("Kotlin " + v("kotlin") + ", AGP " + v("agp") + ", Compose Multiplatform " +

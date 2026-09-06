@@ -68,7 +68,7 @@
 <details>
 <summary>Notes on downloads</summary>
 
-- **Android (GitHub):** Each release ships per-ABI APKs plus a `universal` one. Most modern phones want `arm64-v8a`; pick `universal` if unsure.
+- **Android (GitHub):** Each release ships one `universal` APK that carries every CPU type. There are no per-ABI files any more.
 - **Android (IzzyOnDroid):** A smaller APK built from the `exoOnly` flavor, carrying only the ExoPlayer engine (no bundled mpv native libraries). It uses package id `com.reddnek.syncplay`, so it installs **alongside** the GitHub / Play Store build (`com.yuroyami.syncplay`) rather than updating it. Keep one or the other to avoid two copies.
 - **Android (Play Store):** Same build as GitHub, but a new version can appear here a little later because of store review.
 - **iOS:** The "Download IPA" button always points to the latest release. No App Store access? Sideload via [AltStore](https://github.com/yuroyami/syncplay-mobile/wiki/How-to-install-the-app-on-iOS) with no jailbreak, or install the `.ipa` directly. See the [iOS install guide](https://github.com/yuroyami/syncplay-mobile/wiki/How-to-install-the-app-on-iOS) for both paths.
@@ -231,8 +231,10 @@ looks, and any two-device sync session. Nothing in this list is verified by a gr
 ### Releasing
 
 The release runs from GitHub Actions (`Release`, `workflow_dispatch`) and does everything in one
-go: five Android APKs, an exo-only APK, an AAB, an IPA, and a desktop installer for each of the
-three platforms. Before starting one:
+go: the universal APK, the exo-only APK, the AAB, the IPA, and, when the `build_desktop` switch is
+on, a desktop installer for each of the three platforms. The GitHub release itself is written by
+`.github/scripts/release-body.sh`: a downloads table, the changelog since the previous tag folded
+under a click, and the dependency table from `./gradlew printDependencyTable`. Before starting one:
 
 1. Bump `version` in the root `build.gradle.kts` `kiteConfig { }` block. Nothing else holds the
    version; `./gradlew printReleaseIdentity` prints what the release will use.
@@ -241,7 +243,9 @@ three platforms. Before starting one:
 3. Write a short version into `fastlane/metadata/android/en-US/changelogs/<versionCode>.txt`.
    Google Play caps this at 500 characters and `checkStoreMetadata` will tell you if it is over.
 4. Run `./gradlew kiteRewriteXcode` so the iOS project carries the new version.
-5. Start the workflow, choosing the Play track.
+5. Start the workflow, choosing the Play track. The store uploads and the desktop installers are
+   switches on the run; the GitHub release is cut whether or not they are on, and a run of a
+   version that already has a release replaces its files and notes.
 
 Signing secrets live in `local.properties` for a local build and in repository secrets for CI. A
 release build with no keystore fails rather than producing an unsigned artifact.

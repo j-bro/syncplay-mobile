@@ -122,27 +122,11 @@ android {
                 excludes += ("**/libkitecodec_jni.so")
             }
         }
-    } else {
-        /* ABI splits and AAB packaging can't share one task graph (AGP issuetracker 402800800):
-         * keep splits for APK builds (per-ABI downloads save ~70 MB each), drop them when any
-         * "bundle" task is invoked. Never mix assemble+bundle in one invocation.
-         * Full rationale: CLAUDE.md "Release artifacts". */
-        val isBuildingBundle = gradle.startParameter.taskNames.any {
-            it.contains("bundle", ignoreCase = true)
-        }
-        if (!isBuildingBundle) {
-            splits {
-                abi {
-                    isEnable = true
-                    reset()
-                    for (abi in AppConfig.abiCodes) {
-                        include(abi.key)
-                    }
-                    isUniversalApk = true
-                }
-            }
-        }
     }
+    /* No ABI splits, by decision (0.24.0): one universal APK per flavor carries every ABI. The
+     * per-ABI files saved a download but put a five-way choice on the release page, and they
+     * kept the APK and AAB builds in separate Gradle invocations (AGP issuetracker 402800800).
+     * Play still gets the AAB and serves each phone only its own libraries. */
 
     flavorDimensions.add("flavor")
     productFlavors {
@@ -183,13 +167,12 @@ androidComponents {
     onVariants { variant ->
         variant.outputs.forEach { output ->
             if (output is com.android.build.api.variant.impl.VariantOutputImpl) {
-                val abiFilter = output.filters.find { it.filterType == com.android.build.api.variant.FilterConfiguration.FilterType.ABI }?.identifier
                 val v = kiteConfig.version.get()
+                // "universal" stays in the full name: it tells a downloader every ABI is inside.
                 val fileName = if (exoOnly) {
                     "${kiteConfig.appName.get().lowercase()}-$v-exo-only.apk"
                 } else {
-                    val abiName = abiFilter ?: "universal"
-                    "${kiteConfig.appName.get().lowercase()}-$v-full-${abiName}.apk"
+                    "${kiteConfig.appName.get().lowercase()}-$v-full-universal.apk"
                 }
                 output.outputFileName = fileName
             }
