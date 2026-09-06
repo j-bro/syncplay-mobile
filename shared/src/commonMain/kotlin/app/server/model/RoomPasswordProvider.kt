@@ -46,6 +46,12 @@ object RoomPasswordProvider {
     }
 
     /**
+     * What a managed name costs on top of its base: the leading `+`, the `:`, and the 12
+     * characters of hash. A base name longer than the room limit minus this cannot be managed.
+     */
+    const val MANAGED_NAME_OVERHEAD = 14
+
+    /**
      * Generates a controlled room name from a base name, password, and salt.
      */
     fun getControlledRoomName(roomName: String, password: String, salt: String): String {

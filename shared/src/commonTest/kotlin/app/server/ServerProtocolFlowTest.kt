@@ -492,4 +492,33 @@ class ServerProtocolFlowTest {
         client.receiveRaw("""{"NotARealMessage":42}""")
         assertEquals(true, client.dropped)
     }
+
+    // -----------------------------------------------------------
+    // Managed room names and the 35-character limit
+    // -----------------------------------------------------------
+
+    @Test
+    fun `a base name too long for a managed room is refused, not cut`(): Unit = runBlocking {
+        val alice = TestClient(server())
+        alice.receive(helloFor("alice", "b".repeat(22)))
+        alice.clearSent()
+        alice.receive(WireMessage.controllerAuth(room = "b".repeat(22), password = "AB-123-456"))
+        // 22 + 14 is 36: the name would have to be cut, and a cut hash is not a managed room.
+        assertNotNull(alice.lastOf<WireMessage.Error>())
+        assertEquals(null, alice.lastOf<WireMessage.Set>()?.data?.newControlledRoom)
+    }
+
+    @Test
+    fun `a 21 character base mints a 35 character managed room that stays managed`(): Unit = runBlocking {
+        val alice = TestClient(server())
+        alice.receive(helloFor("alice", "c".repeat(21)))
+        alice.receive(WireMessage.controllerAuth(room = "c".repeat(21), password = "AB-123-456"))
+        val minted = assertNotNull(alice.lastOf<WireMessage.Set>()?.data?.newControlledRoom)
+        assertEquals(35, minted.roomName.length)
+
+        alice.receive(WireMessage.roomChange(minted.roomName))
+        alice.clearSent()
+        alice.receive(WireMessage.controllerAuth(room = minted.roomName, password = minted.password))
+        assertEquals(true, alice.lastOf<WireMessage.Set>()?.data?.controllerAuth?.success)
+    }
 }

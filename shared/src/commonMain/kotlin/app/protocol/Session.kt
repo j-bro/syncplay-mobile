@@ -101,5 +101,11 @@ class Session(val protocol: ProtocolManager) {
 
         /** The chat log keeps this many lines; older ones fall off the top. */
         const val MAX_MESSAGES = 1000
+
+        /**
+         * PC's MAX_ROOM_NAME_LENGTH, and where the server cuts. A managed name is the base plus
+         * a 14-character hash, so anything that caps lower than this silently breaks one.
+         */
+        const val MAX_ROOM_NAME_CHARS = 35
     }
 }

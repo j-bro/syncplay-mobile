@@ -93,6 +93,7 @@ import app.preferences.value
 import app.preferences.watchPref
 import app.protocol.OFFICIAL_SERVER_ADDRESS
 import app.protocol.OFFICIAL_SERVER_NAME
+import app.protocol.Session
 import app.server.ui.ServerHostPanel
 import app.theme.Motion
 import app.theme.Radius
@@ -632,7 +633,7 @@ private fun JoinConfig.sanitised(): JoinConfig {
     val (roomName, operator) = InviteLink.splitOperatorRoom(room)
     return copy(
         user = user.replace("\\", "").trim().substringSafely(0, 149),
-        room = roomName.replace("\\", "").trim().substringSafely(0, 34),
+        room = roomName.replace("\\", "").trim().substringSafely(0, Session.MAX_ROOM_NAME_CHARS),
         operatorPassword = operator.ifEmpty { operatorPassword },
     )
 }

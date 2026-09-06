@@ -64,9 +64,20 @@ class SyncplayServer(
 
     fun getClientConnection(watcher: ServerWatcher): ClientConnection? = _connections[watcher]
 
+    /**
+     * Whether cutting this name to the limit would destroy a managed room's hash. An ordinary
+     * name loses characters and stays itself; a managed one stops being managed.
+     */
+    private fun wouldCutAManagedName(roomName: String): Boolean =
+        roomName.length > MAX_ROOM_NAME_LENGTH && RoomPasswordProvider.isControlledRoom(roomName)
+
     // --- Watcher lifecycle ---
 
     fun addWatcher(connection: ClientConnection, username: String, roomName: String) {
+        if (wouldCutAManagedName(roomName)) {
+            connection.sendError("Managed room name too long")
+            return
+        }
         val truncatedRoom = roomName.take(MAX_ROOM_NAME_LENGTH)
         val uniqueName = roomManager.findFreeUsername(username, config.maxUsernameLength)
         val watcher = ServerWatcher(this, uniqueName)
@@ -82,6 +93,10 @@ class SyncplayServer(
     }
 
     fun setWatcherRoom(watcher: ServerWatcher, roomName: String, asJoin: Boolean = false) {
+        if (wouldCutAManagedName(roomName)) {
+            _connections[watcher]?.sendError("Managed room name too long")
+            return
+        }
         val truncated = roomName.take(MAX_ROOM_NAME_LENGTH)
         roomManager.moveWatcher(watcher, truncated)
 
@@ -343,6 +358,15 @@ class SyncplayServer(
         } catch (_: NotControlledRoomException) {
             // Plain room: mint a new controlled-room name for it.
             val newName = RoomPasswordProvider.getControlledRoomName(targetName, password, config.salt)
+            if (newName.length > MAX_ROOM_NAME_LENGTH) {
+                /* The hash takes 14 characters. Cutting the name here would produce something
+                 * that no longer parses as managed, so the room would come back as an ordinary
+                 * one and nobody would be told why. Refuse instead. */
+                _connections[watcher]?.sendError(
+                    "Room name too long for a managed room (at most ${MAX_ROOM_NAME_LENGTH - RoomPasswordProvider.MANAGED_NAME_OVERHEAD} characters)"
+                )
+                return
+            }
             _connections[watcher]?.sendNewControlledRoom(newName, password)
         } catch (_: IllegalArgumentException) {
             // Malformed password.

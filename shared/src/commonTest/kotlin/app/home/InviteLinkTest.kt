@@ -77,4 +77,13 @@ class InviteLinkTest {
         assertEquals("lobby" to "", InviteLink.splitOperatorRoom("lobby"))
         assertEquals("+movies:AB12CD34EF56" to "", InviteLink.splitOperatorRoom("+movies:AB12CD34EF56"))
     }
+
+    @Test
+    fun `a 35 character managed room survives the link`() {
+        // A real managed name: "+" plus a 21-character base, a colon, and a 12-character hash.
+        val room = "+" + "a".repeat(21) + ":ABCDEF123456"
+        assertEquals(35, room.length)
+        assertEquals(room, InviteLink.parse(InviteLink.build(JoinConfig(room = room)))?.room)
+        assertEquals(room, InviteLink.sanitize(JoinConfig(room = room))?.room)
+    }
 }

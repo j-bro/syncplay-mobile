@@ -2,6 +2,7 @@ package app.home
 
 import app.protocol.OFFICIAL_SERVER_ADDRESS
 import app.protocol.OFFICIAL_SERVER_NAME
+import app.protocol.Session
 
 /**
  * The room as one line someone can send.
@@ -26,7 +27,7 @@ object InviteLink {
 
     /** Caps matching the join form, so a hostile link cannot hand the room a megabyte of name. */
     private const val MAX_NAME = 149
-    private const val MAX_ROOM = 34
+    private const val MAX_ROOM = Session.MAX_ROOM_NAME_CHARS
     private const val MAX_HOST = 255
 
     fun build(config: JoinConfig): String {

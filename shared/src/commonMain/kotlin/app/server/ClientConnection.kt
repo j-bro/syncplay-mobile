@@ -387,6 +387,9 @@ class ClientConnection(
         sendTyped(WireMessage.playlistIndex(index = index, user = username))
     }
 
+    /** A refusal the sender can read, for a request that cannot be carried out. */
+    fun sendError(text: String) = sendTyped(WireMessage.error(text))
+
     fun sendNewControlledRoom(roomName: String, password: String) {
         sendTyped(WireMessage.newControlledRoom(roomName = roomName, password = password))
     }
