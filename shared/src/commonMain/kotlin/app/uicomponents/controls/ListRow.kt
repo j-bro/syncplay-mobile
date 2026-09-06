@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -18,13 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import app.theme.Space
 import app.theme.Type
@@ -76,15 +75,13 @@ fun ListRow(
     )
 }
 
-/** The name of the thing, in `label` type; a long one wraps to a second line instead of hiding. */
+/** The name of the thing, in `label` type; wrap as far as needed to preserve its meaning. */
 @Composable
 fun RowScope.RowLabel(text: String, modifier: Modifier = Modifier, color: Color = palette.ink) {
     Text(
         text = text,
         style = Type.label,
         color = color,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis,
         modifier = modifier.weight(1f),
     )
 }
@@ -102,9 +99,7 @@ fun RowScope.RowValue(text: String, modifier: Modifier = Modifier, accent: Boole
         style = Type.value,
         color = if (accent) p.accent else p.inkDim,
         textAlign = TextAlign.End,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis,
-        modifier = if (width != null) modifier.width(width) else modifier.widthIn(max = Space.valueMax),
+        modifier = if (width != null) modifier.width(width * LocalDensity.current.fontScale) else modifier.widthIn(max = Space.valueMax),
     )
 }
 
@@ -118,9 +113,9 @@ fun RowGap(width: Dp = Space.gap) {
 @Composable
 fun GroupHeading(text: String, modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier.fillMaxWidth().height(Space.groupHead).padding(horizontal = Space.gutter),
+        modifier = modifier.fillMaxWidth().heightIn(min = Space.groupHead).padding(horizontal = Space.gutter),
         contentAlignment = Alignment.BottomStart,
     ) {
-        Text(text.uppercase(), style = Type.group, color = palette.accent, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(text.uppercase(), style = Type.group, color = palette.accent)
     }
 }

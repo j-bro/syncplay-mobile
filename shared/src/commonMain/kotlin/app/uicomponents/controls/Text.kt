@@ -4,6 +4,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -13,8 +18,16 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
 import app.theme.Type
 import app.theme.palette
+
+/**
+ * The sizes a label may take when it has to fit its width: the style's own size down to [min],
+ * in steps of about one point. `Text` shrinks first and cuts only when the floor still overflows.
+ */
+@Immutable
+class FontSizeRange(val min: TextUnit, val max: TextUnit)
 
 /**
  * The app's text, on the foundation text with the app's roles: `note` unless told otherwise, the
@@ -31,7 +44,7 @@ fun Text(
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
-    autoSize: TextAutoSize? = null,
+    autoSize: FontSizeRange? = null,
 ) {
     val resolved = when {
         color.isSpecified -> color
@@ -39,7 +52,39 @@ fun Text(
         else -> palette.ink
     }
     val merged = style.merge(TextStyle(color = resolved, textAlign = textAlign ?: TextAlign.Unspecified))
-    BasicText(text = text, modifier = modifier, style = merged, overflow = overflow, softWrap = softWrap, maxLines = maxLines, minLines = minLines, autoSize = autoSize)
+    if (autoSize == null) {
+        BasicText(text = text, modifier = modifier, style = merged, overflow = overflow, softWrap = softWrap, maxLines = maxLines, minLines = minLines)
+        return
+    }
+    /* Foundation's auto-size never shrinks a label that an ellipsis has already cut: the cut
+     * text counts as fitting. So the search runs with a clip, and only when even the floor
+     * overflows is the label drawn again at the floor with the caller's overflow. It returns
+     * to sizing the moment the floor fits whole, so a wider window grows it back. */
+    var atFloor by remember { mutableStateOf(false) }
+    if (!atFloor) {
+        BasicText(
+            text = text,
+            modifier = modifier,
+            style = merged,
+            onTextLayout = { if (it.hasVisualOverflow) atFloor = true },
+            overflow = TextOverflow.Clip,
+            softWrap = softWrap,
+            maxLines = maxLines,
+            minLines = minLines,
+            autoSize = TextAutoSize.StepBased(minFontSize = autoSize.min, maxFontSize = autoSize.max, stepSize = autoSize.min / 11),
+        )
+    } else {
+        BasicText(
+            text = text,
+            modifier = modifier,
+            style = merged.copy(fontSize = autoSize.min),
+            onTextLayout = { if (!it.hasVisualOverflow && (0 until it.lineCount).none(it::isLineEllipsized)) atFloor = false },
+            overflow = overflow,
+            softWrap = softWrap,
+            maxLines = maxLines,
+            minLines = minLines,
+        )
+    }
 }
 
 /** A vector glyph tinted in one colour, the palette's ink by default. No Material. */

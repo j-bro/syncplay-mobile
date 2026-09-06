@@ -140,6 +140,9 @@ fun ScrubTrack(
             }
             .controlStates(source, Radius.controlShape, enabled = enabled),
     ) {
+        // Room transitions can briefly give the slider no width (or less than its playhead).
+        // Do not build a gradient or clamp a coordinate into a negative range while collapsing.
+        if (size.width <= 0f || size.height <= 0f) return@Canvas
         val trackH = 4.dp.toPx()
         val y = size.height / 2 - trackH / 2
         val r = CornerRadius(1.dp.toPx())
@@ -168,14 +171,15 @@ fun ScrubTrack(
             val tf = t.coerceIn(0f, 1f)
             val tx = (if (rtl) 1f - tf else tf) * size.width
             val h = trackH + 8.dp.toPx()
+            val tickW = 1.dp.toPx().coerceAtMost(size.width)
             drawRect(
                 color = if (i == activeTick) p.accent else p.rule,
-                topLeft = Offset(tx.coerceAtMost(size.width - 1.dp.toPx()), y - 4.dp.toPx()),
-                size = Size(1.dp.toPx(), h),
+                topLeft = Offset(tx.coerceIn(0f, size.width - tickW), y - 4.dp.toPx()),
+                size = Size(tickW, h),
             )
         }
 
-        val headW = 3.dp.toPx()
+        val headW = 3.dp.toPx().coerceAtMost(size.width)
         val headH = 16.dp.toPx()
         val headX = (fillLeft + (if (rtl) 0f else fillW) - headW / 2).coerceIn(0f, size.width - headW)
         drawRoundRect(if (enabled) p.ink else p.disabled, Offset(headX, y + trackH / 2 - headH / 2), Size(headW, headH), r)

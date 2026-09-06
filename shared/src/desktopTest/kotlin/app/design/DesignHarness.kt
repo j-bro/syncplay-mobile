@@ -17,6 +17,10 @@ import app.preferences.datastore
 import app.preferences.datastoreStateFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsNode
+import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import app.LocalTheme
@@ -27,6 +31,8 @@ import app.theme.TRINITY
 import app.theme.DAYLIGHT
 import org.jetbrains.skia.EncodedImageFormat
 import java.io.File
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * Renders real composables headlessly and writes PNGs, the way every DESIGN measurement is
@@ -38,7 +44,29 @@ object DesignHarness {
     val outDir: File = File(System.getenv("DESIGN_GOLDEN_OUT") ?: "build/design-goldens").also { it.mkdirs() }
 
     /** The measured height of the last render, in dp. */
-    data class Result(val file: File, val contentHeightDp: Int)
+    data class Result(val file: File, val contentHeightDp: Int, val textLayouts: List<TextLayoutResult>) {
+        fun assertAllTextFits() {
+            assertTrue(textLayouts.isNotEmpty(), "No text layouts in ${file.name}")
+            for (layout in textLayouts) {
+                val label = "${file.name}: ${layout.layoutInput.text.text}"
+                assertFalse(layout.multiParagraph.didExceedMaxLines, "Clipped lines: $label")
+                for (line in 0 until layout.lineCount) {
+                    assertFalse(layout.isLineEllipsized(line), "Truncated text: $label")
+                    // Paragraph width may retain loose measurement constraints even when the
+                    // text fits its final size. Check the actual line width, not hasVisualOverflow.
+                    assertTrue(layout.getLineRight(line) - layout.getLineLeft(line) <= layout.size.width + 1f, "Clipped width: $label")
+                    assertTrue(layout.getLineBottom(line) <= layout.size.height + 1f, "Clipped height: $label")
+                }
+            }
+        }
+    }
+
+    private fun textLayouts(node: SemanticsNode): List<TextLayoutResult> {
+        val layouts = mutableListOf<TextLayoutResult>()
+        node.config.getOrNull(SemanticsActions.GetTextLayoutResult)?.action?.invoke(layouts)
+        node.children.forEach { layouts += textLayouts(it) }
+        return layouts
+    }
 
     private var datastoreReady = false
 
@@ -106,7 +134,7 @@ object DesignHarness {
             image.encodeToData(EncodedImageFormat.PNG)?.bytes?.let(file::writeBytes)
             val heightDpMeasured = (measuredPx / density.density).toInt()
             println("GOLDEN $name$suffix height=${heightDpMeasured}dp -> ${file.absolutePath}")
-            Result(file, heightDpMeasured)
+            Result(file, heightDpMeasured, scene.semanticsOwners.flatMap { textLayouts(it.unmergedRootSemanticsNode) })
         } finally {
             scene.close()
         }

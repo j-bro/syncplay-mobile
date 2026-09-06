@@ -6,15 +6,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.draw.drawBehind
@@ -22,15 +26,24 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.lerp
 import app.theme.Radius
 import app.theme.Space
 import app.theme.Type
 import app.theme.palette
 
-/** The one gradient on a screen: 48dp, the brand field, label in the ground colour. */
+/** The primary action: at least 48dp, the brand field, label in the ground colour. */
 @Composable
 fun PrimaryAction(
     text: String,
@@ -43,7 +56,7 @@ fun PrimaryAction(
     val source = remember { MutableInteractionSource() }
     Row(
         modifier = modifier
-            .height(48.dp)
+            .heightIn(min = 48.dp)
             .clip(Radius.controlShape)
             .background(Brush.horizontalGradient(if (enabled) p.brandField else listOf(p.disabled, p.disabled)))
             .clickable(interactionSource = source, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
@@ -55,12 +68,9 @@ fun PrimaryAction(
     ) {
         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
             // The label is centred on the whole bar; the trailing glyph sits over its end.
-            Text(
+            ActionLabel(
                 text,
-                style = Type.label,
                 color = p.ground,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(horizontal = if (trailing != null) Space.touchMin else Space.gutter),
             )
             if (trailing != null) Box(Modifier.align(Alignment.CenterEnd)) { trailing() }
@@ -68,14 +78,14 @@ fun PrimaryAction(
     }
 }
 
-/** The confirming action of a panel or full modal: 42dp, filled with the accent, label in ground. */
+/** The confirming action of a panel or full modal: at least 42dp, accent fill, label read off that fill. */
 @Composable
 fun AccentAction(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
     val p = palette
     val source = remember { MutableInteractionSource() }
     Box(
         modifier = modifier
-            .height(Space.row)
+            .heightIn(min = Space.row)
             .clip(Radius.controlShape)
             .background(if (enabled) p.accent else p.disabled)
             .clickable(interactionSource = source, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
@@ -86,18 +96,18 @@ fun AccentAction(text: String, onClick: () -> Unit, modifier: Modifier = Modifie
             .padding(horizontal = Space.gutter),
         contentAlignment = Alignment.Center,
     ) {
-        Text(text, style = Type.label, color = p.ground, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        ActionLabel(text, color = if (enabled) p.inkOn(p.accent) else p.ground)
     }
 }
 
-/** 42dp, a hairline border, label in ink. */
+/** At least 42dp, a hairline border, label in ink. */
 @Composable
 fun SecondaryAction(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
     val p = palette
     val source = remember { MutableInteractionSource() }
     Box(
         modifier = modifier
-            .height(Space.row)
+            .heightIn(min = Space.row)
             .clip(Radius.controlShape)
             .border(Space.hair, if (enabled) p.rule else p.disabled, Radius.controlShape)
             .clickable(interactionSource = source, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
@@ -108,7 +118,32 @@ fun SecondaryAction(text: String, onClick: () -> Unit, modifier: Modifier = Modi
             .padding(horizontal = Space.gutter),
         contentAlignment = Alignment.Center,
     ) {
-        Text(text, style = Type.label, color = if (enabled) p.ink else p.disabled, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        ActionLabel(text, color = if (enabled) p.ink else p.disabled)
+    }
+}
+
+/** Related links stay beside each other only while each has a readable width. */
+@Composable
+fun SecondaryActionPair(
+    firstText: String,
+    onFirstClick: () -> Unit,
+    secondText: String,
+    onSecondClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val minimumPairWidth = 288.dp * LocalDensity.current.fontScale + Space.gap
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        if (maxWidth < minimumPairWidth) {
+            Column(verticalArrangement = Arrangement.spacedBy(Space.gapTight)) {
+                SecondaryAction(firstText, onFirstClick, Modifier.fillMaxWidth())
+                SecondaryAction(secondText, onSecondClick, Modifier.fillMaxWidth())
+            }
+        } else {
+            Row(horizontalArrangement = Arrangement.spacedBy(Space.gap)) {
+                SecondaryAction(firstText, onFirstClick, Modifier.weight(1f))
+                SecondaryAction(secondText, onSecondClick, Modifier.weight(1f))
+            }
+        }
     }
 }
 
@@ -121,7 +156,7 @@ fun DestructiveAction(text: String, onClick: () -> Unit, modifier: Modifier = Mo
     // No weighted child here: a weight would stretch this row across the whole action bar.
     Row(
         modifier = modifier
-            .height(Space.row)
+            .heightIn(min = Space.row)
             .clip(Radius.controlShape)
             .clickable(interactionSource = source, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
             .hoverable(source, enabled)
@@ -133,8 +168,43 @@ fun DestructiveAction(text: String, onClick: () -> Unit, modifier: Modifier = Mo
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(Modifier.padding(start = Space.gutter + 2.dp, end = Space.gutter), contentAlignment = Alignment.Center) {
-            Text(text, style = Type.label, color = stub, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            ActionLabel(text, color = stub)
         }
+    }
+}
+
+/** A completed result in the action area, with no click target or button semantics. */
+@Composable
+fun ActionStatus(text: String, color: Color, modifier: Modifier = Modifier) {
+    Box(
+        modifier.heightIn(min = Space.row)
+            .clip(Radius.controlShape)
+            .background(color.copy(alpha = 0.12f))
+            .border(Space.hair, color, Radius.controlShape)
+            .semantics { liveRegion = LiveRegionMode.Polite }
+            .padding(horizontal = Space.gutter),
+        contentAlignment = Alignment.Center,
+    ) {
+        ActionLabel(text, color = color)
+    }
+}
+
+/** Labels can wrap and shrink in narrow buttons; larger system text can also grow the button. */
+@Composable
+private fun ActionLabel(text: String, color: Color, modifier: Modifier = Modifier) {
+    val style = Type.label.copy(lineHeight = 1.25.em, textAlign = TextAlign.Center)
+    val minFontSize = Type.group.fontSize
+    val measurer = rememberTextMeasurer()
+    BoxWithConstraints(modifier.padding(vertical = 4.dp), contentAlignment = Alignment.Center) {
+        // Measure before choosing the label's height. Foundation autosize in a wrapping button
+        // can otherwise size its parent using a different font from the one it finally draws.
+        val labelConstraints = Constraints(maxWidth = constraints.maxWidth, maxHeight = constraints.maxHeight)
+        val fontSize = (0..8).map { lerp(style.fontSize, minFontSize, it / 8f) }.firstOrNull { candidate ->
+            val layout = measurer.measure(AnnotatedString(text), style.copy(fontSize = candidate), constraints = labelConstraints)
+            layout.lineCount <= 2 && !layout.hasVisualOverflow
+        } ?: minFontSize
+        // At the readable floor, wrapping further is preferable to truncating the action.
+        Text(text, color = color, style = style.copy(fontSize = fontSize))
     }
 }
 

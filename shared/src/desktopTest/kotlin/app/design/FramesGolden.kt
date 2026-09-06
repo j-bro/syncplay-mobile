@@ -89,4 +89,22 @@ class FramesGolden {
             ModalFrame(ModalSize.Panel, "Network engine", true, {}, actions = { AccentAction("Done", onClick = {}) }) { Rows() }
         }
     }
+
+    /**
+     * Three actions in a 320dp Ask at large text: the row wraps, it does not squeeze the last key
+     * down to one letter per line, which is what the tips popup did on a phone at 1.3x.
+     */
+    @Test
+    fun askActionsWrapInsteadOfSqueezing() {
+        for (scale in listOf(1f, 1.3f, 2f)) {
+            val result = DesignHarness.render("modal-ask-three", 402, heightDp = 480, fontScale = scale) {
+                ModalFrame(ModalSize.Ask, "Did ya know?", true, {}, actions = {
+                    SecondaryAction("No more tips", onClick = {}); SecondaryAction("Next", onClick = {}); AccentAction("OK", onClick = {})
+                }) { Text("Want to use the video player solo? Select a player, tap the logo, then choose Watch alone.", style = Type.note, color = palette.inkDim) }
+            }
+            result.assertAllTextFits()
+            val ok = result.textLayouts.first { it.layoutInput.text.text == "OK" }
+            assertTrue(ok.lineCount == 1, "OK broke into ${ok.lineCount} lines at ${scale}x text")
+        }
+    }
 }

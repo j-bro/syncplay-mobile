@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -26,7 +27,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -52,7 +52,10 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import app.theme.Motion
@@ -123,6 +126,10 @@ internal fun ModalFrame(
     val window = LocalWindowInfo.current.containerSize
     val windowHeight = with(density) { window.height.toDp() }
     val sheet = size != ModalSize.Ask && LocalWidthClass.current == WidthClass.Compact
+    /* A panel is 440dp wide so its rows stay readable on a desktop, where height is plentiful.
+     * A phone on its side has 330dp of height for the whole panel, so there the width is the
+     * room a body gets: 720dp, and the body lays itself out beside itself. */
+    val panelMaxWidth = if (windowHeight < SHORT_WINDOW) 720.dp else 440.dp
     val visible = remember { MutableTransitionState(false) }.apply { targetState = true }
     val focusRequester = remember { FocusRequester() }
     val dismissLabel = stringResource(Res.string.modal_dismiss)
@@ -158,8 +165,8 @@ internal fun ModalFrame(
                     .then(
                         when {
                             sheet -> Modifier.fillMaxWidth().heightIn(max = windowHeight * 0.88f)
-                            size == ModalSize.Ask -> Modifier.fillMaxWidth(0.88f).widthIn(max = 320.dp).heightIn(max = windowHeight * 0.88f)
-                            size == ModalSize.Panel -> Modifier.fillMaxWidth(0.92f).widthIn(max = 440.dp).heightIn(max = windowHeight * 0.88f)
+                            size == ModalSize.Ask -> Modifier.widthFraction(0.88f, max = 320.dp).heightIn(max = windowHeight * 0.88f)
+                            size == ModalSize.Panel -> Modifier.widthFraction(0.92f, max = panelMaxWidth).heightIn(max = windowHeight * 0.88f)
                             else -> Modifier.fillMaxWidth(0.92f).fillMaxHeight(0.88f)
                         }
                     )
@@ -188,17 +195,35 @@ internal fun ModalFrame(
                 )
                 if (actions != null) {
                     Rule()
-                    Row(
-                        modifier = Modifier.fillMaxWidth().height(Space.rowTall).padding(horizontal = Space.gap),
+                    /* Actions wrap to a second line when they do not fit one: three keys at large
+                     * text in a 320dp Ask used to squeeze the last one down to a letter per line. */
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth().heightIn(min = Space.rowTall).padding(horizontal = Space.gap, vertical = Space.gapTight),
                         horizontalArrangement = Arrangement.spacedBy(Space.gapTight, Alignment.End),
-                        verticalAlignment = Alignment.CenterVertically,
-                        content = actions,
-                    )
+                        verticalArrangement = Arrangement.spacedBy(Space.gapTight, Alignment.CenterVertically),
+                    ) {
+                        // FlowRowScope is a RowScope, so the callers' action lambdas run unchanged.
+                        actions()
+                    }
                 }
             }
         }
     }
 }
+
+/**
+ * [fraction] of the available width, but never more than [max]. Written as one layout step on
+ * purpose: `fillMaxWidth(f).widthIn(max)` cannot cap anything, because the fill has already fixed
+ * the width by the time the cap measures, which is how every panel came to span a desktop window.
+ */
+private fun Modifier.widthFraction(fraction: Float, max: Dp): Modifier = layout { measurable, constraints ->
+    val width = minOf((constraints.maxWidth * fraction).roundToInt(), max.roundToPx()).coerceIn(constraints.minWidth, constraints.maxWidth)
+    val placeable = measurable.measure(constraints.copy(minWidth = width, maxWidth = width))
+    layout(placeable.width, placeable.height) { placeable.placeRelative(0, 0) }
+}
+
+/** Under this window height a panel modal widens, because height is what it lacks. */
+private val SHORT_WINDOW = 480.dp
 
 /** A hairline that appears under a scrolled header; kept here so every frame draws it the same. */
 @Composable

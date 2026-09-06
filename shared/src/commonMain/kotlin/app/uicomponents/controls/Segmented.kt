@@ -7,11 +7,11 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
-import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -100,8 +100,10 @@ private fun SegmentedCell(label: String, active: Boolean, enabled: Boolean, auto
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            // Between the group and value sizes, in one-sp steps, when a label has to fit.
-            autoSize = if (autoSize) TextAutoSize.StepBased(minFontSize = Type.group.fontSize, maxFontSize = Type.value.fontSize, stepSize = Type.group.fontSize / 11) else null,
+            // Between the group and value sizes when a label has to fit; cut only past the floor.
+            autoSize = if (autoSize) FontSizeRange(Type.group.fontSize, Type.value.fontSize) else null,
+            // A label never touches the cell's hairlines, whatever size it settles at.
+            modifier = Modifier.padding(horizontal = Space.gapTight),
         )
     }
 }
