@@ -77,4 +77,4 @@ desktopApp/resources/
 *.kiteconfig.bak
 
 # Design notes and working documents. Local only, they are not part of the shipped app.
-DESIGN/
+/DESIGN/
