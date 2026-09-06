@@ -64,7 +64,7 @@ jobs:
   # ───────────────────────────────────────────────────────────────────────────
   build-android-full:
     needs: verify
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
       version_code: ${{ steps.version.outputs.version_code }}
@@ -80,7 +80,8 @@ jobs:
 
       - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
 
-      # NDK is ~1GB and rarely changes (pinned in gradle.properties).
+      # AGP needs the NDK to strip packaged libraries and to extract native symbols; nothing
+      # native is compiled. About 1GB, pinned in gradle.properties.
       # Skip the install on cache hit.
       - name: Cache Android NDK
         id: ndk-cache
@@ -108,27 +109,6 @@ jobs:
               -e 's/^APPLICATION_ID=/application_id=/' \
               -e 's/^IOS_MIN_VERSION=/ios_min_version=/' \
               identity.env >> "$GITHUB_OUTPUT"
-
-      # Native MPV build (FFmpeg, libass, harfbuzz, freetype, mbedtls, dav1d,
-      # libplacebo, lua, fribidi, unibreak) cross-compiled for 4 ABIs.
-      # When the cache hits, NativeBuildConfig's `onlyIf` short-circuits the
-      # Exec task because all output libs are already on disk.
-      #
-      # Key inputs: every build script under buildscripts/ (depinfo.sh pins
-      # dep versions; per-lib scripts in scripts/ control build flags) plus
-      # gradle.properties (NDK version) plus the AppConfig lib list.
-      - name: Cache MPV native libs
-        id: mpv-cache
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-        with:
-          path: androidApp/src/main/libs
-          key: mpv-libs-${{ runner.os }}-${{ hashFiles('buildscripts/mpv_*.sh', 'buildscripts/include/*.sh', 'buildscripts/scripts/*.sh', 'gradle.properties', 'buildSrc/src/main/kotlin/AppConfig.kt') }}
-
-      # Required by the MPV build chain. Skipped entirely when MPV libs are
-      # cached: no need to bootstrap the toolchain for a no-op task.
-      - name: Install native build dependencies
-        if: steps.mpv-cache.outputs.cache-hit != 'true'
-        run: brew install automake autoconf libtool pkg-config nasm meson
 
       - name: Decode keystore
         run: |
