@@ -16,11 +16,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -54,6 +56,7 @@ import app.theme.Space
 import app.theme.Type
 import app.theme.palette
 import app.uicomponents.controls.Feedback
+import app.uicomponents.controls.FontSizeRange
 import app.uicomponents.controls.Tag
 import app.uicomponents.controls.Text
 import app.uicomponents.controls.Tone
@@ -79,7 +82,8 @@ import syncplaymobile.shared.generated.resources.help_tip
  * Every engine at once: one hairline frame, one cell per engine with its mark, name and badge,
  * the active cell filled with the accent and carrying the bottom edge. Under the frame a "?"
  * square sits below the selected cell; a tap morphs it into a full-width card with the
- * engine's story, so there is never a doubt which engine the words are about.
+ * engine's story, so there is never a doubt which engine the words are about. [compact] is the
+ * short-window size: smaller marks and tighter padding, twenty points less per cell.
  */
 @Composable
 fun HomeEnginePicker(
@@ -87,16 +91,19 @@ fun HomeEnginePicker(
     selectedEngine: String,
     onSelectEngine: (PlayerEngine) -> Unit,
     modifier: Modifier = Modifier,
+    compact: Boolean = false,
 ) {
     if (engines.isEmpty()) return
     val p = palette
     val selectedIndex = engines.indexOfFirst { it.name == selectedEngine }
 
     Column(modifier) {
+        /* The row takes the height of its tallest cell rather than a fixed one, so bigger
+         * system text grows the cells instead of clipping the badge out of them. */
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(CellHeight)
+                .height(IntrinsicSize.Min)
                 .clip(Radius.controlShape)
                 .border(Space.hair, p.rule, Radius.controlShape)
                 .selectableGroup(),
@@ -106,7 +113,8 @@ fun HomeEnginePicker(
                 EngineCell(
                     engine = engine,
                     active = i == selectedIndex,
-                    modifier = Modifier.weight(1f).fillMaxHeight(),
+                    compact = compact,
+                    modifier = Modifier.weight(1f).fillMaxHeight().heightIn(min = if (compact) CompactCellHeight else CellHeight),
                     onClick = {
                         if (i == selectedIndex) return@EngineCell
                         Feedback.tick()
@@ -124,7 +132,9 @@ fun HomeEnginePicker(
 }
 
 private val CellHeight = 118.dp
+private val CompactCellHeight = 98.dp
 private val MarkSize = 40.dp
+private val CompactMarkSize = 32.dp
 private val TipSize = 18.dp
 
 /**
@@ -202,7 +212,7 @@ private fun badgeOf(engine: PlayerEngine): EngineBadge? = when {
 }
 
 @Composable
-private fun EngineCell(engine: PlayerEngine, active: Boolean, modifier: Modifier, onClick: () -> Unit) {
+private fun EngineCell(engine: PlayerEngine, active: Boolean, compact: Boolean, modifier: Modifier, onClick: () -> Unit) {
     val p = palette
     val source = remember { MutableInteractionSource() }
     val available = engine.isAvailable
@@ -225,14 +235,14 @@ private fun EngineCell(engine: PlayerEngine, active: Boolean, modifier: Modifier
             .controlStates(source, Radius.controlShape)
             .pointerHoverIcon(PointerIcon.Hand)
             .pressFeedback(source)
-            .padding(horizontal = 2.dp, vertical = Space.gap),
+            .padding(horizontal = 2.dp, vertical = if (compact) Space.gapTight else Space.gap),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Image(
             painter = painterResource(engine.img),
             contentDescription = null,
-            modifier = Modifier.size(MarkSize),
+            modifier = Modifier.size(if (compact) CompactMarkSize else MarkSize),
             // An engine that cannot be picked loses its colour, not only its word.
             colorFilter = if (available) null else ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }),
             alpha = if (available) 1f else 0.5f,
@@ -248,12 +258,13 @@ private fun EngineCell(engine: PlayerEngine, active: Boolean, modifier: Modifier
             },
             textAlign = TextAlign.Center,
             maxLines = 1,
-            softWrap = false,
             overflow = TextOverflow.Ellipsis,
+            // A name wider than its cell steps down toward the group size before it is cut.
+            autoSize = FontSizeRange(Type.group.fontSize, Type.label.fontSize),
         )
         if (badge != null) {
             Spacer(Modifier.height(Space.gapTight))
-            Tag(stringResource(badge.label), tone = badge.tone, filled = active && badge.tone != Tone.Neutral)
+            Tag(stringResource(badge.label), tone = badge.tone, filled = active && badge.tone != Tone.Neutral, autoSize = true)
         }
     }
 }
