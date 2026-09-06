@@ -5,8 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,9 +23,9 @@ import app.preferences.Preferences.MSG_OUTLINE_THICKNESS
 import app.preferences.Preferences.MSG_SHADOW_ACTIVATE
 import app.preferences.watchPref
 import app.room.models.Message
-import app.room.roomTopInsets
 import app.theme.Motion
 import app.theme.Space
+import app.theme.Type
 import app.theme.palette
 import kotlinx.coroutines.delay
 
@@ -34,6 +33,9 @@ import kotlinx.coroutines.delay
  * With the HUD hidden, the last few unseen lines from other people show over the video in the
  * same two shapes as the list, with no panel behind them: this is where the outline preference
  * earns its keep. The count is the fading count preference, the hold is the fading duration.
+ *
+ * It draws where the room puts it, under the notices on the centre line, and only caps its own
+ * width to a notice's, so a line wraps at the same edge a notice would.
  */
 @Composable
 fun FadingMessageLayout() {
@@ -49,7 +51,11 @@ fun FadingMessageLayout() {
     val shadowOn by MSG_SHADOW_ACTIVATE.watchPref()
     val fontSize by MSG_FONTSIZE.watchPref()
     // PiP caps large text at the default, while respecting a smaller size chosen by the user.
-    val style = MessageStyle(if (isInPiPMode) minOf(fontSize, MSG_FONTSIZE.default) else fontSize, outlineThickness.toFloat().takeIf { it > 0f }, shadowOn, showTime = false)
+    // Anywhere else these lines are read from the middle of the picture, so they never go
+    // below a notice's size: the log's size is for a dense list, not for a glance over video.
+    val noticeSize = Type.note.fontSize.value.toInt()
+    val size = if (isInPiPMode) minOf(fontSize, MSG_FONTSIZE.default) else maxOf(fontSize, noticeSize)
+    val style = MessageStyle(size, outlineThickness.toFloat().takeIf { it > 0f }, shadowOn, showTime = false)
 
     val messages by viewmodel.session.messageSequence.collectAsState()
     var shown by remember { mutableStateOf<List<Message>>(emptyList()) }
@@ -63,12 +69,7 @@ fun FadingMessageLayout() {
         visible = false
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth(0.6f)
-            .windowInsetsPadding(roomTopInsets())
-            .padding(start = Space.gutter, top = Space.rowCompact + Space.gap),
-    ) {
+    Column(modifier = Modifier.widthIn(max = Space.noticeWidth).fillMaxWidth()) {
         AnimatedVisibility(visible = visible, enter = fadeIn(Motion.quick()), exit = fadeOut(Motion.move())) {
             Column {
                 shown.forEachIndexed { index, message ->

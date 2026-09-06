@@ -95,7 +95,7 @@ fun Notice(
     val ink = if (overVideo) Color.White else p.ink
     Row(
         modifier = modifier
-            .widthIn(max = 420.dp)
+            .widthIn(max = Space.noticeWidth)
             .height(IntrinsicSize.Min)
             .heightIn(min = Space.rowCompact)
             .then(

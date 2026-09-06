@@ -46,6 +46,8 @@ object Space {
     val glyphLarge = 24.dp
     val hair = 1.dp
     val touchMin = 48.dp
+    /** The widest a line meant to be read at a glance gets: a notice, or chat over the video. */
+    val noticeWidth = 420.dp
 }
 
 /** Near square. Nothing is a capsule. */

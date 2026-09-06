@@ -27,6 +27,7 @@ Written for people who use the app. The full engineering history is in the commi
 - Panels look right on a light theme, not bruised at the bottom and edgeless at the top.
 - Buffering no longer shoves the play button around. The button rounds into a circle and its colours move until the player catches up.
 - The custom skip button sits between the two jump buttons.
+- Chat that fades in while the controls are hidden now shows in the top middle, under the notices, and is never smaller than a notice. It used to sit tiny at the left edge.
 
 ### Connection
 

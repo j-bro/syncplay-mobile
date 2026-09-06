@@ -3,7 +3,9 @@ package app.room
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -164,17 +166,23 @@ fun RoomScreenUI(viewmodel: RoomViewmodel) {
             }
 
             if (!isInPipMode) {
-                // Notices sit above the HUD and outside its alpha: they show while it is hidden.
-                // They stack on the centre line, under the status line (and under the rail row
-                // on a tall window).
-                NoticeHost(
-                    queue = viewmodel.notices,
+                // Notices and unseen chat share one column on the centre line, under the status
+                // line (and under the rail row on a tall window): the room's own notices first,
+                // people's lines under them. Both sit above the HUD and outside its alpha, so they
+                // show while it is hidden. Chat used to fade in at the left edge, which is the one
+                // place nobody watching the picture is looking.
+                Column(
                     modifier = Modifier.align(Alignment.TopCenter)
+                        .fillMaxWidth()
                         .windowInsetsPadding(roomTopInsets())
                         .padding(top = if (tall) Space.row * 2 + Space.gap * 2 else Space.row + Space.gap)
                         .padding(horizontal = Space.gutter),
-                )
-                if (!soloMode) FadingMessageLayout()
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(Space.gapTight),
+                ) {
+                    NoticeHost(queue = viewmodel.notices)
+                    if (!soloMode) FadingMessageLayout()
+                }
             }
         }
 
