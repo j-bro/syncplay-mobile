@@ -453,8 +453,8 @@
     <string name="room_link_play_anyway">Lire quand même</string>
     <string name="room_link_resolver_off">Ce lien a besoin du résolveur de liens, désactivé dans les Réglages.</string>
     <string name="room_link_resolving">Recherche en cours</string>
-    <string name="room_link_sites_full">YouTube, SoundCloud et d'autres, ou un lien direct</string>
-    <string name="room_link_sites_youtube">YouTube, ou un lien direct</string>
+    <string name="room_link_sites_full">YT, SoundCloud et d'autres, ou un lien direct</string>
+    <string name="room_link_sites_yt">YT, ou un lien direct</string>
     <string name="room_link_unknown">Ce n'est pas un lien média direct. La lecture peut échouer.</string>
     <string name="room_lock">Verrouiller l'écran</string>
     <string name="room_locked_hint">Écran verrouillé. Touchez n'importe où pour afficher la touche de déverrouillage.</string>
@@ -598,7 +598,7 @@
     <string name="setting_import_settings_summary">Relit les réglages depuis un fichier.</string>
     <string name="setting_import_settings_title">Importer les réglages</string>
     <string name="setting_language_no_preference">Aucune préférence</string>
-    <string name="setting_media_resolver_detail">YouTube, SoundCloud, PeerTube, Bandcamp et media.ccc.de sur Android et bureau ; YouTube sur iOS. Résolu sur l'appareil, rien d'autre à installer.</string>
+    <string name="setting_media_resolver_detail">YT, SoundCloud, PeerTube, Bandcamp et media.ccc.de sur Android et bureau ; YT sur iOS. Résolu sur l'appareil, rien d'autre à installer.</string>
     <string name="setting_media_resolver_summary">Lit les liens de page des sites pris en charge.</string>
     <string name="setting_media_resolver_title">Résoudre les liens de streaming</string>
     <string name="setting_reduce_motion_summary">Chaque transition devient un fondu.</string>
@@ -723,7 +723,7 @@
         <item>Vous pouvez réinitialiser les paramètres par défaut dans 'Paramètres -> Avancés -> Réinitialiser par défaut'</item>
         <item>Vous rejoignez souvent la même salle ? Sauvegardez-la en raccourci sur votre appareil pour y accéder en un tapotement, en cliquant sur le petit bouton à côté de 'Rejoindre la salle'.</item>
         <item>Chaque lecteur a ses forces. Si l’un d’eux ne fonctionne pas bien avec votre format vidéo, essayez-en un autre.</item>
-        <item>%1$s Mobile vous permet de lire des liens directs vers des médias. Cependant, YouTube n'est PAS encore supporté.</item>
+        <item>%1$s lit les liens directs et, sur Android, YT et quelques autres sites. Collez le lien sous « Ajouter média ».</item>
         <item>Si vous souhaitez minimiser temporairement la salle sans quitter, activez le mode "Picture-in-Picture" et gardez l'écran en flottant par-dessus les autres applications.</item>
     </string-array>
 </resources>

@@ -449,8 +449,8 @@
     <string name="room_link_play_anyway">Odtwórz mimo to</string>
     <string name="room_link_resolver_off">Ten link wymaga rozwiązywania linków, które jest wyłączone w ustawieniach.</string>
     <string name="room_link_resolving">Sprawdzanie</string>
-    <string name="room_link_sites_full">YouTube, SoundCloud i inne, albo bezpośredni link</string>
-    <string name="room_link_sites_youtube">YouTube albo bezpośredni link</string>
+    <string name="room_link_sites_full">YT, SoundCloud i inne, albo bezpośredni link</string>
+    <string name="room_link_sites_yt">YT albo bezpośredni link</string>
     <string name="room_link_unknown">To nie jest bezpośredni link do pliku. Odtwarzanie może się nie udać.</string>
     <string name="room_lock">Zablokuj ekran</string>
     <string name="room_locked_hint">Ekran zablokowany. Dotknij gdziekolwiek, aby pokazać przycisk odblokowania.</string>
@@ -594,7 +594,7 @@
     <string name="setting_import_settings_summary">Wczytaj ustawienia z pliku.</string>
     <string name="setting_import_settings_title">Importuj ustawienia</string>
     <string name="setting_language_no_preference">Bez preferencji</string>
-    <string name="setting_media_resolver_detail">YouTube, SoundCloud, PeerTube, Bandcamp i media.ccc.de na Androidzie i komputerze; YouTube na iOS. Rozwiązywane na urządzeniu, nic więcej nie trzeba instalować.</string>
+    <string name="setting_media_resolver_detail">YT, SoundCloud, PeerTube, Bandcamp i media.ccc.de na Androidzie i komputerze; YT na iOS. Rozwiązywane na urządzeniu, nic więcej nie trzeba instalować.</string>
     <string name="setting_media_resolver_summary">Odtwarza linki do stron z obsługiwanych serwisów.</string>
     <string name="setting_media_resolver_title">Rozwiązuj linki strumieniowe</string>
     <string name="setting_reduce_motion_summary">Każde przejście staje się przenikaniem.</string>
@@ -719,7 +719,7 @@
         <item>Zawsze możesz przywrócić ustawienia do stanów domyślnych, przechodząc do 'Ustawienia -> Zaawansowane -> Przywróć domyślne'</item>
         <item>Dołączasz wielokrotnie do tego samego pokoju? Zapisz go jako skrót na swoim urządzeniu dla dostępu jednym dotknięciem, klikając mały przycisk obok 'Dołącz do pokoju'.</item>
         <item>Każdy odtwarzacz ma różne zalety. Jeśli jeden nie działa dobrze z twoim formatem wideo, spróbuj innego.</item>
-        <item>%1$s Mobile pozwala odtwarzać media z bezpośrednich linków. Jednak YouTube NIE jest obsługiwany, jeszcze.</item>
+        <item>%1$s odtwarza bezpośrednie linki, a na Androidzie także YT i kilka innych stron. Wklej link w „Dodaj media”.</item>
         <item>Jeśli chcesz tymczasowo zminimalizować pokój bez opuszczania go, możesz przejść w tryb "Obraz w obrazie", gdzie ekran jest małym pływającym okienkiem nad innymi aplikacjami.</item>
     </string-array>
 </resources>

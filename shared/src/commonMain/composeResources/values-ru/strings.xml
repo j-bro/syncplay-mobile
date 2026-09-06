@@ -438,8 +438,8 @@
     <string name="room_link_play_anyway">Всё равно играть</string>
     <string name="room_link_resolver_off">Для этой ссылки нужен разбор ссылок, а он выключен в настройках.</string>
     <string name="room_link_resolving">Ищем</string>
-    <string name="room_link_sites_full">YouTube, SoundCloud и другие, или прямая ссылка</string>
-    <string name="room_link_sites_youtube">YouTube или прямая ссылка</string>
+    <string name="room_link_sites_full">YT, SoundCloud и другие, или прямая ссылка</string>
+    <string name="room_link_sites_yt">YT или прямая ссылка</string>
     <string name="room_link_unknown">Это не прямая ссылка на медиа. Воспроизведение может не пойти.</string>
     <string name="room_lock">Заблокировать экран</string>
     <string name="room_locked_hint">Экран заблокирован. Нажмите в любом месте, чтобы показать кнопку разблокировки.</string>
@@ -583,7 +583,7 @@
     <string name="setting_import_settings_summary">Прочитать настройки обратно из файла.</string>
     <string name="setting_import_settings_title">Импорт настроек</string>
     <string name="setting_language_no_preference">Без предпочтения</string>
-    <string name="setting_media_resolver_detail">YouTube, SoundCloud, PeerTube, Bandcamp и media.ccc.de на Android и десктопе; YouTube на iOS. Разбирается на устройстве, больше ничего ставить не нужно.</string>
+    <string name="setting_media_resolver_detail">YT, SoundCloud, PeerTube, Bandcamp и media.ccc.de на Android и десктопе; YT на iOS. Разбирается на устройстве, больше ничего ставить не нужно.</string>
     <string name="setting_media_resolver_summary">Проигрывает ссылки на страницы поддерживаемых сайтов.</string>
     <string name="setting_media_resolver_title">Разбирать ссылки на стримы</string>
     <string name="setting_reduce_motion_summary">Каждый переход становится перекрёстным затуханием.</string>
@@ -708,7 +708,7 @@
         <item>Вы всегда можете сбросить настройки к значениям по умолчанию, перейдя в 'Настройки -> Расширенные -> Сбросить к умолчаниям'.</item>
         <item>Часто присоединяетесь к одной и той же комнате? Сохраните её как ярлык на вашем устройстве для доступа в одно касание, нажав на маленькую кнопку рядом с 'Присоединиться к комнате'.</item>
         <item>Каждый плеер имеет разные преимущества. Если один не работает хорошо с вашим форматом видео, попробуйте другой.</item>
-        <item>%1$s Mobile позволяет воспроизводить медиа с прямых ссылок. Однако YouTube пока НЕ поддерживается.</item>
+        <item>%1$s воспроизводит прямые ссылки, а на Android ещё YT и несколько других сайтов. Вставьте ссылку в «Добавить медиа».</item>
         <item>Если вы хотите временно свернуть комнату без выхода, вы можете перейти в режим "Картинка в картинке", где экран становится маленьким плавающим окном поверх других приложений.</item>
     </string-array>
 </resources>

@@ -11,7 +11,7 @@ package app.player.resolver
  * Resolution is async (network fetch + cipher solving). The bridge uses a callback signature to
  * stay JVM-free in commonMain; [YouTubeKitMediaResolver] wraps it in `suspendCancellableCoroutine`
  * to expose the suspend [MediaResolver.resolve] API. YouTubeKit transparently falls back to a
- * maintained server-side extractor (Cloudflare Workers + youtube-dl) when YouTube rotates its
+ * maintained server-side extractor (Cloudflare Workers + youtube-dl) when YT rotates its
  * signature cipher and local extraction breaks.
  */
 var instantiateYouTubeKitBridge: (() -> YouTubeKitBridge)? = null

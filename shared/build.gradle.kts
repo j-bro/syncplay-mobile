@@ -219,7 +219,7 @@ kotlin {
             /* ExoPlayer's FFmpeg-powered audio renderer extension (this does not need to be updated with every media3 release)  */
             implementation(files(File(projectDir, "libs/libffmpeg_media3exo_1.8.0.aar")))
 
-            /* YouTube/SoundCloud/PeerTube stream URL extractor (no Python, pure JVM) */
+            /* YT/SoundCloud/PeerTube stream URL extractor (no Python, pure JVM) */
             implementation(libs.newpipe.extractor)
 
             /* Ktor HTTP client engine for Android */
@@ -240,7 +240,7 @@ kotlin {
                 implementation(libs.netty.transport)
 
 
-                /* YouTube/SoundCloud/PeerTube stream URL extractor (pure JVM, same as Android) */
+                /* YT/SoundCloud/PeerTube stream URL extractor (pure JVM, same as Android) */
                 implementation(libs.newpipe.extractor)
 
                 /* Ktor HTTP client engine for desktop (also backs Coil's network fetcher) */

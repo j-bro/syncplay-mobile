@@ -6,7 +6,7 @@ import kotlin.coroutines.resume
 
 /** iOS resolver — backed by YouTubeKit (Swift) via [YouTubeKitBridge].
  *
- *  YouTube only. Other URLs fall through to the player unresolved (which is fine for direct
+ *  YT only. Other URLs fall through to the player unresolved (which is fine for direct
  *  media files; fails predictably for other page URLs the player can't handle natively).
  *
  *  If the bridge factory was never registered (e.g. running unit tests without the iosApp

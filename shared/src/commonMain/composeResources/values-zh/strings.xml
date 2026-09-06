@@ -426,8 +426,8 @@
     <string name="room_link_play_anyway">仍然播放</string>
     <string name="room_link_resolver_off">这个链接需要链接解析功能，而它在设置里是关闭的。</string>
     <string name="room_link_resolving">正在查找</string>
-    <string name="room_link_sites_full">YouTube、SoundCloud 等，或直链</string>
-    <string name="room_link_sites_youtube">YouTube，或直链</string>
+    <string name="room_link_sites_full">YT、SoundCloud 等，或直链</string>
+    <string name="room_link_sites_yt">YT，或直链</string>
     <string name="room_link_unknown">不是直链媒体地址，播放可能失败。</string>
     <string name="room_lock">锁定屏幕</string>
     <string name="room_locked_hint">屏幕已锁定。点按任意位置显示解锁键。</string>
@@ -571,7 +571,7 @@
     <string name="setting_import_settings_summary">从文件读回设置。</string>
     <string name="setting_import_settings_title">导入设置</string>
     <string name="setting_language_no_preference">不指定</string>
-    <string name="setting_media_resolver_detail">Android 和桌面端支持 YouTube、SoundCloud、PeerTube、Bandcamp 和 media.ccc.de；iOS 支持 YouTube。在本机解析，无需安装其他东西。</string>
+    <string name="setting_media_resolver_detail">Android 和桌面端支持 YT、SoundCloud、PeerTube、Bandcamp 和 media.ccc.de；iOS 支持 YT。在本机解析，无需安装其他东西。</string>
     <string name="setting_media_resolver_summary">播放受支持网站的页面链接。</string>
     <string name="setting_media_resolver_title">解析流媒体链接</string>
     <string name="setting_reduce_motion_summary">所有过渡都改为淡入淡出。</string>
@@ -696,7 +696,7 @@
         <item>您始终可以通过转到"设置 -> 高级 -> 重置为默认"将设置重置为其默认状态。</item>
         <item>反复加入同一个房间？点击"加入房间"旁边的小按钮，将其保存为设备上的快捷方式，以便一键访问。</item>
         <item>每个播放器都有不同的优势。如果一个播放器不能很好地处理您的视频格式，请尝试另一个。</item>
-        <item>%1$s Mobile允许您从直接链接播放媒体。但是，目前不支持YouTube。</item>
+        <item>%1$s 可播放直链，在 Android 上还支持 YT 和其他几个网站。把链接粘贴到“添加媒体”下。</item>
         <item>如果您想暂时最小化房间而不离开，可以进入"画中画"模式，屏幕将变为浮动在其他应用上方的小屏幕。</item>
     </string-array>
 </resources>

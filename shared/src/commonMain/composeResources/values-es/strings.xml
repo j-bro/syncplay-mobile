@@ -438,8 +438,8 @@
     <string name="room_link_play_anyway">Reproducir igualmente</string>
     <string name="room_link_resolver_off">Este enlace necesita el resolutor de enlaces, que está apagado en Ajustes.</string>
     <string name="room_link_resolving">Buscando</string>
-    <string name="room_link_sites_full">YouTube, SoundCloud y más, o un enlace directo</string>
-    <string name="room_link_sites_youtube">YouTube o un enlace directo</string>
+    <string name="room_link_sites_full">YT, SoundCloud y más, o un enlace directo</string>
+    <string name="room_link_sites_yt">YT o un enlace directo</string>
     <string name="room_link_unknown">No es un enlace directo a un medio. La reproducción puede fallar.</string>
     <string name="room_lock">Bloquear la pantalla</string>
     <string name="room_locked_hint">Pantalla bloqueada. Toca en cualquier sitio para ver el botón de desbloqueo.</string>
@@ -583,7 +583,7 @@
     <string name="setting_import_settings_summary">Recupera los ajustes desde un archivo.</string>
     <string name="setting_import_settings_title">Importar ajustes</string>
     <string name="setting_language_no_preference">Sin preferencia</string>
-    <string name="setting_media_resolver_detail">YouTube, SoundCloud, PeerTube, Bandcamp y media.ccc.de en Android y escritorio; YouTube en iOS. Se resuelve en el dispositivo, sin instalar nada más.</string>
+    <string name="setting_media_resolver_detail">YT, SoundCloud, PeerTube, Bandcamp y media.ccc.de en Android y escritorio; YT en iOS. Se resuelve en el dispositivo, sin instalar nada más.</string>
     <string name="setting_media_resolver_summary">Reproduce enlaces de página de sitios compatibles.</string>
     <string name="setting_media_resolver_title">Resolver URL de streaming</string>
     <string name="setting_reduce_motion_summary">Cada transición pasa a ser un fundido.</string>
@@ -708,7 +708,7 @@
         <item>Siempre puedes restablecer la configuración a su estado predeterminado yendo a 'Configuración -> Avanzado -> Restablecer a predeterminado'.</item>
         <item>¿Te unes a la misma sala repetidamente? Guárdala como un acceso directo en tu dispositivo para acceso con un toque haciendo clic en el botón pequeño junto a 'Unirse a sala'.</item>
         <item>Cada reproductor tiene diferentes fortalezas. Si uno no funciona bien con tu formato de video, prueba otro.</item>
-        <item>%1$s Mobile te permite reproducir medios desde enlaces directos. Sin embargo, YouTube NO es compatible todavía.</item>
+        <item>%1$s reproduce enlaces directos y, en Android, también YT y algunos sitios más. Pega el enlace en «Añadir medios».</item>
         <item>Si quieres minimizar la sala temporalmente sin salir, puedes entrar en modo "Imagen en imagen" donde la pantalla es una pequeña ventana flotante sobre otras aplicaciones.</item>
     </string-array>
 </resources>

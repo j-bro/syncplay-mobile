@@ -319,13 +319,13 @@ abstract class PlayerImpl(val viewmodel: RoomViewmodel, val engine: PlayerEngine
     abstract suspend fun injectVideoURLImpl(location: MediaFileLocation.Remote)
     abstract suspend fun injectVideoFileImpl(location: MediaFileLocation.Local)
 
-    /** Hands a URL to the player. If the URL is a "page URL" (YouTube, SoundCloud, …) and the
+    /** Hands a URL to the player. If the URL is a "page URL" (YT, SoundCloud, …) and the
      *  platform resolver is enabled, the URL is first run through the resolver to extract a
      *  direct streamable URL plus best-effort title/duration metadata. Direct media URLs
      *  (`*.mp4`, `*.m3u8`, …) short-circuit the resolver entirely.
      *
      *  Resolution happens client-side at retrieve time — the shared playlist still stores the
-     *  *original* page URL, since YouTube stream URLs are IP-pinned and time-limited and would
+     *  *original* page URL, since YT stream URLs are IP-pinned and time-limited and would
      *  not be valid across other clients in the room. Each client resolves independently from
      *  the same input. */
     suspend fun injectVideoURL(url: String) = inject(

@@ -20,7 +20,7 @@ import org.schabi.newpipe.extractor.downloader.Response as NpResponse
 
 /** The NewPipe resolver, shared by Android and desktop — pure JVM, no Python, no native binaries.
  *
- *  Supports YouTube, SoundCloud, PeerTube, Bandcamp and MediaCCC out of the box. NewPipe's
+ *  Supports YT, SoundCloud, PeerTube, Bandcamp and MediaCCC out of the box. NewPipe's
  *  `StreamInfo.getInfo(url)` auto-detects the service from the URL; if no service handles it
  *  (e.g. a Twitch URL), it throws and we return null so callers can fall back to the original
  *  URL unchanged. */

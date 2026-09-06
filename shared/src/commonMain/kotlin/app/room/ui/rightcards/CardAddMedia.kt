@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalClipboard
 import app.i18n.AppStrings
 import app.i18n.strings
 import app.player.resolver.ResolvedMedia
-import app.player.resolver.extractYoutubeId
+import app.player.resolver.extractYtId
 import app.player.resolver.mediaResolver
 import app.player.resolver.urlLooksLikeDirectMedia
 import app.utils.getText
@@ -249,7 +249,7 @@ object CardAddMedia {
         }
     }
 
-    private fun supportedSites(s: AppStrings) = if (platform == Platform.IOS) s.roomLinkSitesYoutube else s.roomLinkSitesFull
+    private fun supportedSites(s: AppStrings) = if (platform == Platform.IOS) s.roomLinkSitesYt else s.roomLinkSitesFull
 
     /** What the app can make of a pasted link before it is confirmed. */
     private enum class LinkKind { Empty, Direct, Resolvable, ResolverOff, Unknown }
@@ -258,7 +258,7 @@ object CardAddMedia {
         if (url.isBlank()) return LinkKind.Empty
         if (urlLooksLikeDirectMedia(url)) return LinkKind.Direct
         val host = url.substringAfter("://").substringBefore('/').lowercase()
-        val resolvable = extractYoutubeId(url) != null ||
+        val resolvable = extractYtId(url) != null ||
             (platform != Platform.IOS && listOf("soundcloud.com", "bandcamp.com", "media.ccc.de").any { host.endsWith(it) })
         return when {
             resolvable && resolverOn -> LinkKind.Resolvable

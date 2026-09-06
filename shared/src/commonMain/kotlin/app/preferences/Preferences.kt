@@ -370,7 +370,7 @@ object Preferences {
         detail = { it.settingTlsRequiredDetail }
         icon = Icons.Filled.Lock
     }
-    /** When true, page URLs (YouTube, SoundCloud, …) entered as media are run through the
+    /** When true, page URLs (YT, SoundCloud, …) entered as media are run through the
      *  platform's native extractor before reaching the player. A heuristic short-circuits when
      *  the URL is already direct media, so there's no cost in the common case. */
     val MEDIA_RESOLVER_ENABLED = Pref("pref_media_resolver_enabled", true) {

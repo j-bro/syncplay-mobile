@@ -438,8 +438,8 @@
     <string name="room_link_play_anyway">شغّل على أي حال</string>
     <string name="room_link_resolver_off">هذا الرابط يحتاج محلّل الروابط، وهو مُعطَّل في الإعدادات.</string>
     <string name="room_link_resolving">جارٍ البحث</string>
-    <string name="room_link_sites_full">يوتيوب وSoundCloud وغيرهما، أو رابط مباشر</string>
-    <string name="room_link_sites_youtube">يوتيوب، أو رابط مباشر</string>
+    <string name="room_link_sites_full">YT وSoundCloud وغيرهما، أو رابط مباشر</string>
+    <string name="room_link_sites_yt">YT، أو رابط مباشر</string>
     <string name="room_link_unknown">ليس رابط وسائط مباشرًا. قد يفشل التشغيل.</string>
     <string name="room_lock">اقفل الشاشة</string>
     <string name="room_locked_hint">الشاشة مقفلة. اضغط في أي مكان لإظهار مفتاح الفتح.</string>
@@ -583,7 +583,7 @@
     <string name="setting_import_settings_summary">استرجع الإعدادات من ملف.</string>
     <string name="setting_import_settings_title">استيراد الإعدادات</string>
     <string name="setting_language_no_preference">بلا تفضيل</string>
-    <string name="setting_media_resolver_detail">يوتيوب وSoundCloud وPeerTube وBandcamp وmedia.ccc.de على أندرويد وسطح المكتب؛ ويوتيوب على iOS. يُحلَّل على الجهاز، دون تثبيت أي شيء آخر.</string>
+    <string name="setting_media_resolver_detail">YT وSoundCloud وPeerTube وBandcamp وmedia.ccc.de على أندرويد وسطح المكتب؛ وYT على iOS. يُحلَّل على الجهاز، دون تثبيت أي شيء آخر.</string>
     <string name="setting_media_resolver_summary">يشغّل روابط الصفحات من المواقع المدعومة.</string>
     <string name="setting_media_resolver_title">تحليل روابط البث</string>
     <string name="setting_reduce_motion_summary">كل انتقال يصبح تلاشيًا متقاطعًا.</string>
@@ -708,7 +708,7 @@
         <item>يمكنك دائماً إعادة تعيين الإعدادات إلى حالتها الافتراضية بالانتقال إلى 'الإعدادات -> متقدم -> إعادة تعيين إلى الافتراضي'</item>
         <item>تنضم إلى نفس الغرفة بشكل متكرر؟ احفظها كاختصار على جهازك للوصول السريع بنقرة واحدة عن طريق النقر على الزر الصغير بجوار 'الانضمام للغرفة'.</item>
         <item>لكل مشغل نقاط قوة مختلفة. إذا لم يعمل أحدها بشكل جيد مع تنسيق الفيديو، جرب آخر.</item>
-        <item>يتيح لك %1$s Mobile تشغيل الوسائط من روابط مباشرة. ومع ذلك، YouTube غير مدعوم بعد.</item>
+        <item>يشغّل %1$s الروابط المباشرة، وعلى أندرويد أيضًا YT وبضعة مواقع أخرى. الصق الرابط تحت «إضافة وسائط».</item>
         <item>إذا كنت تريد تصغير الغرفة مؤقتاً دون المغادرة، يمكنك الانتقال إلى وضع "صورة داخل صورة" حيث تكون الشاشة عبارة عن شاشة عائمة صغيرة فوق التطبيقات الأخرى.</item>
     </string-array>
 </resources>

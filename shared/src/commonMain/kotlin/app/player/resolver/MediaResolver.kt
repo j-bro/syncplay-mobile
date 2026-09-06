@@ -1,13 +1,13 @@
 package app.player.resolver
 
 /**
- * Resolves "page URLs" (YouTube, SoundCloud, PeerTube, etc.) into direct streamable URLs.
+ * Resolves "page URLs" (YT, SoundCloud, PeerTube, etc.) into direct streamable URLs.
  *
  * The PC desktop app gets this for free via mpv's `ytdl_hook.lua`, which shells out to a
  * locally installed `yt-dlp` binary. Mobile has no such binary on PATH, so each platform
  * provides its own pure-native extractor:
  *  - Android: NewPipe Extractor (com.github.TeamNewPipe:NewPipeExtractor) — JVM/Java, no Python.
- *  - iOS: YouTubeKit — Swift, YouTube only, no Python.
+ *  - iOS: YouTubeKit — Swift, YT only, no Python.
  *
  * Each client resolves independently at retrieve time. The shared playlist still stores the
  * *original* page URL (e.g. `youtube.com/watch?v=…`) — direct stream URLs are typically
@@ -24,8 +24,8 @@ interface MediaResolver {
 
 /**
  * The platform's native [MediaResolver]. Initialized lazily on first use.
- *  - Android and desktop: NewPipe Extractor — YouTube, SoundCloud, PeerTube, Bandcamp, MediaCCC.
- *  - iOS: YouTubeKit — YouTube only.
+ *  - Android and desktop: NewPipe Extractor — YT, SoundCloud, PeerTube, Bandcamp, MediaCCC.
+ *  - iOS: YouTubeKit — YT only.
  */
 expect val mediaResolver: MediaResolver
 
@@ -64,19 +64,19 @@ private val DIRECT_MEDIA_EXTENSIONS = listOf(
 )
 
 /**
- * Pulls the 11-character video ID out of any common YouTube URL form:
+ * Pulls the 11-character video ID out of any common YT URL form:
  *  - youtube.com/watch?v=ID
  *  - youtu.be/ID
  *  - youtube.com/embed/ID
  *  - youtube.com/shorts/ID
  *  - m.youtube.com / music.youtube.com (subdomains)
  *
- * Returns null if the URL is not a recognizable YouTube link. Used by the iOS resolver,
+ * Returns null if the URL is not a recognizable YT link. Used by the iOS resolver,
  * since YouTubeKit takes a raw video ID rather than a URL string.
  */
-fun extractYoutubeId(url: String): String? = YOUTUBE_ID_REGEX.find(url)?.groupValues?.getOrNull(1)
+fun extractYtId(url: String): String? = YT_ID_REGEX.find(url)?.groupValues?.getOrNull(1)
 
-private val YOUTUBE_ID_REGEX = Regex(
+private val YT_ID_REGEX = Regex(
     pattern = """(?:youtube(?:-nocookie)?\.com/(?:watch\?(?:.*&)?v=|embed/|v/|shorts/|live/)|youtu\.be/)([\w-]{11})""",
     option = RegexOption.IGNORE_CASE,
 )
