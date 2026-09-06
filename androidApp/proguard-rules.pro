@@ -1,11 +1,4 @@
 # =============================================================================
-# MPV (full build only) — JNI-accessed entry point. The native MPV layer looks
-# up methods like eventProperty / event reflectively via JNI GetMethodID.
-# =============================================================================
--keep class is.xyz.mpv.MPVLib { *; }
--keep class is.xyz.mpv.MPVLib$* { *; }
-
-# =============================================================================
 # NewPipe Extractor — pulls in Mozilla Rhino for embedded JS (YT cipher
 # extraction). Rhino's JavaToJSONConverters references java.beans.* APIs that
 # don't exist on Android; they're only used when Rhino runs on a JVM with the

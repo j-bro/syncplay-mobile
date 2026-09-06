@@ -219,6 +219,11 @@ kotlin {
             /* ExoPlayer's FFmpeg-powered audio renderer extension (this does not need to be updated with every media3 release)  */
             implementation(files(File(projectDir, "libs/libffmpeg_media3exo_1.8.0.aar")))
 
+            /* libmpv for Android, prebuilt: mpv, FFmpeg, libass and libplacebo in one AAR from
+             * libmpvKt. The exoOnly flavor keeps this dependency so the engine code compiles;
+             * androidApp strips every library in it at packaging time. */
+            implementation(libs.libmpvkt)
+
             /* YT/SoundCloud/PeerTube stream URL extractor (no Python, pure JVM) */
             implementation(libs.newpipe.extractor)
 

@@ -35,6 +35,11 @@ dependencyResolutionManagement {
         }
         google()
         mavenCentral()
+        // libmpvKt's artifacts: a static Maven repository on GitHub Pages, not Central. The filter
+        // keeps every other io.github.yuroyami artifact (KiteConfig, KitePlayer) on Central.
+        maven("https://yuroyami.github.io/maven") {
+            content { includeModuleByRegex("io\\.github\\.yuroyami", "libmpvkt.*") }
+        }
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         // NewPipe Extractor (Android-only YT/SoundCloud/PeerTube resolver), and nothing else:
         // unfiltered, jitpack can answer for any coordinate Central and Google happen to miss.
