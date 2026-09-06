@@ -11,6 +11,13 @@ internal const val BIDI_ISOLATE_START = "\u2068"
 /** Unicode BiDi "Pop Directional Isolate" (U+2069): closes a [BIDI_ISOLATE_START] run. */
 internal const val BIDI_ISOLATE_END = "\u2069"
 
+/** Chat shows text the way a person would type it: no trailing spaces, no blank lines. */
+fun String.collapsedForChat(): String =
+    lineSequence()
+        .map { it.trimEnd() }
+        .filter { it.isNotBlank() }
+        .joinToString("\n")
+
 /** Hands every message a stable identity, so a lazy list can key on it. */
 private val messageIds = atomic(0L)
 

@@ -16,6 +16,7 @@ import app.protocol.wire.Room
 import app.room.OSDCategory
 import app.room.RoomViewmodel
 import app.room.models.Message
+import app.room.models.collapsedForChat
 import app.utils.loggy
 import app.utils.md5
 import app.utils.platformCallback
@@ -227,6 +228,8 @@ class RoomEventDispatcher(val viewmodel: RoomViewmodel) : AbstractManager(viewmo
      * the time the finger lifts the preview has moved even though the engine has not.
      */
     fun seek(targetMs: Long, fromMs: Long? = null, recordUndo: Boolean = true) {
+        // Chat commands and hardware media keys remain reachable during room startup.
+        if (!viewmodel.playerManager.isPlayerReady.value || viewmodel.media == null) return
         viewmodel.player.playerScopeMain.launch { seekNow(targetMs, fromMs, recordUndo) }
     }
 
@@ -241,6 +244,7 @@ class RoomEventDispatcher(val viewmodel: RoomViewmodel) : AbstractManager(viewmo
     fun seekFrwrd() = seekBy(Preferences.SEEK_FORWARD_JUMP.value())
 
     fun seekBy(deltaSeconds: Int) {
+        if (!viewmodel.playerManager.isPlayerReady.value || viewmodel.media == null) return
         viewmodel.player.playerScopeMain.launch {
             val currentMs = viewmodel.player.currentPositionMs()
             seekNow(currentMs + deltaSeconds * 1000L, currentMs, recordUndo = true)
@@ -276,10 +280,13 @@ class RoomEventDispatcher(val viewmodel: RoomViewmodel) : AbstractManager(viewmo
         if (viewmodel.isSoloMode) return
 
         viewmodel.viewModelScope.launch {
+            val text = message.invoke().collapsedForChat()
+            // A notice that was only blank lines has nothing to show.
+            if (text.isEmpty()) return@launch
             val msg = Message(
                 sender = if (isChat) chatter else null,
                 isMainUser = chatter == viewmodel.session.currentUsername,
-                content = message.invoke(),
+                content = text,
                 isError = isError
             )
             // Bounded: a long session must not keep every line ever shown.
