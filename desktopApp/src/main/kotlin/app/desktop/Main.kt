@@ -214,12 +214,12 @@ private fun handleGlobalKey(event: KeyEvent, windowState: WindowState): Boolean 
         }
         if (inRoom && vm != null) {
             val ui = vm.uiState
-            val panelOpen = ui.tabCardUserInfo.value || ui.tabCardSharedPlaylist.value || ui.tabCardRoomPreferences.value || ui.controlPanel.value
+            // All seven, not the three that happened to exist when this was written: Escape used
+            // to walk past an open Tracks or Gestures panel and hide the HUD instead.
+            val panelOpen = ui.anySidePanelOpen || ui.controlPanel.value
             when {
                 panelOpen -> {
-                    ui.toggleUserInfo(false)
-                    ui.toggleSharedPlaylist(false)
-                    ui.toggleRoomPreferences(false)
+                    ui.closeSidePanels()
                     ui.controlPanel.value = false
                 }
                 ui.visibleHUD.value -> ui.visibleHUD.value = false

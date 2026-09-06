@@ -150,6 +150,14 @@ data class Palette(
     val accent: Color,
     val brandField: List<Color>,
     val ok: Color,
+    /**
+     * The same idea as [ok], but for words rather than a filled shape.
+     *
+     * [ok] is a readiness square on its own ground and is fixed on purpose. Text has to sit on
+     * the theme's own surface, and on the light theme that surface is pale enough that the
+     * bright green reads at roughly 1:1 against it. This is the readable one.
+     */
+    val okText: Color,
     val warn: Color,
     val bad: Color,
     val disabled: Color,
@@ -180,6 +188,9 @@ data class Palette(
     companion object {
         /** Readiness green and error red are fixed so no theme can make "not ready" look ready. */
         val Ok = Color(0xFF6ECB5A)
+
+        /** A dark green for text on a light ground: about 4.6:1 against the Daylight surface. */
+        val OkOnLight = Color(0xFF14532D)
         val Bad = Color(0xFFE85455)
         val VideoGround = Color(0xFF0E0E12)
         val VideoPanel = Color(0xFF1B1B21)
@@ -201,6 +212,7 @@ data class Palette(
                 accent = seeds[0],
                 brandField = seeds,
                 ok = Ok,
+                okText = if (theme.isDark) Ok else OkOnLight,
                 warn = seeds[2],
                 bad = Bad,
                 disabled = scheme.onSurface.copy(alpha = 0.38f),

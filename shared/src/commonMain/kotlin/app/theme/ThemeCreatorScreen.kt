@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import app.LocalGlobalViewmodel
 import app.LocalTheme
+import app.Screen
 import app.preferences.settings.ColorModal
 import app.uicomponents.controls.Field
 import app.uicomponents.controls.GroupHeading
@@ -68,12 +69,27 @@ fun ThemeCreatorScreenUI(themeToEdit: SaveableTheme? = null) {
     val notices = remember { NoticeQueue() }
     val exists = strings.themeCustomizeAlreadyExistsWarning
 
+    var saving by remember { mutableStateOf(false) }
+
     fun close() = globalViewmodel.backstack.removeAt(globalViewmodel.backstack.lastIndex)
 
+    /* A save is a round trip, and the editor can be gone by the time it lands: popping whatever
+     * is last would then close whatever the user opened instead. */
+    fun closeIfStillTheEditor() {
+        val stack = globalViewmodel.backstack
+        if (stack.lastOrNull() is Screen.ThemeCreator) stack.removeAt(stack.lastIndex)
+    }
+
     fun save(asNew: Boolean) {
+        if (saving) return
+        saving = true
         globalViewmodel.viewModelScope.launch {
-            val saved = if (themeToEdit != null && !asNew) globalViewmodel.replaceTheme(themeToEdit, theme) else globalViewmodel.saveNewTheme(theme)
-            if (saved) close() else notices.post(exists, NoticeSeverity.Warn, holdMs = 3000L)
+            val saved = try {
+                if (themeToEdit != null && !asNew) globalViewmodel.replaceTheme(themeToEdit, theme) else globalViewmodel.saveNewTheme(theme)
+            } finally {
+                saving = false
+            }
+            if (saved) closeIfStillTheEditor() else notices.post(exists, NoticeSeverity.Warn, holdMs = 3000L)
         }
     }
 
@@ -84,13 +100,13 @@ fun ThemeCreatorScreenUI(themeToEdit: SaveableTheme? = null) {
                     val wide = maxWidth >= 720.dp
                     if (wide) {
                         Row(Modifier.fillMaxSize()) {
-                            Controls(theme, onTheme = { theme = it }, editing = themeToEdit != null, onSave = ::save, modifier = Modifier.weight(1f).fillMaxHeight())
+                            Controls(theme, onTheme = { theme = it }, editing = themeToEdit != null, saving = saving, onSave = ::save, modifier = Modifier.weight(1f).fillMaxHeight())
                             ThemeMiniature(theme, Modifier.weight(1f).fillMaxHeight().padding(Space.gutter).clip(Radius.panelShape))
                         }
                     } else {
                         Column(Modifier.fillMaxSize()) {
                             ThemeMiniature(theme, Modifier.fillMaxWidth().height(160.dp).padding(horizontal = Space.gutter, vertical = Space.gap).clip(Radius.panelShape))
-                            Controls(theme, onTheme = { theme = it }, editing = themeToEdit != null, onSave = ::save, modifier = Modifier.weight(1f).fillMaxWidth())
+                            Controls(theme, onTheme = { theme = it }, editing = themeToEdit != null, saving = saving, onSave = ::save, modifier = Modifier.weight(1f).fillMaxWidth())
                         }
                     }
                     NoticeHost(notices, overVideo = false, modifier = Modifier.align(Alignment.BottomCenter).padding(Space.gutter))
@@ -105,6 +121,7 @@ private fun Controls(
     theme: SaveableTheme,
     onTheme: (SaveableTheme) -> Unit,
     editing: Boolean,
+    saving: Boolean,
     onSave: (asNew: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -153,8 +170,9 @@ private fun Controls(
         }
 
         Column(Modifier.padding(Space.gutter), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(Space.gap)) {
-            PrimaryAction(strings.save, onClick = { onSave(false) }, modifier = Modifier.fillMaxWidth())
-            if (editing) SecondaryAction(strings.themeSaveAsNew, onClick = { onSave(true) }, modifier = Modifier.fillMaxWidth())
+            // Disabled while a save is in flight: two taps used to write the theme twice.
+            PrimaryAction(strings.save, onClick = { onSave(false) }, enabled = !saving, modifier = Modifier.fillMaxWidth())
+            if (editing) SecondaryAction(strings.themeSaveAsNew, onClick = { onSave(true) }, enabled = !saving, modifier = Modifier.fillMaxWidth())
         }
         Spacer(Modifier.height(Space.gutter))
     }

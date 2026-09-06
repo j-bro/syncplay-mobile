@@ -27,7 +27,7 @@
     <string name="home_ip_address">IP地址</string>
     <string name="home_port">端口</string>
     <string name="home_password_if_any">密码（如果有）</string>
-    <string name="home_engine_unavailable_error">此引擎不可用。您下载了正确的APK吗？</string>
+    <string name="home_engine_unavailable_error">此平台没有该引擎。</string>
 
     <!-- String templates (with placeholders... that's why I named them dynamic) -->
     <string name="room_selected_vid">选择的视频文件：%1$s</string>
@@ -641,11 +641,11 @@
     <string name="uisetting_kite_eq_hue_title">视频色相（度）</string>
     <string name="uisetting_kite_eq_saturation_summary">0 到 200 百分比，0 为黑白。</string>
     <string name="uisetting_kite_eq_saturation_title">视频饱和度（%）</string>
-    <string name="uisetting_kite_hw_summary">能用硬件解码时就用。</string>
+    <string name="uisetting_kite_hw_summary">能用硬件解码时就用。下次进入房间时生效。</string>
     <string name="uisetting_kite_hw_title">硬件加速</string>
     <string name="uisetting_kite_preserve_pitch_summary">变速时人声保持原本音调。</string>
     <string name="uisetting_kite_preserve_pitch_title">变速不变调</string>
-    <string name="uisetting_kite_sub_autoselect_summary">打开时显示默认字幕轨。</string>
+    <string name="uisetting_kite_sub_autoselect_summary">打开时显示默认字幕轨。下次进入房间时生效。</string>
     <string name="uisetting_kite_sub_autoselect_title">自动选择字幕</string>
     <string name="uisetting_kite_sub_delay_summary">以毫秒为单位调整字幕时间。正值让字幕更晚出现，负值更早。1000 毫秒为一秒。</string>
     <string name="uisetting_kite_sub_delay_title">字幕延迟（毫秒）</string>
@@ -680,6 +680,15 @@
     <string name="uisetting_vlc_custom_flags_title">自定义 VLC 参数</string>
     <string name="stepper_previous">上一个</string>
     <string name="stepper_next">下一个</string>
+    <string name="home_settings_were_reset">无法读取设置，已重置。</string>
+    <string name="settings_import_done">已应用 %1$d 项设置，跳过 %2$d 项。</string>
+    <string name="settings_import_refused">未导入：%1$s</string>
+    <string name="settings_export_done">设置已保存。</string>
+    <string name="settings_file_error">无法读取或写入该文件。</string>
+    <string name="room_gif_untitled">GIF</string>
+    <string name="room_subs_all_languages">所有语言</string>
+    <string name="room_subs_media_changed">下载字幕时文件已更换，请重新搜索。</string>
+    <string name="home_engine_unavailable_flavor">此版本不含该引擎，完整版 APK 里有。</string>
     <string-array name="tips">
         <item>要使共享播放列表正常工作，%1$s需要知道您的媒体文件存储位置。在"设置 > 常规 > 共享播放列表的媒体目录"中添加您的媒体文件夹。</item>
         <item>想单独使用视频播放器吗？选择一个播放器，点击上方的%1$s徽标，然后选择"离线模式"。</item>

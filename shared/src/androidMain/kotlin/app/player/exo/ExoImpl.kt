@@ -332,25 +332,30 @@ class ExoImpl(vm: RoomViewmodel) : PlayerImpl(vm, ExoEngine) {
         val exoTrack = track as? ExoTrack
 
         val builder = exoplayer?.trackSelector?.parameters?.buildUpon() ?: return
+        val exoType = type.getExoType()
 
         /* Clear only the override for the type being changed. */
-        exoplayer?.trackSelector?.parameters = builder.clearOverridesOfType(type.getExoType()).build()
-        when (type) {
-            TrackType.SUBTITLE -> playerManager.currentTrackChoices.subtitle = TrackChoice.Off
-            TrackType.AUDIO -> playerManager.currentTrackChoices.audio = TrackChoice.Off
+        val cleared = builder.clearOverridesOfType(exoType)
+
+        if (exoTrack == null) {
+            /* Off means off. Removing the override alone leaves the selector free to pick a
+             * track by preferred language, which it does, so "no subtitles" showed subtitles. */
+            exoplayer?.trackSelector?.parameters = cleared.setTrackTypeDisabled(exoType, true).build()
+            when (type) {
+                TrackType.SUBTITLE -> playerManager.currentTrackChoices.subtitle = TrackChoice.Off
+                TrackType.AUDIO -> playerManager.currentTrackChoices.audio = TrackChoice.Off
+            }
+            return
         }
 
-        if (exoTrack != null) {
-            val override = TrackSelectionOverride(
-                exoTrack.trackGroup,
-                exoTrack.index
-            )
-            when (type) {
-                TrackType.SUBTITLE -> playerManager.currentTrackChoices.subtitle = TrackChoice.ByOverride(override)
-                TrackType.AUDIO -> playerManager.currentTrackChoices.audio = TrackChoice.ByOverride(override)
-            }
-            exoplayer?.trackSelector?.parameters = builder.addOverride(override).build()
+        val override = TrackSelectionOverride(exoTrack.trackGroup, exoTrack.index)
+        when (type) {
+            TrackType.SUBTITLE -> playerManager.currentTrackChoices.subtitle = TrackChoice.ByOverride(override)
+            TrackType.AUDIO -> playerManager.currentTrackChoices.audio = TrackChoice.ByOverride(override)
         }
+        // And undo the disable, or picking a track after switching off would show nothing.
+        exoplayer?.trackSelector?.parameters =
+            cleared.setTrackTypeDisabled(exoType, false).addOverride(override).build()
     }
 
     override suspend fun analyzeChapters(mediafile: MediaFile) {}
@@ -370,12 +375,20 @@ class ExoImpl(vm: RoomViewmodel) : PlayerImpl(vm, ExoEngine) {
                 var newParams = builder.build()
 
                 for (type in TrackType.entries) {
+                    val exoType = type.getExoType()
                     val stored = playerManager.currentTrackChoices[type]
                     val override = (stored as? TrackChoice.ByOverride)?.override as? TrackSelectionOverride
-                    if (override != null) {
-                        newParams = newParams.buildUpon().addOverride(override).build()
-                    } else if (stored == TrackChoice.Off) {
-                        newParams = newParams.buildUpon().clearOverridesOfType(type.getExoType()).build()
+                    newParams = when {
+                        override != null -> newParams.buildUpon()
+                            .setTrackTypeDisabled(exoType, false)
+                            .addOverride(override)
+                            .build()
+                        // Restore the disable too, or Off stopped holding across a resume.
+                        stored == TrackChoice.Off -> newParams.buildUpon()
+                            .clearOverridesOfType(exoType)
+                            .setTrackTypeDisabled(exoType, true)
+                            .build()
+                        else -> newParams
                     }
                 }
                 trackSelectionParameters = newParams

@@ -477,7 +477,12 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                                 availablePlatformPlayerEngines.firstOrNull { it.isDefault }?.let { PLAYER_ENGINE.set(it.name) }
                             }
                         }
-                        val unavailable = strings.homeEngineUnavailableError
+                        /* Two different reasons, and asking an iPhone owner about an APK was
+                         * neither of them: on Android the engine exists in the other flavour,
+                         * anywhere else it does not exist for that platform at all. */
+                        val unavailable =
+                            if (platform == Platform.Android) strings.homeEngineUnavailableFlavor
+                            else strings.homeEngineUnavailableError
                         HomeEnginePicker(
                             modifier = Modifier.fillMaxWidth(),
                             engines = availablePlatformPlayerEngines,

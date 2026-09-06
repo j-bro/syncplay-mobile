@@ -27,6 +27,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.setProgress
 import androidx.compose.ui.semantics.stateDescription
@@ -80,7 +81,11 @@ fun Stepper(
             .semantics {
                 stateDescription = options.getOrNull(current) ?: ""
                 if (name != null) contentDescription = name
-                setProgress { target -> latestIndex(target.toInt().coerceIn(0, last)); true }
+                if (!enabled) {
+                    disabled()
+                } else {
+                    setProgress { target -> latestIndex(target.toInt().coerceIn(0, last)); true }
+                }
             }
             .focusable(enabled, source)
             .hoverable(source, enabled)

@@ -40,7 +40,8 @@
     <string name="home_port">Port</string>
     <string name="home_password_if_any">Password (if any)</string>
 
-    <string name="home_engine_unavailable_error">This engine is unavailable. Did you download the right APK?</string>
+    <string name="home_engine_unavailable_error">This engine is not available here.</string>
+    <string name="home_engine_unavailable_flavor">This build has no such engine. The full APK has it.</string>
     <string name="connect_engine_badge_default">Default</string>
     <string name="connect_engine_badge_experimental">Experimental</string>
     <string name="connect_engine_badge_system">System</string>
@@ -382,9 +383,9 @@
     <string name="uisetting_kite_compose_renderer_title">Compose renderer</string>
     <string name="uisetting_kite_compose_renderer_summary">Draws video as Compose content. Switches live.</string>
     <string name="uisetting_kite_hw_title">Hardware acceleration</string>
-    <string name="uisetting_kite_hw_summary">Uses the hardware decoder when it can.</string>
+    <string name="uisetting_kite_hw_summary">Uses the hardware decoder when it can. Takes effect the next time you enter a room.</string>
     <string name="uisetting_kite_sub_autoselect_title">Auto-select subtitles</string>
-    <string name="uisetting_kite_sub_autoselect_summary">Shows the default subtitle track on open.</string>
+    <string name="uisetting_kite_sub_autoselect_summary">Shows the default subtitle track on open. Takes effect the next time you enter a room.</string>
     <string name="uisetting_kite_sub_delay_title">Subtitle delay (ms)</string>
     <string name="uisetting_kite_sub_delay_summary">Shift subtitle timing in milliseconds. Positive values show subtitles later; negative values show them earlier. 1000 ms is one second.</string>
     <string name="uisetting_kite_audio_delay_title">Audio delay (ms)</string>
@@ -671,6 +672,7 @@
     <string name="settings_file_error">The file could not be read or written.</string>
     <string name="room_gif_untitled">GIF</string>
     <string name="room_subs_all_languages">All languages</string>
+    <string name="room_subs_media_changed">The file changed while the subtitle was downloading. Search again.</string>
     <string name="action_clear">Clear</string>
     <!-- Engine picker (design overhaul) -->
     <!-- Home revisions -->

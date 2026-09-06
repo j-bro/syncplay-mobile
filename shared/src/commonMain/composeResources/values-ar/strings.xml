@@ -35,7 +35,7 @@
     <string name="home_port">المنفذ</string>
     <string name="home_password_if_any">كلمة المرور (إن وجدت)</string>
 
-    <string name="home_engine_unavailable_error">هذا المحرك غير متوفر. هل قمت بتنزيل ملف APK الصحيح؟</string>
+    <string name="home_engine_unavailable_error">هذا المحرك غير متاح هنا.</string>
 
     <!-- String templates (with placeholders... that's why I named them dynamic) -->
     <string name="room_selected_vid">ملف الفيديو المحدد: %1$s</string>
@@ -653,11 +653,11 @@
     <string name="uisetting_kite_eq_hue_title">تدرّج لون الفيديو (بالدرجات)</string>
     <string name="uisetting_kite_eq_saturation_summary">من 0 إلى 200 بالمئة، و0 أبيض وأسود.</string>
     <string name="uisetting_kite_eq_saturation_title">تشبّع الفيديو (%)</string>
-    <string name="uisetting_kite_hw_summary">يستخدم مفكّك الترميز العتادي متى استطاع.</string>
+    <string name="uisetting_kite_hw_summary">يستخدم مفكّك الترميز العتادي متى استطاع. يسري في المرة التالية التي تدخل فيها غرفة.</string>
     <string name="uisetting_kite_hw_title">تسريع عتادي</string>
     <string name="uisetting_kite_preserve_pitch_summary">تحتفظ الأصوات بنبرتها عند السرعات الأخرى.</string>
     <string name="uisetting_kite_preserve_pitch_title">احتفظ بالنبرة مع تغيّر السرعة</string>
-    <string name="uisetting_kite_sub_autoselect_summary">يعرض مسار الترجمة الافتراضي عند الفتح.</string>
+    <string name="uisetting_kite_sub_autoselect_summary">يعرض مسار الترجمة الافتراضي عند الفتح. يسري في المرة التالية التي تدخل فيها غرفة.</string>
     <string name="uisetting_kite_sub_autoselect_title">اختيار الترجمة تلقائيًا</string>
     <string name="uisetting_kite_sub_delay_summary">أزح توقيت الترجمة بالمللي ثانية. القيم الموجبة تُظهر الترجمة أمتأخرًا؛ والسالبة تُظهرها أبكر. 1000 مللي ثانية تساوي ثانية.</string>
     <string name="uisetting_kite_sub_delay_title">تأخير الترجمة (مللي ثانية)</string>
@@ -692,6 +692,15 @@
     <string name="uisetting_vlc_custom_flags_title">خيارات VLC مخصصة</string>
     <string name="stepper_previous">السابق</string>
     <string name="stepper_next">التالي</string>
+    <string name="home_settings_were_reset">تعذّرت قراءة الإعدادات فأُعيد ضبطها.</string>
+    <string name="settings_import_done">طُبّق %1$d إعدادًا، وتُخطّي %2$d.</string>
+    <string name="settings_import_refused">لم يُستورد: %1$s</string>
+    <string name="settings_export_done">حُفظت الإعدادات.</string>
+    <string name="settings_file_error">تعذّرت قراءة الملف أو كتابته.</string>
+    <string name="room_gif_untitled">صورة GIF</string>
+    <string name="room_subs_all_languages">كل اللغات</string>
+    <string name="room_subs_media_changed">تغيّر الملف أثناء تنزيل الترجمة. ابحث من جديد.</string>
+    <string name="home_engine_unavailable_flavor">هذه النسخة لا تحتوي على هذا المحرك. النسخة الكاملة تحتويه.</string>
     <string-array name="tips">
         <item>لكي تعمل قوائم التشغيل المشتركة، يحتاج %1$s لمعرفة مكان تخزين ملفات الوسائط. أضف مجلدات الوسائط في 'الإعدادات > عام > مجلدات الوسائط لقائمة التشغيل المشتركة'.</item>
         <item>تريد استخدام مشغل الفيديو بمفردك؟ اختر مشغلاً، اضغط على شعار %1$s في الأعلى، ثم اختر 'الوضع غير المتصل'.</item>

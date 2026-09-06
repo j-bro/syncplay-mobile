@@ -2,7 +2,7 @@
 
 Kotlin Multiplatform (KMP) port of [Syncplay](https://syncplay.pl), a synchronized media-playback app for Android, iOS and desktop (Windows/macOS/Linux). The reference Python/Twisted desktop client lives in `syncplay-pc-src-master/` and the mobile code is a deliberate port of its protocol and sync algorithm. This document maps the code **as it stands at version 0.24.0** (2026-09-03). The defect ledger lives in `MASTER_LEDGER.md` (repo root, gitignored, local only): read it before changing anything.
 
-**App name:** Synkplay | **Version:** 0.24.0 (untagged; last tag v0.23.0) | **Min SDK (Android):** 26 | **iOS deployment:** 14.0
+**App name:** Synkplay | **Version:** 0.24.0 (untagged; last tag v0.23.0) | **Min SDK (Android):** 26 | **iOS deployment:** 14.1
 
 | | |
 |---|---|
@@ -102,7 +102,7 @@ reads those.
 
 **detekt and kover.** `config/detekt/detekt.yml` is almost entirely off; what is on maps to
 defects this repo had. `koverVerify` enforces a line-coverage floor over `app.protocol` and
-`app.server` only, currently 24 percent; it is a ratchet, raise it, never lower it.
+`app.server` only, currently 24 percent (`COVERAGE_FLOOR` in the root build file); it is a ratchet, raise it, never lower it.
 
 **buildSrc holds all non-trivial build logic; the four `build.gradle.kts` files stay declarative.**
 - `AppConfig.kt` - build helpers that are NOT app identity (identity now lives only in the root `kiteConfig { }` block): `SHARED_MODULE_NAME`, `localProperties(rootDir)` (signing secrets - caller must pass `rootDir` explicitly), the `exoOnly` flag + `resolveExoOnly(providers)`, Trinity brand colors (`0xFF9879EF` ultraviolet / `0xFFC331D8` orchid / `0xFFD86B75` coral, the three dominant stops of `art/synkplay_logo_palette.md`), `abiCodes`, `mpvLibs` (9 `.so` files), and the custom propagators `propagateTrinityColors()` (rewrites `ic_launcher_foreground.xml` gradient stops) + `propagateDefaultStrings()` (`values-en/strings.xml` → `values/strings.xml`); `propagateAllCustom()` runs them.
@@ -129,7 +129,7 @@ live; the workflow fails if the version being built has no section in it.
 
 **Android-only native gotchas.** `restoreMpvLibcxx` copies the NDK r29 `libc++_shared.so` into `src/main/libs/<abi>/`; `verifyMpvLibcxx` greps for the `from_chars_floating` symbol and fails the build if missing (an older libc++ lacks `__from_chars_floating_point`, crashing mpv at load). `exoOnly` runs `pruneStaleExoOnlyLibcxx` so the exo-only APK ships no libc++ at all, matching a clean checkout.
 
-**Reproducible-build constraints (IzzyOnDroid, issue #105).** Do NOT re-add foojay-resolver or pin a JVM toolchain vendor; JDK 21 is requested vendor-neutrally. KitePlayer (0.0.22) now resolves from Maven Central; the two content-filtered `mavenLocal()` blocks in `settings.gradle.kts` remain only as a local-override escape hatch for `io.github.yuroyami` artifacts and could shadow Central for that group, so treat them as removal candidates. `jitpack.io` is for the NewPipe Extractor (unfiltered today).
+**Reproducible-build constraints (IzzyOnDroid, issue #105).** Do NOT re-add foojay-resolver or pin a JVM toolchain vendor; JDK 21 is requested vendor-neutrally. KitePlayer (0.0.23) now resolves from Maven Central; the two content-filtered `mavenLocal()` blocks in `settings.gradle.kts` remain only as a local-override escape hatch for `io.github.yuroyami` artifacts and could shadow Central for that group, so treat them as removal candidates. `jitpack.io` is for the NewPipe Extractor (unfiltered today).
 
 ---
 
@@ -412,7 +412,7 @@ startup regression (`RoomStartupTest`) renders the real room and leaves before a
 
 ### Player (`commonMain/app/player/`)
 
-`PlayerImpl.kt` (abstract engine base: lifecycle, playback, track/chapter analysis, `injectVideoURL`/`injectVideoFile`, `VideoPlayer()` composable, `startTrackingProgress`; `playerSupervisorJob` backs `playerScopeMain`/`IO`; `PLAYLIST_ADVANCE_MIN_DURATION_MS=10_000`, `PLAYLIST_ADVANCE_NEAR_END_MS=5_000`; `announcesFileLoadViaEvent`, `supportsScreenshot`, `trackerJobInterval` open hooks; iOS security-scoped file access held by the base), `PlayerManager` (`isPlayerReady`, `media`, `isNowPlaying`, `timeCurrentMillis`/`timeFullMillis`; `invalidate()` tears down on `GlobalScope` with `runCatching`), `PlayerEngine`, `Playback` (PAUSE/PLAY), `mpv/MpvSubfont.installMpvSubfontIfNeeded()` (copies bundled `subfont.ttf` into mpv's config dir on Android; mpv must run `config=yes`), `resolver/MediaResolver.kt` (`expect val mediaResolver`; `ResolvedMedia`, `urlLooksLikeDirectMedia`, `extractYoutubeId`), `Volume.kt` (`VolumeLadder`: 0-100 is the device stream where the platform can set it, else the engine's own output; above 100 is engine gain - VLCKit/mpv to 200 natively, Exo to 200 via `LoudnessEnhancer`, KitePlayer/AVPlayer none). Models in `player/models/`: `MediaFile` (duration in seconds, size a String of bytes), `MediaFileLocation` (`Local`/`Remote` + `commonUri`), `Track`, `TrackChoices` (Exo `Any?` override / mpv `Int` / VLCKit `String` id - standing TODO to make a sealed class), `PlayerOptions` (Exo buffers; `get()` multiplies `EXO_MAX/MIN_BUFFER` by 1000), `Chapter`.
+`PlayerImpl.kt` (abstract engine base: lifecycle, playback, track/chapter analysis, `injectVideoURL`/`injectVideoFile`, `VideoPlayer()` composable, `startTrackingProgress`; `playerSupervisorJob` backs `playerScopeMain`/`IO`; `PLAYLIST_ADVANCE_MIN_DURATION_MS=10_000`, `PLAYLIST_ADVANCE_NEAR_END_MS=5_000`; `announcesFileLoadViaEvent`, `supportsScreenshot`, `trackerJobInterval` open hooks; iOS security-scoped file access held by the base), `PlayerManager` (`isPlayerReady`, `media`, `isNowPlaying`, `timeCurrentMillis`/`timeFullMillis`; `invalidate()` tears down on `GlobalScope` with `runCatching`), `PlayerEngine`, `Playback` (PAUSE/PLAY), `mpv/MpvSubfont.installMpvSubfontIfNeeded()` (copies bundled `subfont.ttf` into mpv's config dir on Android; mpv must run `config=yes`), `resolver/MediaResolver.kt` (`expect val mediaResolver`; `ResolvedMedia`, `urlLooksLikeDirectMedia`, `extractYoutubeId`), `Volume.kt` (`VolumeLadder`: 0-100 is the device stream where the platform can set it, else the engine's own output; above 100 is engine gain - VLCKit/mpv to 200 natively, Exo to 200 via `LoudnessEnhancer`, KitePlayer/AVPlayer none). Models in `player/models/`: `MediaFile` (duration in seconds, size a String of bytes), `MediaFileLocation` (`Local`/`Remote` + `commonUri`), `Track`, `TrackChoices` (a `TrackChoice` sealed interface: `Off`, or `ByOverride` carrying the engine's own id, an Exo override / an mpv `Int` / a VLCKit `String`), `PlayerOptions` (Exo buffers; `get()` multiplies `EXO_MAX/MIN_BUFFER` by 1000), `Chapter`.
 
 ### Preferences (`commonMain/app/preferences/`)
 
@@ -485,11 +485,11 @@ sampling a capture that contains itself recurses until the render thread dies.
 
 | Expect | Android actual | iOS actual |
 |---|---|---|
-| `instantiateNetworkManager()` | `NettyNetworkManager` (pref `netty`) else `KtorNetworkManager` | `SwiftNioNetworkManager` (pref `swiftnio`) else `KtorNetworkManager` |
+| `instantiateNetworkManager()` | `NettyNetworkManager` (pref `netty`) else `KtorNetworkManager`; the Netty class lives in `jvmShared` and serves desktop too | `SwiftNioNetworkManager` (pref `swiftnio`) else `KtorNetworkManager` |
 | `ServerNetworkEngine` | Netty `ServerBootstrap` | Ktor raw sockets (IPv4 `0.0.0.0`) |
 | `availablePlatformPlayerEngines` | `[ExoEngine, MpvEngine, KiteEngine]` | `[AVPlayerEngine, VlcKitEngine, KiteEngine]` |
 | `httpClient` | OkHttp lazy singleton (15/10/15 s; UA `SynkplayMobile/<ver>`; logging filtered to `api.*`) | Darwin lazy singleton (same timeouts; NSURLCache 32 MB/256 MB; logging filtered to `api.*`) |
-| `mediaResolver` | `NewPipeMediaResolver` (YouTube/SoundCloud/PeerTube/Bandcamp/MediaCCC) | `YouTubeKitMediaResolver` (YouTube only; no-op if bridge unregistered) |
+| `mediaResolver` | `NewPipeMediaResolver` (YouTube/SoundCloud/PeerTube/Bandcamp/MediaCCC), in `jvmShared` and shared with desktop | `YouTubeKitMediaResolver` (YouTube only; no-op if bridge unregistered) |
 | `indexMediaTree()` | SAF tree (DocumentFile) / `java.io.File`; child document-URI bytes | NSFileManager walk holding the dir scope; per-file security-scoped bookmarks |
 | `WeakRef<T>` | `java.lang.ref.WeakReference` | `WeakReference` |
 | `EnterRoomMode`/`ExitRoomMode` | hide bars + lock orientation | UIKit orientation mask + `setNeedsUpdateOfSupportedInterfaceOrientations` |
@@ -556,7 +556,7 @@ only one on all three platforms, so it is where an unfamiliar reader gets stuck.
 
 **No bundled natives.** Desktop used to download a native player per build OS into `desktopApp/resources/<os>-<arch>/` and package it into the app image (277 MB on macOS). That is gone: the only engine is KitePlayer and its decoder rides inside the KiteFFmpeg jar, so there is nothing to fetch and no `appResourcesRootDir` to point at.
 
-**Desktop actuals in brief:** Netty client + server engines are near-verbatim copies of the Android ones (JDK TLS, no Conscrypt; `NETWORK_ENGINE` defaults to `netty`); NewPipe resolver copied as-is (pure JVM); file ops/`indexMediaTree` are plain `java.io.File`; `AnimatedImage` decodes GIFs with Skia `Codec` (coil-gif is Android-only) behind a 64-entry LRU; DataStore + logs live in the per-OS app-data dir (`~/Library/Application Support/Synkplay`, `%APPDATA%\Synkplay`, `$XDG_DATA_HOME/synkplay`); `EnterRoomMode`/`ExitRoomMode` are no-ops; PiP/haptics/brightness/media-session are no-ops. CLI join: `--user U --room R [--host H] [--port P] [--pw W] [--media URL] [--autoplay]` (the desktop `consumePendingShortcut`).
+**Desktop actuals in brief:** the Netty client and the NewPipe resolver are not copies any more, they are the same files: both live in `shared/src/jvmShared/kotlin` and Android and desktop share them (JDK TLS on desktop, Conscrypt on Android; `NETWORK_ENGINE` defaults to `netty`). The Netty *server* engine is still its own desktop file; file ops/`indexMediaTree` are plain `java.io.File`; `AnimatedImage` decodes GIFs with Skia `Codec` (coil-gif is Android-only) behind a 64-entry LRU; DataStore + logs live in the per-OS app-data dir (`~/Library/Application Support/Synkplay`, `%APPDATA%\Synkplay`, `$XDG_DATA_HOME/synkplay`); `EnterRoomMode`/`ExitRoomMode` are no-ops; PiP/haptics/brightness/media-session are no-ops. CLI join: `--user U --room R [--host H] [--port P] [--pw W] [--media URL] [--autoplay]` (the desktop `consumePendingShortcut`).
 
 **Desktop engine:** KitePlayer only, via `desktopKiteEngine` (`desktopMain app/player/kite/KiteDesktopEngine.kt`), which is also the platform default because exactly one engine per platform must say `isDefault`. Presentation is pinned to the Compose canvas (`forcesComposeCanvas = true`): KitePlayer's JVM native view is real since 0.0.21, but on macOS it takes every click meant for the HUD drawn over it. Frames come through KiteFFmpeg's CPU converter as one Skia raster each, and media loading stays suspended until the renderer reports itself attached so decoder selection cannot race video output. There is no `--engine` CLI flag any more.
 
@@ -611,7 +611,7 @@ and room-wide playback behavior.
 
 **Missing vs desktop:** file-switch manager (auto-find matching files across users), persistent rooms / SQLite on the mobile server (ephemeral only), server statistics, IPv6 server (IPv4 only), a console UI (the desktop build does take CLI join arguments), desktop players (MPC-HC/BE, MPlayer, IINA).
 
-**Code-level TODOs:** `TrackChoices` → sealed class; `PlayerManager.timeCurrentMillis/timeFullMillis` → `media.fileTimePos`/`fileDuration`; check operator status before opening the identify popup. Phones are landscape-locked in the room (`EnterRoomMode(false)`); the tall arrangement exists but only windows taller than wide reach it (issue #93 in effect). An empty orphan `shared/src/mobileMain/` tree exists, and `shared/src/desktopTest/` holds the design harness plus the ignored subtitle E2E. The full open-defect list is `MASTER_LEDGER.md`.
+**Code-level TODOs:** `PlayerManager.timeCurrentMillis/timeFullMillis` → `media.fileTimePos`/`fileDuration`; check operator status before opening the identify popup. The room follows the device when `ROOM_ALLOW_PORTRAIT` is on and stays landscape when it is off (`EnterRoomMode(portrait)`); the tall arrangement is chosen from the window, so only a window taller than wide reaches it. An empty orphan `shared/src/mobileMain/` tree exists, and `shared/src/desktopTest/` holds the design harness plus the ignored subtitle E2E. The full open-defect list is `MASTER_LEDGER.md`.
 
 **Platform limitations:**
 - **iOS server hosting** may not run reliably in the background (no foreground services); the mobile server always answers `TLS: false` (no server-side cert support).

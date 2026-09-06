@@ -173,9 +173,17 @@ fun SubtitleSearchModal(open: Boolean, onDismiss: () -> Unit) {
                 onClick = {
                     error = null
                     downloading = result.fileId
+                    // What this subtitle was searched for. A download takes seconds, and the room
+                    // can move to the next file inside them.
+                    val forMedia = viewmodel.media?.location?.commonUri
                     scope.launch(Dispatchers.IO) {
                         when (val outcome = SubtitleSearch.download(result.fileId)) {
                             is SubtitleDownloadResult.Success -> {
+                                if (viewmodel.media?.location?.commonUri != forMedia) {
+                                    downloading = null
+                                    error = Localization.strings.roomSubsMediaChanged
+                                    return@launch
+                                }
                                 val injected = viewmodel.player.loadSubtitleFromPath(outcome.path, outcome.fileName)
                                 downloading = null
                                 if (injected) {

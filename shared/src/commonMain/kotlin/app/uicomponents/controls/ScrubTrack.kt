@@ -32,6 +32,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.setProgress
 import androidx.compose.ui.semantics.stateDescription
@@ -97,9 +98,15 @@ fun ScrubTrack(
             .semantics {
                 stateDescription = describe(value)
                 if (name != null) contentDescription = name
-                setProgress { target ->
-                    val v = target.coerceIn(0f, 1f)
-                    latestChange(v); latestFinished?.invoke(); true
+                // A disabled control says so and refuses the action. Publishing setProgress
+                // anyway let a screen reader or a remote move a track the eye can see is off.
+                if (!enabled) {
+                    disabled()
+                } else {
+                    setProgress { target ->
+                        val v = target.coerceIn(0f, 1f)
+                        latestChange(v); latestFinished?.invoke(); true
+                    }
                 }
             }
             .focusable(enabled, source)

@@ -1,5 +1,6 @@
 package app.player.vlc
 
+import app.player.Playback
 import cocoapods.VLCKit.VLCDrawableProtocol
 import cocoapods.VLCKit.VLCPictureInPictureDrawableProtocol
 import cocoapods.VLCKit.VLCPictureInPictureMediaControllingProtocol
@@ -110,24 +111,29 @@ internal class VlcDrawable(
     // ────────────────────────────────────────────────────────────────────────
     // VLCPictureInPictureMediaControlling
     //
-    // VLCKit invokes these from the system's PiP overlay (its play/pause/seek buttons). We
-    // route playback commands through VlcKitImpl's main-thread-suspending wrappers — they
-    // already serialize against our own UI-driven calls and update [PlayerManager] state.
+    // VLCKit invokes these from the system's PiP overlay (its play/pause/seek buttons). They go
+    // through the room dispatcher, not straight to the engine: a PiP window is still a person in
+    // a room, so a play has to pass the readiness gate and a seek has to be announced. Driving
+    // the engine directly moved this viewer alone and told nobody.
     // ────────────────────────────────────────────────────────────────────────
 
     override fun play() {
-        impl.playerScopeMain.launch(Dispatchers.Main.immediate) { impl.play() }
+        impl.playerScopeMain.launch(Dispatchers.Main.immediate) {
+            impl.viewmodel.dispatcher.controlPlayback(Playback.PLAY, tellServer = true)
+        }
     }
 
     override fun pause() {
-        impl.playerScopeMain.launch(Dispatchers.Main.immediate) { impl.pause() }
+        impl.playerScopeMain.launch(Dispatchers.Main.immediate) {
+            impl.viewmodel.dispatcher.controlPlayback(Playback.PAUSE, tellServer = true)
+        }
     }
 
     override fun seekBy(offset: Long, completion: (() -> Unit)?) {
-        // Match the official VLCKit PiP example: forward the offset (in ms) to libvlc's native
-        // jumpWithOffset, which handles its own seek + completion-on-main-thread dispatch.
-        // Both `completion` parameters are nullable, so we can pass it through unchanged.
-        impl.vlcPlayer?.jumpWithOffset(offset.toInt(), completion = completion)
+        impl.playerScopeMain.launch(Dispatchers.Main.immediate) {
+            impl.viewmodel.dispatcher.seekBy((offset / 1000L).toInt())
+            completion?.invoke()
+        }
     }
 
     override fun mediaLength(): Long =

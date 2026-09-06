@@ -27,7 +27,7 @@
     <string name="home_ip_address">Dirección IP</string>
     <string name="home_port">Puerto</string>
     <string name="home_password_if_any">Contraseña (si hay)</string>
-    <string name="home_engine_unavailable_error">Este motor no está disponible. ¿Descargaste el APK correcto?</string>
+    <string name="home_engine_unavailable_error">Este motor no está disponible aquí.</string>
 
     <!-- String templates (with placeholders... that's why I named them dynamic) -->
     <string name="room_selected_vid">Archivo de video seleccionado: %1$s</string>
@@ -653,11 +653,11 @@
     <string name="uisetting_kite_eq_hue_title">Tono del vídeo (grados)</string>
     <string name="uisetting_kite_eq_saturation_summary">De 0 a 200 por ciento, 0 es blanco y negro.</string>
     <string name="uisetting_kite_eq_saturation_title">Saturación del vídeo (%)</string>
-    <string name="uisetting_kite_hw_summary">Usa el decodificador por hardware cuando puede.</string>
+    <string name="uisetting_kite_hw_summary">Usa el decodificador por hardware cuando puede. Se aplica la próxima vez que entres en una sala.</string>
     <string name="uisetting_kite_hw_title">Aceleración por hardware</string>
     <string name="uisetting_kite_preserve_pitch_summary">Las voces mantienen su tono a otras velocidades.</string>
     <string name="uisetting_kite_preserve_pitch_title">Mantener el tono al cambiar la velocidad</string>
-    <string name="uisetting_kite_sub_autoselect_summary">Muestra la pista de subtítulos predeterminada al abrir.</string>
+    <string name="uisetting_kite_sub_autoselect_summary">Muestra la pista de subtítulos predeterminada al abrir. Se aplica la próxima vez que entres en una sala.</string>
     <string name="uisetting_kite_sub_autoselect_title">Elegir subtítulos automáticamente</string>
     <string name="uisetting_kite_sub_delay_summary">Desplaza el tiempo de los subtítulos en milisegundos. Los valores positivos los muestran después; los negativos, antes. 1000 ms es un segundo.</string>
     <string name="uisetting_kite_sub_delay_title">Retardo de subtítulos (ms)</string>
@@ -692,6 +692,15 @@
     <string name="uisetting_vlc_custom_flags_title">Opciones de VLC personalizadas</string>
     <string name="stepper_previous">Anterior</string>
     <string name="stepper_next">Siguiente</string>
+    <string name="home_settings_were_reset">No se pudieron leer los ajustes y se han restablecido.</string>
+    <string name="settings_import_done">%1$d ajustes aplicados, %2$d omitidos.</string>
+    <string name="settings_import_refused">No importado: %1$s</string>
+    <string name="settings_export_done">Ajustes guardados.</string>
+    <string name="settings_file_error">No se pudo leer ni escribir el archivo.</string>
+    <string name="room_gif_untitled">GIF</string>
+    <string name="room_subs_all_languages">Todos los idiomas</string>
+    <string name="room_subs_media_changed">El archivo cambió mientras se descargaba el subtítulo. Busca de nuevo.</string>
+    <string name="home_engine_unavailable_flavor">Esta versión no incluye ese motor. La APK completa sí.</string>
     <string-array name="tips">
         <item>Para que las listas de reproducción compartidas funcionen, %1$s necesita saber dónde se almacenan tus archivos multimedia. Añade tus carpetas de medios en 'Configuración > General > Directorios de medios para lista de reproducción compartida'.</item>
         <item>¿Quieres usar el reproductor de video solo? Selecciona un reproductor, toca el logo de %1$s arriba, luego elige 'Modo sin conexión'.</item>

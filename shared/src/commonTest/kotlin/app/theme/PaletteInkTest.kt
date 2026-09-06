@@ -27,6 +27,7 @@ class PaletteInkTest {
         accent = violet,
         brandField = listOf(violet, Color(0xFFC331D8), Color(0xFFD86B75)),
         ok = Palette.Ok,
+        okText = Palette.Ok,
         warn = Color(0xFFD86B75),
         bad = Palette.Bad,
         disabled = Color.White.copy(alpha = 0.38f),

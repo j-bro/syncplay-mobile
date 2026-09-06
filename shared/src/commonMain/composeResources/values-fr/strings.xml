@@ -35,7 +35,7 @@
     <string name="home_port">Port</string>
     <string name="home_password_if_any">Mot de passe (si existant)</string>
 
-    <string name="home_engine_unavailable_error">Ce moteur est indisponible. Avez-vous téléchargé le bon APK ?</string>
+    <string name="home_engine_unavailable_error">Ce moteur n'est pas disponible ici.</string>
 
     <!-- Dynamic Strings -->
     <string name="room_selected_vid">Fichier vidéo sélectionné : %1$s</string>
@@ -668,11 +668,11 @@
     <string name="uisetting_kite_eq_hue_title">Teinte de la vidéo (degrés)</string>
     <string name="uisetting_kite_eq_saturation_summary">De 0 à 200 pour cent, 0 donne du noir et blanc.</string>
     <string name="uisetting_kite_eq_saturation_title">Saturation de la vidéo (%)</string>
-    <string name="uisetting_kite_hw_summary">Utilise le décodeur matériel quand c'est possible.</string>
+    <string name="uisetting_kite_hw_summary">Utilise le décodeur matériel quand c'est possible. S'applique à la prochaine entrée dans une salle.</string>
     <string name="uisetting_kite_hw_title">Accélération matérielle</string>
     <string name="uisetting_kite_preserve_pitch_summary">Les voix gardent leur hauteur aux autres vitesses.</string>
     <string name="uisetting_kite_preserve_pitch_title">Garder la hauteur à vitesse modifiée</string>
-    <string name="uisetting_kite_sub_autoselect_summary">Affiche la piste de sous-titres par défaut à l'ouverture.</string>
+    <string name="uisetting_kite_sub_autoselect_summary">Affiche la piste de sous-titres par défaut à l'ouverture. S'applique à la prochaine entrée dans une salle.</string>
     <string name="uisetting_kite_sub_autoselect_title">Sélection automatique des sous-titres</string>
     <string name="uisetting_kite_sub_delay_summary">Décale le timing des sous-titres en millisecondes. Les valeurs positives les affichent plus tard, négatives plus tôt. 1000 ms font une seconde.</string>
     <string name="uisetting_kite_sub_delay_title">Décalage des sous-titres (ms)</string>
@@ -707,6 +707,15 @@
     <string name="uisetting_vlc_custom_flags_title">Options VLC personnalisées</string>
     <string name="stepper_previous">Précédent</string>
     <string name="stepper_next">Suivant</string>
+    <string name="home_settings_were_reset">Les réglages n'ont pas pu être lus et ont été réinitialisés.</string>
+    <string name="settings_import_done">%1$d réglages appliqués, %2$d ignorés.</string>
+    <string name="settings_import_refused">Non importé : %1$s</string>
+    <string name="settings_export_done">Réglages enregistrés.</string>
+    <string name="settings_file_error">Le fichier n'a pas pu être lu ou écrit.</string>
+    <string name="room_gif_untitled">GIF</string>
+    <string name="room_subs_all_languages">Toutes les langues</string>
+    <string name="room_subs_media_changed">Le fichier a changé pendant le téléchargement du sous-titre. Relancez la recherche.</string>
+    <string name="home_engine_unavailable_flavor">Cette version n'a pas ce moteur. L'APK complet l'a.</string>
     <string-array name="tips">
         <item>Pour que les playlists partagées fonctionnent, %1$s doit savoir où sont stockés vos fichiers multimédias. Ajoutez vos dossiers dans 'Paramètres > Général > Répertoires multimédias pour la playlist partagée'.</item>
         <item>Vous voulez utiliser le lecteur vidéo seul ? Sélectionnez un lecteur, appuyez sur le logo %1$s, puis choisissez 'Mode hors ligne'.</item>

@@ -35,7 +35,7 @@
     <string name="home_port">Port</string>
     <string name="home_password_if_any">Hasło (jeśli dotyczy)</string>
 
-    <string name="home_engine_unavailable_error">Ten silnik jest niedostępny. Czy pobrałeś właściwy plik APK?</string>
+    <string name="home_engine_unavailable_error">Ten silnik nie jest tu dostępny.</string>
 
     <!-- String templates (with placeholders... that's why I named them dynamic) -->
     <string name="room_selected_vid">Wybrany plik wideo: %1$s</string>
@@ -664,11 +664,11 @@
     <string name="uisetting_kite_eq_hue_title">Odcień wideo (stopnie)</string>
     <string name="uisetting_kite_eq_saturation_summary">Od 0 do 200 procent, 0 to czerń i biel.</string>
     <string name="uisetting_kite_eq_saturation_title">Nasycenie wideo (%)</string>
-    <string name="uisetting_kite_hw_summary">Używa dekodera sprzętowego, gdy się da.</string>
+    <string name="uisetting_kite_hw_summary">Używa dekodera sprzętowego, gdy się da. Działa przy następnym wejściu do pokoju.</string>
     <string name="uisetting_kite_hw_title">Akceleracja sprzętowa</string>
     <string name="uisetting_kite_preserve_pitch_summary">Głosy zachowują wysokość przy innych prędkościach.</string>
     <string name="uisetting_kite_preserve_pitch_title">Zachowaj wysokość przy zmianie prędkości</string>
-    <string name="uisetting_kite_sub_autoselect_summary">Pokazuje domyślną ścieżkę napisów po otwarciu.</string>
+    <string name="uisetting_kite_sub_autoselect_summary">Pokazuje domyślną ścieżkę napisów po otwarciu. Działa przy następnym wejściu do pokoju.</string>
     <string name="uisetting_kite_sub_autoselect_title">Automatyczny wybór napisów</string>
     <string name="uisetting_kite_sub_delay_summary">Przesuwa czas napisów w milisekundach. Wartości dodatnie pokazują je później, ujemne wcześniej. 1000 ms to jedna sekunda.</string>
     <string name="uisetting_kite_sub_delay_title">Opóźnienie napisów (ms)</string>
@@ -703,6 +703,15 @@
     <string name="uisetting_vlc_custom_flags_title">Własne flagi VLC</string>
     <string name="stepper_previous">Poprzedni</string>
     <string name="stepper_next">Następny</string>
+    <string name="home_settings_were_reset">Nie udało się odczytać ustawień, zostały zresetowane.</string>
+    <string name="settings_import_done">Zastosowano %1$d ustawień, pominięto %2$d.</string>
+    <string name="settings_import_refused">Nie zaimportowano: %1$s</string>
+    <string name="settings_export_done">Ustawienia zapisane.</string>
+    <string name="settings_file_error">Nie udało się odczytać ani zapisać pliku.</string>
+    <string name="room_gif_untitled">GIF</string>
+    <string name="room_subs_all_languages">Wszystkie języki</string>
+    <string name="room_subs_media_changed">Plik zmienił się w trakcie pobierania napisów. Poszukaj ponownie.</string>
+    <string name="home_engine_unavailable_flavor">Ta wersja nie ma tego silnika. Pełny APK go ma.</string>
     <string-array name="tips">
         <item>Aby wspólne listy odtwarzania działały, %1$s musi wiedzieć, gdzie przechowywane są twoje pliki multimedialne. Dodaj swoje foldery z mediami w 'Ustawienia > Ogólne > Katalogi mediów dla wspólnej listy odtwarzania'.</item>
         <item>Chcesz używać odtwarzacza wideo solo? Wybierz odtwarzacz, stuknij w logo %1$s powyżej, a następnie wybierz 'Tryb offline'.</item>

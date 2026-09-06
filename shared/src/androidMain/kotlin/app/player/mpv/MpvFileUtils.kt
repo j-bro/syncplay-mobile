@@ -79,10 +79,14 @@ object MpvFileUtils {
             return path
         }
 
-        // No real path — detach and pass fd ownership to mpv
-        // mpv WILL close this fd when it's done with it (it takes ownership of fd:// fds)
+        /* No real path: detach and hand the descriptor to mpv.
+         *
+         * fdclose://, not fd://. The comment here used to claim mpv takes ownership of an fd://
+         * descriptor, and it does not: stream_file.c borrows one and closes only the fdclose://
+         * form. Every SAF file opened this way leaked a descriptor, and a process has a limited
+         * number of them. */
         val fd = desc.detachFd()
-        return "fd://${fd}"
+        return "fdclose://${fd}"
     }
 
     private fun findRealPath(fd: Int): String? {

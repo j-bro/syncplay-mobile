@@ -27,7 +27,7 @@
     <string name="home_ip_address">IP-адрес</string>
     <string name="home_port">Порт</string>
     <string name="home_password_if_any">Пароль (если есть)</string>
-    <string name="home_engine_unavailable_error">Этот движок недоступен. Вы скачали правильный APK?</string>
+    <string name="home_engine_unavailable_error">Этот движок здесь недоступен.</string>
 
     <!-- String templates (with placeholders... that's why I named them dynamic) -->
     <string name="room_selected_vid">Выбран видео файл: %1$s</string>
@@ -653,11 +653,11 @@
     <string name="uisetting_kite_eq_hue_title">Оттенок видео (градусы)</string>
     <string name="uisetting_kite_eq_saturation_summary">От 0 до 200 процентов, 0 это чёрно-белое.</string>
     <string name="uisetting_kite_eq_saturation_title">Насыщенность видео (%)</string>
-    <string name="uisetting_kite_hw_summary">Использует аппаратный декодер, когда может.</string>
+    <string name="uisetting_kite_hw_summary">Использует аппаратный декодер, когда может. Применится при следующем входе в комнату.</string>
     <string name="uisetting_kite_hw_title">Аппаратное ускорение</string>
     <string name="uisetting_kite_preserve_pitch_summary">Голоса сохраняют высоту на другой скорости.</string>
     <string name="uisetting_kite_preserve_pitch_title">Сохранять высоту при смене скорости</string>
-    <string name="uisetting_kite_sub_autoselect_summary">Показывает дорожку субтитров по умолчанию при открытии.</string>
+    <string name="uisetting_kite_sub_autoselect_summary">Показывает дорожку субтитров по умолчанию при открытии. Применится при следующем входе в комнату.</string>
     <string name="uisetting_kite_sub_autoselect_title">Автовыбор субтитров</string>
     <string name="uisetting_kite_sub_delay_summary">Сдвигает время субтитров в миллисекундах. Положительные значения показывают их позже, отрицательные раньше. 1000 мс это секунда.</string>
     <string name="uisetting_kite_sub_delay_title">Задержка субтитров (мс)</string>
@@ -692,6 +692,15 @@
     <string name="uisetting_vlc_custom_flags_title">Свои флаги VLC</string>
     <string name="stepper_previous">Назад</string>
     <string name="stepper_next">Вперёд</string>
+    <string name="home_settings_were_reset">Не удалось прочитать настройки, они сброшены.</string>
+    <string name="settings_import_done">Применено настроек: %1$d, пропущено: %2$d.</string>
+    <string name="settings_import_refused">Не импортировано: %1$s</string>
+    <string name="settings_export_done">Настройки сохранены.</string>
+    <string name="settings_file_error">Не удалось прочитать или записать файл.</string>
+    <string name="room_gif_untitled">GIF</string>
+    <string name="room_subs_all_languages">Все языки</string>
+    <string name="room_subs_media_changed">Файл сменился, пока скачивались субтитры. Поищите заново.</string>
+    <string name="home_engine_unavailable_flavor">В этой сборке этого движка нет. В полном APK он есть.</string>
     <string-array name="tips">
         <item>Для работы общих списков воспроизведения %1$s необходимо знать, где хранятся ваши медиафайлы. Добавьте свои медиапапки в 'Настройки > Общие > Папки с медиа для общего списка воспроизведения'.</item>
         <item>Хотите использовать видеоплеер отдельно? Выберите плеер, нажмите на логотип %1$s выше, затем выберите 'Автономный режим'.</item>

@@ -19,7 +19,8 @@ internal fun UpdateCheckAction(
     when (result) {
         UpdateCheck.Result.UpToDate -> ActionStatus(
             text = strings.aboutUpdateCurrent,
-            color = palette.ok,
+            // Text on the theme's own surface, so the readable green, not the badge one.
+            color = palette.okText,
             modifier = Modifier.fillMaxWidth(),
         )
         is UpdateCheck.Result.Newer -> AccentAction(

@@ -35,7 +35,7 @@
     <string name="home_port">Port</string>
     <string name="home_password_if_any">Passwort (falls vorhanden)</string>
 
-    <string name="home_engine_unavailable_error">Diese Engine ist nicht verfügbar. Haben Sie das richtige APK heruntergeladen?</string>
+    <string name="home_engine_unavailable_error">Diese Engine gibt es hier nicht.</string>
 
     <!-- String templates (with placeholders... that's why I named them dynamic) -->
     <string name="room_selected_vid">Ausgewählte Videodatei: %1$s</string>
@@ -651,11 +651,11 @@
     <string name="uisetting_kite_eq_hue_title">Videofarbton (Grad)</string>
     <string name="uisetting_kite_eq_saturation_summary">0 bis 200 Prozent, 0 ist Schwarzweiß.</string>
     <string name="uisetting_kite_eq_saturation_title">Videosättigung (%)</string>
-    <string name="uisetting_kite_hw_summary">Nutzt den Hardware-Decoder, wenn möglich.</string>
+    <string name="uisetting_kite_hw_summary">Nutzt den Hardware-Decoder, wenn möglich. Gilt beim nächsten Betreten eines Raums.</string>
     <string name="uisetting_kite_hw_title">Hardwarebeschleunigung</string>
     <string name="uisetting_kite_preserve_pitch_summary">Stimmen behalten bei anderen Geschwindigkeiten ihre Tonhöhe.</string>
     <string name="uisetting_kite_preserve_pitch_title">Tonhöhe bei Tempoänderung halten</string>
-    <string name="uisetting_kite_sub_autoselect_summary">Zeigt beim Öffnen die Standard-Untertitelspur.</string>
+    <string name="uisetting_kite_sub_autoselect_summary">Zeigt beim Öffnen die Standard-Untertitelspur. Gilt beim nächsten Betreten eines Raums.</string>
     <string name="uisetting_kite_sub_autoselect_title">Untertitel automatisch wählen</string>
     <string name="uisetting_kite_sub_delay_summary">Verschiebt das Timing der Untertitel in Millisekunden. Positive Werte zeigen sie später, negative früher. 1000 ms sind eine Sekunde.</string>
     <string name="uisetting_kite_sub_delay_title">Untertitelverzögerung (ms)</string>
@@ -690,6 +690,15 @@
     <string name="uisetting_vlc_custom_flags_title">Eigene VLC-Flags</string>
     <string name="stepper_previous">Zurück</string>
     <string name="stepper_next">Weiter</string>
+    <string name="home_settings_were_reset">Die Einstellungen konnten nicht gelesen werden und wurden zurückgesetzt.</string>
+    <string name="settings_import_done">%1$d Einstellungen übernommen, %2$d übersprungen.</string>
+    <string name="settings_import_refused">Nicht importiert: %1$s</string>
+    <string name="settings_export_done">Einstellungen gespeichert.</string>
+    <string name="settings_file_error">Die Datei konnte nicht gelesen oder geschrieben werden.</string>
+    <string name="room_gif_untitled">GIF</string>
+    <string name="room_subs_all_languages">Alle Sprachen</string>
+    <string name="room_subs_media_changed">Die Datei hat sich während des Downloads geändert. Bitte neu suchen.</string>
+    <string name="home_engine_unavailable_flavor">Dieser Build hat diese Engine nicht. Das volle APK hat sie.</string>
     <string-array name="tips">
         <item>Damit gemeinsame Playlists funktionieren, muss %1$s wissen, wo Ihre Mediendateien gespeichert sind. Fügen Sie Ihre Medienordner unter 'Einstellungen > Allgemein > Medienverzeichnisse für gemeinsame Playlist' hinzu.</item>
         <item>Möchten Sie den Video-Player solo verwenden? Wählen Sie einen Player, tippen Sie auf das %1$s-Logo oben und wählen Sie dann 'Offline-Modus'.</item>

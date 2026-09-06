@@ -87,6 +87,10 @@ class RoomUiStateManager(val viewmodel: RoomViewmodel) : AbstractManager(viewmod
         }
     }
 
+    /** Whether any of the seven side panels is showing. */
+    val anySidePanelOpen: Boolean
+        get() = sidePanels.any { it.value }
+
     /** Closes whatever side panel is open, for a control that needs the room's right side. */
     fun closeSidePanels() = sidePanels.forEach { it.value = false }
 
