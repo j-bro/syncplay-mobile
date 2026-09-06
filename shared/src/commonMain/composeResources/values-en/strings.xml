@@ -342,6 +342,7 @@
     <string name="uisetting_categ_chat_colors">Chat colors</string>
     <string name="uisetting_categ_player_settings">Player</string>
     <string name="uisetting_categ_chat_properties">Chat</string>
+    <string name="uisetting_categ_notices">Notices</string>
 
     <!-- UI Settings -->
     <string name="uisetting_timestamp_summary">Shows the time next to each message.</string>
@@ -548,7 +549,6 @@
     <string name="settings_group_connection">Connection</string>
     <string name="settings_group_links">Links</string>
     <string name="settings_group_messages">Messages</string>
-    <string name="settings_group_notices">Notices</string>
     <string name="settings_group_seeking">Seeking</string>
     <string name="settings_group_subtitles">Audio and subtitles</string>
     <string name="settings_group_chapters">Chapters</string>

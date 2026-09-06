@@ -2,6 +2,7 @@ package app.preferences.settings
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.ConnectWithoutContact
 import androidx.compose.material.icons.filled.Hub
 import androidx.compose.material.icons.filled.SettingsSuggest
@@ -93,7 +94,6 @@ import syncplaymobile.shared.generated.resources.settings_group_connection
 import syncplaymobile.shared.generated.resources.settings_group_links
 import syncplaymobile.shared.generated.resources.settings_group_logs
 import syncplaymobile.shared.generated.resources.settings_group_messages
-import syncplaymobile.shared.generated.resources.settings_group_notices
 import syncplaymobile.shared.generated.resources.settings_group_picture
 import syncplaymobile.shared.generated.resources.settings_group_privacy
 import syncplaymobile.shared.generated.resources.settings_group_readiness
@@ -101,6 +101,7 @@ import syncplaymobile.shared.generated.resources.settings_group_seeking
 import syncplaymobile.shared.generated.resources.settings_group_subtitles
 import syncplaymobile.shared.generated.resources.uisetting_categ_chat_properties
 import syncplaymobile.shared.generated.resources.uisetting_categ_haptics
+import syncplaymobile.shared.generated.resources.uisetting_categ_notices
 import syncplaymobile.shared.generated.resources.uisetting_categ_player_settings
 import syncplaymobile.shared.generated.resources.uisetting_categ_sync_mechanisms
 
@@ -204,15 +205,22 @@ val INROOM_CHAT_PROPERTIES = SettingCategory(
         +MSG_MAXCOUNT
         +GIF_REMEMBER_RECENTS
     }
-    /* The notice switches the room reads; they had no row anywhere until now. */
-    group(Res.string.settings_group_notices) {
-        +OSD_DURATION
-        +OSD_SAME_ROOM
-        +OSD_NON_OPERATOR
-        +OSD_OTHER_ROOM
-        +OSD_SLOWDOWN
-        +OSD_WARNINGS
-    }
+}
+
+/**
+ * What the room is allowed to draw over the video, and for how long. Chat is a log you read;
+ * these are interruptions, so they get their own category instead of a group under chat.
+ */
+val INROOM_NOTICES = SettingCategory(
+    title = Res.string.uisetting_categ_notices,
+    icon = Icons.Filled.Campaign,
+) {
+    +OSD_DURATION
+    +OSD_SAME_ROOM
+    +OSD_NON_OPERATOR
+    +OSD_OTHER_ROOM
+    +OSD_SLOWDOWN
+    +OSD_WARNINGS
 }
 
 val INROOM_PLAYER_SETTINGS = SettingCategory(
@@ -278,6 +286,7 @@ val SETTINGS_GLOBAL: List<SettingCategory> = listOf(GLOBAL_GENERAL, GLOBAL_LANGU
 val SETTINGS_ROOM: List<SettingCategory> = listOf(
     INROOM_SYNC,
     INROOM_CHAT_PROPERTIES,
+    INROOM_NOTICES,
     INROOM_PLAYER_SETTINGS,
     INROOM_HAPTICS,
     INROOM_ADVANCED,
