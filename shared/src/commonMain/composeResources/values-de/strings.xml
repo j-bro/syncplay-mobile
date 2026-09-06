@@ -450,6 +450,7 @@
     <string name="room_not_ready_set_by">%1$s wurde von %2$s auf nicht bereit gesetzt</string>
     <string name="room_pause">Pause</string>
     <string name="room_play">Abspielen</string>
+    <string name="room_buffering">Pufferung</string>
     <string name="room_playback_error">Wiedergabefehler: %1$s</string>
     <string name="room_rail_more">Mehr</string>
     <string name="room_ready_set_by">%1$s wurde von %2$s auf bereit gesetzt</string>

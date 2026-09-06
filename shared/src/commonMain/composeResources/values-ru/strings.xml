@@ -452,6 +452,7 @@
     <string name="room_not_ready_set_by">%1$s отмечен как не готовый пользователем %2$s</string>
     <string name="room_pause">Пауза</string>
     <string name="room_play">Воспроизвести</string>
+    <string name="room_buffering">Буферизация</string>
     <string name="room_playback_error">Ошибка воспроизведения: %1$s</string>
     <string name="room_rail_more">Ещё</string>
     <string name="room_ready_set_by">%1$s отмечен как готовый пользователем %2$s</string>

@@ -73,14 +73,15 @@ fun RoomTransportKeys(modifier: Modifier = Modifier) {
             JumpKey(Icons.Filled.FastRewind, strings.roomJumpBack(back), "$back s") {
                 viewmodel.dispatcher.seekBckwd()
             }
-            JumpKey(Icons.Filled.FastForward, strings.roomJumpForward(forward), "$forward s") {
-                viewmodel.dispatcher.seekFrwrd()
-            }
-            // The longer skip from the settings, beside the two jumps when the setting asks for it.
+            // The longer skip from the settings sits between the two jumps when the setting asks
+            // for it, so back stays at the start and forward at the end whatever is in between.
             if (customSkip) {
                 JumpKey(Icons.Filled.Update, strings.roomCustomSkipButton(timestampFromMillis(customAmount * 1000L)), "$customAmount s") {
                     viewmodel.customSkip()
                 }
+            }
+            JumpKey(Icons.Filled.FastForward, strings.roomJumpForward(forward), "$forward s") {
+                viewmodel.dispatcher.seekFrwrd()
             }
         }
     }

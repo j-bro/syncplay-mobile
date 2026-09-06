@@ -12,6 +12,7 @@ Written for people who use the app. The full engineering history is in the commi
 - Tracks marked as accessibility captions, audio description or forced now say so in the picker.
 - The end of a file moves the playlist on by one, not once per person watching.
 - A file that is still opening no longer drags the whole room back to the start.
+- Seeking with KitePlayer lands on the exact frame in one step, instead of showing two pictures a blink apart.
 
 ### Room and chat
 
@@ -24,6 +25,8 @@ Written for people who use the app. The full engineering history is in the commi
 - The locked screen tells you how to unlock it, instead of leaving you guessing.
 - The room shows whether your connection is encrypted.
 - Panels look right on a light theme, not bruised at the bottom and edgeless at the top.
+- Buffering no longer shoves the play button around. The button rounds into a circle and its colours move until the player catches up.
+- The custom skip button sits between the two jump buttons.
 
 ### Connection
 

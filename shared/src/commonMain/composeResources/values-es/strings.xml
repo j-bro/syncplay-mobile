@@ -452,6 +452,7 @@
     <string name="room_not_ready_set_by">%1$s ha sido marcado como no listo por %2$s</string>
     <string name="room_pause">Pausar</string>
     <string name="room_play">Reproducir</string>
+    <string name="room_buffering">Almacenando en búfer</string>
     <string name="room_playback_error">Error de reproducción: %1$s</string>
     <string name="room_rail_more">Más</string>
     <string name="room_ready_set_by">%1$s ha sido marcado como listo por %2$s</string>

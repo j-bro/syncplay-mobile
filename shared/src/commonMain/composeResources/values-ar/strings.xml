@@ -452,6 +452,7 @@
     <string name="room_not_ready_set_by">%1$s أصبح غير جاهز بقرار من %2$s</string>
     <string name="room_pause">إيقاف مؤقت</string>
     <string name="room_play">تشغيل</string>
+    <string name="room_buffering">جارٍ التخزين المؤقت</string>
     <string name="room_playback_error">خطأ في التشغيل: %1$s</string>
     <string name="room_rail_more">المزيد</string>
     <string name="room_ready_set_by">%1$s أصبح جاهزًا بقرار من %2$s</string>

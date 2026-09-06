@@ -463,6 +463,7 @@
     <string name="room_not_ready_set_by">%1$s został oznaczony jako niegotowy przez %2$s</string>
     <string name="room_pause">Pauza</string>
     <string name="room_play">Odtwórz</string>
+    <string name="room_buffering">Buforowanie</string>
     <string name="room_playback_error">Błąd odtwarzania: %1$s</string>
     <string name="room_rail_more">Więcej</string>
     <string name="room_ready_set_by">%1$s został oznaczony jako gotowy przez %2$s</string>

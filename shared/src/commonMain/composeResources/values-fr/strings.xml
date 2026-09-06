@@ -467,6 +467,7 @@
     <string name="room_not_ready_set_by">%1$s a été marqué comme pas prêt par %2$s</string>
     <string name="room_pause">Pause</string>
     <string name="room_play">Lecture</string>
+    <string name="room_buffering">Mise en mémoire tampon</string>
     <string name="room_playback_error">Erreur de lecture : %1$s</string>
     <string name="room_rail_more">Plus</string>
     <string name="room_ready_set_by">%1$s a été marqué comme prêt par %2$s</string>

@@ -440,6 +440,7 @@
     <string name="room_not_ready_set_by">%1$s 被 %2$s 标记为未就绪</string>
     <string name="room_pause">暂停</string>
     <string name="room_play">播放</string>
+    <string name="room_buffering">缓冲中</string>
     <string name="room_playback_error">播放出错：%1$s</string>
     <string name="room_rail_more">更多</string>
     <string name="room_ready_set_by">%1$s 被 %2$s 标记为已就绪</string>

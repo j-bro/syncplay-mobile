@@ -540,6 +540,7 @@
     <string name="settings_group_logs">Logs</string>
     <!-- Transport (design overhaul) -->
     <string name="room_play">Play</string>
+    <string name="room_buffering">Buffering</string>
     <string name="room_pause">Pause</string>
     <string name="room_seekbar_name">Position</string>
     <string name="room_jump_back">Back %1$d seconds</string>
