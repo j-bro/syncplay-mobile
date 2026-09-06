@@ -33,6 +33,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.i18n.strings
 import app.theme.Radius
 import app.theme.Space
 import app.theme.Type
@@ -112,12 +113,13 @@ fun Stepper(
 private fun StepperArrow(direction: ChevronDirection, enabled: Boolean, onClick: () -> Unit) {
     val p = palette
     val source = remember { MutableInteractionSource() }
+    val name = if (direction == ChevronDirection.Left) strings.stepperPrevious else strings.stepperNext
     Box(
         modifier = Modifier
             .width(32.dp)
             .height(Space.row)
             .clickable(interactionSource = source, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
-            .semantics { contentDescription = if (direction == ChevronDirection.Left) "Previous" else "Next" }
+            .semantics { contentDescription = name }
             .pointerHoverIcon(PointerIcon.Hand)
             .pressFeedback(source, enabled),
         contentAlignment = Alignment.Center,

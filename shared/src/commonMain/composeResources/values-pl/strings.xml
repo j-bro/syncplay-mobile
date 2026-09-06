@@ -701,6 +701,8 @@
     <string name="uisetting_vlc_custom_flags_detail">Na przykład --file-caching=5000 --network-caching=3000. Działa przy następnym starcie silnika VLC.</string>
     <string name="uisetting_vlc_custom_flags_summary">Dodatkowe flagi LibVLC, oddzielone spacjami.</string>
     <string name="uisetting_vlc_custom_flags_title">Własne flagi VLC</string>
+    <string name="stepper_previous">Poprzedni</string>
+    <string name="stepper_next">Następny</string>
     <string-array name="tips">
         <item>Aby wspólne listy odtwarzania działały, %1$s musi wiedzieć, gdzie przechowywane są twoje pliki multimedialne. Dodaj swoje foldery z mediami w 'Ustawienia > Ogólne > Katalogi mediów dla wspólnej listy odtwarzania'.</item>
         <item>Chcesz używać odtwarzacza wideo solo? Wybierz odtwarzacz, stuknij w logo %1$s powyżej, a następnie wybierz 'Tryb offline'.</item>

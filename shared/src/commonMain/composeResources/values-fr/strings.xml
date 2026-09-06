@@ -705,6 +705,8 @@
     <string name="uisetting_vlc_custom_flags_detail">Par exemple --file-caching=5000 --network-caching=3000. S'applique au prochain démarrage du moteur VLC.</string>
     <string name="uisetting_vlc_custom_flags_summary">Options LibVLC supplémentaires, séparées par des espaces.</string>
     <string name="uisetting_vlc_custom_flags_title">Options VLC personnalisées</string>
+    <string name="stepper_previous">Précédent</string>
+    <string name="stepper_next">Suivant</string>
     <string-array name="tips">
         <item>Pour que les playlists partagées fonctionnent, %1$s doit savoir où sont stockés vos fichiers multimédias. Ajoutez vos dossiers dans 'Paramètres > Général > Répertoires multimédias pour la playlist partagée'.</item>
         <item>Vous voulez utiliser le lecteur vidéo seul ? Sélectionnez un lecteur, appuyez sur le logo %1$s, puis choisissez 'Mode hors ligne'.</item>

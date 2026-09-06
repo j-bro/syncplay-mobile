@@ -678,6 +678,8 @@
     <string name="uisetting_vlc_custom_flags_detail">例如 --file-caching=5000 --network-caching=3000。下次启动 VLC 引擎时生效。</string>
     <string name="uisetting_vlc_custom_flags_summary">额外的 LibVLC 参数，用空格分隔。</string>
     <string name="uisetting_vlc_custom_flags_title">自定义 VLC 参数</string>
+    <string name="stepper_previous">上一个</string>
+    <string name="stepper_next">下一个</string>
     <string-array name="tips">
         <item>要使共享播放列表正常工作，%1$s需要知道您的媒体文件存储位置。在"设置 > 常规 > 共享播放列表的媒体目录"中添加您的媒体文件夹。</item>
         <item>想单独使用视频播放器吗？选择一个播放器，点击上方的%1$s徽标，然后选择"离线模式"。</item>

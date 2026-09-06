@@ -61,8 +61,14 @@ standing decision was being kept by memory alone. Every one was verified by plan
   has shipped one. Deliberately no apostrophe rule: these are Compose Resources, not Android
   `res/`.
 - `checkLocaleParity` - reports how far behind each locale is, fails on a key that exists in a
-  translation but not in `values-en`. `-PstrictLocales=true` also fails on missing keys.
-- `checkDeadResources` - strings and drawables nothing references. `synkplay_bg`/`synkplay_fg` are
+  translation but not in `values-en`. `-PstrictLocales=true` also fails on missing keys. Every
+  locale is at 100 percent as of 0.24.0, so strict mode passes today.
+- `checkStringArguments` - a translation whose `%1$` placeholders differ in order or number from
+  English. The string generator strips those markers and fills left to right, so a reordered
+  translation would print the room name where the password goes and say nothing about it. Also
+  refuses a key that uses the same placeholder twice.
+- `checkDeadResources` - strings and drawables nothing references. It knows both spellings of a
+  key, `connect_username` and the generated `connectUsername`. `synkplay_bg`/`synkplay_fg` are
   excluded because KiteConfig reads them by path.
 - `checkSettingsReachable` - a preference that declares a title, summary and icon and is never
   named outside its own declaration.
@@ -70,6 +76,29 @@ standing decision was being kept by memory alone. Every one was verified by plan
   `playerSupervisorJob`.
 - `checkStoreMetadata` - Play's 500-character What's New limit, and a changelog file for the
   version being built.
+
+**Strings (`app.i18n`, Lyricist).** `values-*/strings.xml` stays the source of truth and
+translators keep Weblate, but nothing reads it at runtime any more. `lyricist-processor-xml`
+(KSP, on the common metadata compilation) turns every locale into a Kotlin object, and the app
+reads those.
+- Composables read `strings.connectUsername`; anything else reads `Localization.strings`. Both
+  come from one `Lyricist` created in `Localization`, so the language cannot drift between them.
+- The language is state, not a restart. `AdamScreen` applies `DISPLAY_LANG` before anything below
+  it reads a string, and the same picker appears on all three platforms.
+  `PlatformCallback.onLanguageChanged` is gone.
+- The generator reads elements in order, so **every `<string>` must come before the lists** at the
+  end of each file, and it strips `%1$` position markers, so placeholders are filled left to right
+  (`checkStringArguments` guards that). `app/i18n/Format.kt` supplies the `format` the generated
+  code calls; it lives in the generated package on purpose, since those files import nothing.
+- Plurals are `<key>_zero/_one/_two/_few/_many/_other` strings plus `app/i18n/Plurals.kt`, which
+  applies the CLDR rule for the current language. Do not use `<plurals>`: the generator collapses
+  every form to zero/one/two/else, which is wrong for Russian, Polish and Arabic.
+- Compose Resources still serves drawables, fonts, the `language_names`/`language_codes` lists and
+  mpv's bundled `subfont.ttf`.
+- **The layout stays left to right in every language, Arabic included.** `AdamScreen` pins
+  `LocalLayoutDirection`, so an Arabic device does not mirror the app either. Owner decision.
+- `DesignHarness.render(language = ...)` draws any screen in a shipped language; `LanguageGolden`
+  runs the settings rows, the room's category grid and About through all eight.
 
 **detekt and kover.** `config/detekt/detekt.yml` is almost entirely off; what is on maps to
 defects this repo had. `koverVerify` enforces a line-coverage floor over `app.protocol` and
@@ -387,7 +416,7 @@ startup regression (`RoomStartupTest`) renders the real room and leaves before a
 
 ### Preferences (`commonMain/app/preferences/`)
 
-`Pref<T>` (type-safe wrapper + `SettingConfig` DSL; `value()` synchronous snapshot, `flow()`/`watchPref()` reactive over one snapshotted `LocalPrefsState`). `Datastore.kt` (lateinit global `datastore`, eager hot `datastoreStateFlow` via `runBlocking`). `PrefExtraConfig.kt` (`PerformAction`, `BooleanCallback`, `Slider`, `MultiChoice`, `ColorPick`, `YesNoDialog`, `TextField`, `ShowComposable`). `Preferences.kt` (the 100+ Pref registry; `NETWORK_ENGINE` default `netty` Android / `swiftnio` iOS; `UNPAUSE_ACTION` default `IfOthersReady`; `REDUCE_MOTION`; the in-room reset clears only `IN_ROOM_KEY_PREFIXES` + extras, the global reset clears the whole store). `settings/` - the settings console: `MySettings.kt` (`SETTINGS_GLOBAL`, and the six room categories in `SETTINGS_ROOM`: sync, chat, notices, player, haptics, advanced. The OSD switches are their own `INROOM_NOTICES` category, not a group under chat, because they interrupt the video rather than fill a log; `roomSettings(engine)` folds the active engine's rows into the player category), `SettingRows.kt` (drawn rows: toggle, stepper, slider with a committed-value hold, colour rows editing inline via `InlineEditorHost` (`InlineEditorPage.scrollable` gives colour pages a bounded height), action/ask rows), `SettingsContent.kt` + `SettingsScreen.kt` (the `Screen.Settings` destination and the in-room panel body, with search over every resolved entry), `SettingCategory.kt` (`withControl` wraps a Pref in a `SettingEntry` without mutating the shared object), `PopupTrustedDomains.kt`.
+`Pref<T>` (type-safe wrapper + `SettingConfig` DSL, whose `title`/`summary`/`detail` are `(AppStrings) -> String` so a row follows a language change; `value()` synchronous snapshot, `flow()`/`watchPref()` reactive over one snapshotted `LocalPrefsState`). `Datastore.kt` (lateinit global `datastore`, eager hot `datastoreStateFlow` via `runBlocking`). `PrefExtraConfig.kt` (`PerformAction`, `BooleanCallback`, `Slider`, `MultiChoice`, `ColorPick`, `YesNoDialog`, `TextField`, `ShowComposable`). `Preferences.kt` (the 100+ Pref registry; `NETWORK_ENGINE` default `netty` Android / `swiftnio` iOS; `UNPAUSE_ACTION` default `IfOthersReady`; `REDUCE_MOTION`; the in-room reset clears only `IN_ROOM_KEY_PREFIXES` + extras, the global reset clears the whole store). `settings/` - the settings console: `MySettings.kt` (`SETTINGS_GLOBAL`, and the six room categories in `SETTINGS_ROOM`: sync, chat, notices, player, haptics, advanced. The OSD switches are their own `INROOM_NOTICES` category, not a group under chat, because they interrupt the video rather than fill a log; `roomSettings(engine)` folds the active engine's rows into the player category), `SettingRows.kt` (drawn rows: toggle, stepper, slider with a committed-value hold, colour rows editing inline via `InlineEditorHost` (`InlineEditorPage.scrollable` gives colour pages a bounded height), action/ask rows), `SettingsContent.kt` + `SettingsScreen.kt` (the `Screen.Settings` destination and the in-room panel body, with search over every resolved entry), `SettingCategory.kt` (`withControl` wraps a Pref in a `SettingEntry` without mutating the shared object), `PopupTrustedDomains.kt`.
 
 `PrefExtraConfig.Slider.formatValue` formats stored integers for both the visible value and progress semantics. Sync thresholds retain tenths internally but display seconds; the time offset retains its 600-centred storage and displays -60.0 to +60.0 seconds (0.0 at the default). English setting labels and explanations prioritize meaning over character caps. Chat font size is 5–24, default 10; the message/name renderer and PiP respect the same minimum, preserving saved choices.
 

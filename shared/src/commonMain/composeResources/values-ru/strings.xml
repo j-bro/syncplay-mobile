@@ -690,6 +690,8 @@
     <string name="uisetting_vlc_custom_flags_detail">Например --file-caching=5000 --network-caching=3000. Применится при следующем запуске движка VLC.</string>
     <string name="uisetting_vlc_custom_flags_summary">Дополнительные флаги LibVLC через пробел.</string>
     <string name="uisetting_vlc_custom_flags_title">Свои флаги VLC</string>
+    <string name="stepper_previous">Назад</string>
+    <string name="stepper_next">Вперёд</string>
     <string-array name="tips">
         <item>Для работы общих списков воспроизведения %1$s необходимо знать, где хранятся ваши медиафайлы. Добавьте свои медиапапки в 'Настройки > Общие > Папки с медиа для общего списка воспроизведения'.</item>
         <item>Хотите использовать видеоплеер отдельно? Выберите плеер, нажмите на логотип %1$s выше, затем выберите 'Автономный режим'.</item>

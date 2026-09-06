@@ -690,6 +690,8 @@
     <string name="uisetting_vlc_custom_flags_detail">مثال ‎--file-caching=5000 --network-caching=3000. تسري في المرة التالية التي يبدأ فيها محرك VLC.</string>
     <string name="uisetting_vlc_custom_flags_summary">خيارات LibVLC إضافية، مفصولة بمسافات.</string>
     <string name="uisetting_vlc_custom_flags_title">خيارات VLC مخصصة</string>
+    <string name="stepper_previous">السابق</string>
+    <string name="stepper_next">التالي</string>
     <string-array name="tips">
         <item>لكي تعمل قوائم التشغيل المشتركة، يحتاج %1$s لمعرفة مكان تخزين ملفات الوسائط. أضف مجلدات الوسائط في 'الإعدادات > عام > مجلدات الوسائط لقائمة التشغيل المشتركة'.</item>
         <item>تريد استخدام مشغل الفيديو بمفردك؟ اختر مشغلاً، اضغط على شعار %1$s في الأعلى، ثم اختر 'الوضع غير المتصل'.</item>

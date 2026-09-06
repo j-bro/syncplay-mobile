@@ -96,6 +96,9 @@ fun CrashOverlay() {
             .systemBarsPadding()
     ) {
         Column(modifier = Modifier.fillMaxSize().padding(Space.gutter)) {
+            /* English on purpose. This screen appears when something has already gone wrong,
+             * so it must not depend on anything the app loads, and the trace below it is
+             * headed for a bug report that a maintainer reads in English. */
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,

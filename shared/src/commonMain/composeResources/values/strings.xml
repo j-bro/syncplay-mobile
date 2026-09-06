@@ -662,6 +662,8 @@
     <string name="uisetting_doubletap_seek_detail">Off removes the short delay a single tap has while the app waits for a second tap.</string>
     <string name="action_back">Back</string>
     <string name="action_close">Close</string>
+    <string name="stepper_previous">Previous</string>
+    <string name="stepper_next">Next</string>
     <string name="action_clear">Clear</string>
     <!-- Engine picker (design overhaul) -->
     <!-- Home revisions -->

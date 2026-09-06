@@ -688,6 +688,8 @@
     <string name="uisetting_vlc_custom_flags_detail">Zum Beispiel --file-caching=5000 --network-caching=3000. Gilt beim nächsten Start der VLC-Engine.</string>
     <string name="uisetting_vlc_custom_flags_summary">Zusätzliche LibVLC-Flags, durch Leerzeichen getrennt.</string>
     <string name="uisetting_vlc_custom_flags_title">Eigene VLC-Flags</string>
+    <string name="stepper_previous">Zurück</string>
+    <string name="stepper_next">Weiter</string>
     <string-array name="tips">
         <item>Damit gemeinsame Playlists funktionieren, muss %1$s wissen, wo Ihre Mediendateien gespeichert sind. Fügen Sie Ihre Medienordner unter 'Einstellungen > Allgemein > Medienverzeichnisse für gemeinsame Playlist' hinzu.</item>
         <item>Möchten Sie den Video-Player solo verwenden? Wählen Sie einen Player, tippen Sie auf das %1$s-Logo oben und wählen Sie dann 'Offline-Modus'.</item>
