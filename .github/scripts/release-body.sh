@@ -85,7 +85,7 @@ ALTSTORE="https://celloserenity.github.io/altdirect/?url=https://raw.githubuserc
   row "*-full-universal.apk" "Android 8.0 and up" \
     "The full app: ExoPlayer, mpv and KitePlayer, every CPU type in one file. Pick this one."
   row "*-exo-only.apk" "Android 8.0 and up" \
-    "ExoPlayer only, no bundled native players, a fraction of the size. The build IzzyOnDroid carries. It installs beside the full app, not over it."
+    "ExoPlayer only, and much smaller. This is the build IzzyOnDroid carries. It installs beside the full app as a separate app."
   row "*-ios.ipa" "iOS 14.1 and up" \
     "Sideload with AltStore or install it directly. The [install guide](https://github.com/${GITHUB_REPOSITORY}/wiki/How-to-install-the-app-on-iOS) covers both."
   row "*.dmg" "macOS" "The desktop app."
