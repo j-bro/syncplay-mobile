@@ -107,5 +107,14 @@ class Session(val protocol: ProtocolManager) {
          * a 14-character hash, so anything that caps lower than this silently breaks one.
          */
         const val MAX_ROOM_NAME_CHARS = 35
+
+        /**
+         * An absolute ceiling on a peer-supplied name, well above any honest server's limit.
+         *
+         * Deliberately not the protocol's 16: a server that already has an "alice" hands the
+         * next one "alice_", and it keeps appending past 16 for duplicates. Cutting at 16 makes
+         * a viewer stop recognising their own name in the room's own messages.
+         */
+        const val MAX_USERNAME_CHARS = 64
     }
 }

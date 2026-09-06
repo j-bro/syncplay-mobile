@@ -1,5 +1,6 @@
 package app.protocol.sync
 
+import app.protocol.Session
 import app.protocol.wire.IgnoringOnTheFlyData
 import app.protocol.wire.PlaystateData
 import kotlin.time.Duration.Companion.seconds
@@ -94,8 +95,11 @@ const val SLOWDOWN_RATE = 0.95
 const val SLOWDOWN_THRESHOLD = 1.5
 const val SLOWDOWN_RESET_THRESHOLD = 0.1
 
-/** Longest username the protocol allows; names arriving longer than this are cut. */
-private const val MAX_USERNAME_CHARS = 16
+/**
+ * The ingress ceiling on a name, shared with the message handler. Cutting at the protocol's 16
+ * broke the server's own duplicate-name convention, where "alice" is followed by "alice_".
+ */
+private const val MAX_USERNAME_CHARS = Session.MAX_USERNAME_CHARS
 
 /**
  * Applies a server `ignoringOnTheFly` block. A server counter adopts it and clears ours; a

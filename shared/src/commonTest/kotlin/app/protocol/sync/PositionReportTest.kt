@@ -133,16 +133,22 @@ class UserOffsetTest {
 
     private val t0 = kotlin.time.Instant.fromEpochMilliseconds(1_700_000_000_000L)
 
-    private fun inputs(localMs: Double, offset: Double, deadline: kotlin.time.Instant? = null) =
+    private fun inputs(
+        localMs: Double,
+        offset: Double,
+        deadline: kotlin.time.Instant? = null,
+        globalMs: Double = 100_000.0,
+        durationMs: Double = 7_200_000.0,
+    ) =
         PositionInputs(
             now = t0,
-            globalPositionMs = 100_000.0,
+            globalPositionMs = globalMs,
             globalPositionSetAt = t0,
             globalPaused = false,
             hasMedia = true,
             isInBackground = false,
             localPositionMs = localMs,
-            durationMs = 7_200_000.0,
+            durationMs = durationMs,
             awaitingRoomResyncDeadline = deadline,
             userOffsetSeconds = offset,
         )
@@ -179,5 +185,37 @@ class UserOffsetTest {
     fun the_room_still_looks_desynced_when_it_genuinely_is() {
         val r = reportablePosition(inputs(localMs = 5_000.0, offset = 12.0, deadline = t0 + 20.seconds))
         assertTrue(r.keepMasking)
+    }
+
+    @Test
+    fun an_impossible_local_target_is_impossible_in_local_time() {
+        // Our copy is 100 s long and runs 10 s ahead. The room is at 95 s, which is 105 s in our
+        // copy: past the end. Comparing 95 against 100 said "keep trying" forever.
+        val far = t0 + 20.seconds
+        val r = reportablePosition(
+            inputs(localMs = 0.0, offset = 10.0, deadline = far, globalMs = 95_000.0, durationMs = 100_000.0)
+        )
+        assertFalse(r.keepMasking, "a target past the end of our copy is not reachable")
+    }
+
+    @Test
+    fun a_negative_offset_can_make_the_same_target_reachable() {
+        // Same room position, but our copy runs 10 s behind: the room's 95 s is our 85 s, which
+        // is inside a 100 s file, so masking stays on until we get there.
+        val far = t0 + 20.seconds
+        val r = reportablePosition(
+            inputs(localMs = 0.0, offset = -10.0, deadline = far, globalMs = 95_000.0, durationMs = 100_000.0)
+        )
+        assertTrue(r.keepMasking)
+    }
+
+    @Test
+    fun a_target_before_the_start_of_our_copy_is_impossible() {
+        // The room is at 5 s and our copy runs 10 s behind, so it wants us at minus 5 s.
+        val far = t0 + 20.seconds
+        val r = reportablePosition(
+            inputs(localMs = 50_000.0, offset = -10.0, deadline = far, globalMs = 5_000.0, durationMs = 100_000.0)
+        )
+        assertFalse(r.keepMasking)
     }
 }

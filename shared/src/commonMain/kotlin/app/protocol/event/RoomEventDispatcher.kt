@@ -12,6 +12,7 @@ import app.protocol.ProtocolManager.Companion.SYNCPLAY_PROTOCOL_VERSION
 import app.protocol.Session
 import app.protocol.WireMessage
 import app.protocol.models.RoomFeatures
+import app.protocol.sync.localToRoomSeconds
 import app.protocol.wire.HelloData
 import app.protocol.wire.Room
 import app.room.OSDCategory
@@ -89,7 +90,9 @@ class RoomEventDispatcher(val viewmodel: RoomViewmodel) : AbstractManager(viewmo
                 viewmodel.protocol.buildStatePacket(
                     serverTime = null,
                     doSeek = true,
-                    position = newPosMs / 1000.0,
+                    // In room time: the room hears where everyone else should be, not where
+                    // this viewer's own copy happens to be.
+                    position = localToRoomSeconds(newPosMs, viewmodel.protocol.userTimeOffsetSeconds()),
                     isLocalStateChange = true,
                     play = playing
                 )

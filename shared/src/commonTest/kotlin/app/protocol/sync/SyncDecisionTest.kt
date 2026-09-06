@@ -2,6 +2,7 @@ package app.protocol.sync
 
 import app.protocol.wire.IgnoringOnTheFlyData
 import app.protocol.wire.PlaystateData
+import app.protocol.Session
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -140,12 +141,17 @@ class SyncDecisionTest {
     }
 
     @Test
-    fun a_long_username_is_cut_to_the_protocol_limit() {
+    fun a_hostile_username_is_bounded() {
+        // The cap is an ingress ceiling on a peer-supplied string, not the protocol's own 16:
+        // a real server appends underscores past 16 to keep duplicate names apart.
         val out = decideSync(
-            playstate(position = 10.0, doSeek = true, setBy = "a".repeat(40)),
+            playstate(position = 10.0, doSeek = true, setBy = "a".repeat(500)),
             anchored(), ctx(playerSeconds = 10.0),
         )
-        assertEquals(16, out.actions.filterIsInstance<SyncAction.SomeoneSeeked>().single().by.length)
+        assertEquals(
+            Session.MAX_USERNAME_CHARS,
+            out.actions.filterIsInstance<SyncAction.SomeoneSeeked>().single().by.length,
+        )
     }
 
     // ---- rewind ----
@@ -275,6 +281,19 @@ class SyncDecisionTest {
     fun a_pause_transition_is_announced_once() {
         val out = decideSync(playstate(position = 10.0, paused = true, setBy = "peer"), anchored(paused = false), ctx(playerSeconds = 10.0))
         assertEquals("peer", out.actions.filterIsInstance<SyncAction.SomeonePaused>().single().by)
+    }
+
+    @Test
+    fun a_17_character_server_assigned_name_is_still_us() {
+        // A server that already has "abcdefghijklmnop" hands the next one an underscore on the
+        // end. Cutting at the protocol's 16 turned that back into the other person's name.
+        val me = "abcdefghijklmnop_"
+        val out = decideSync(
+            playstate(position = 10.0, paused = true, setBy = me),
+            anchored(paused = false),
+            ctx(playerSeconds = 10.0, self = me),
+        )
+        assertEquals(me, out.actions.filterIsInstance<SyncAction.SomeonePaused>().single().by)
     }
 
     @Test

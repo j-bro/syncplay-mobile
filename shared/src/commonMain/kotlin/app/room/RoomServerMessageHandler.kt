@@ -128,7 +128,7 @@ class RoomServerMessageHandler(private val viewmodel: RoomViewmodel) : WireMessa
                 rewindThreshold = Preferences.SYNC_REWIND_THRESHOLD.value() / 10.0,
                 slowdownThreshold = Preferences.SYNC_SLOWDOWN_THRESHOLD.value() / 10.0,
                 fastForwardThreshold = Preferences.SYNC_FASTFORWARD_THRESHOLD.value() / 10.0,
-                userOffsetSeconds = userTimeOffsetSeconds(),
+                userOffsetSeconds = protocol.userTimeOffsetSeconds(),
             ),
         )
         protocol.syncState = outcome.state
@@ -185,10 +185,6 @@ class RoomServerMessageHandler(private val viewmodel: RoomViewmodel) : WireMessa
             )
         }
     }
-
-    /** The slider stores tenths offset by 600, so its middle is no shift at all. */
-    private fun userTimeOffsetSeconds(): Double =
-        (Preferences.USER_TIME_OFFSET.value() - 600) / 10.0
 
     /** Carries out one decision. The order the actions arrive in is the order they must happen. */
     private suspend fun apply(action: SyncAction) = when (action) {
@@ -503,7 +499,7 @@ class RoomServerMessageHandler(private val viewmodel: RoomViewmodel) : WireMessa
 
     private companion object {
         /** Absolute ceilings on peer-supplied strings, well above any honest server's limits. */
-        const val MAX_USERNAME_CHARS = 64
+        const val MAX_USERNAME_CHARS = Session.MAX_USERNAME_CHARS
         const val MAX_CHAT_CHARS = 2000
         const val MAX_FILENAME_CHARS = 512
     }

@@ -34,6 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import app.protocol.OFFICIAL_SERVER_ADDRESS
 import app.protocol.OFFICIAL_SERVER_NAME
+import app.protocol.sync.roomToLocalMs
 
 /**
  * Handles incoming Syncplay protocol events, updating local state and broadcasting
@@ -71,7 +72,9 @@ class RoomCallback(val viewmodel: RoomViewmodel) : AbstractManager(viewmodel) {
             // controlPlayback does — same NULL libvlc handle, same dispatch-queue race. The
             // controlPlayback call below has its own internal gate.
             if (viewmodel.media != null) {
-                onMainThread { viewmodel.player.seekTo(protocol.extrapolatedGlobalPositionMs().toLong()) }
+                // The room's position translated into our own copy's time.
+                val target = roomToLocalMs(protocol.extrapolatedGlobalPositionMs(), protocol.userTimeOffsetSeconds())
+                onMainThread { viewmodel.player.seekTo(target.toLong()) }
             }
             dispatcher.controlPlayback(Playback.PAUSE, false)
         }

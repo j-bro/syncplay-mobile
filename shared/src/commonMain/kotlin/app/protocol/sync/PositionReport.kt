@@ -65,15 +65,19 @@ fun reportablePosition(inputs: PositionInputs): PositionReport {
     if (inputs.isInBackground) return PositionReport(globalMs / 1000.0, keepMasking = true)
 
     // What the room should hear: our position, less the offset that is ours alone.
-    val localAsRoomSeesIt = inputs.localPositionMs / 1000.0 - inputs.userOffsetSeconds
+    val localAsRoomSeesIt = localToRoomSeconds(inputs.localPositionMs.toLong(), inputs.userOffsetSeconds)
 
     val deadline = inputs.awaitingRoomResyncDeadline
         ?: return PositionReport(localAsRoomSeesIt, keepMasking = false)
 
     val thresholdMs = SEEK_THRESHOLD_SECONDS * 1000.0
     val converged = abs(localAsRoomSeesIt * 1000.0 - globalMs) <= thresholdMs
-    // A file shorter than the room position can never catch up; a mismatched file does this.
-    val cannotCatchUp = inputs.durationMs > 0.0 && globalMs >= inputs.durationMs - thresholdMs
+    /* Where in our own copy the room is asking us to be. Comparing the room's position against
+     * our duration skips the offset, so an offset viewer was told to give up, or to keep trying,
+     * on the strength of a number from someone else's copy. */
+    val localTargetMs = roomToLocalMs(globalMs, inputs.userOffsetSeconds)
+    val cannotCatchUp = localTargetMs < 0.0 ||
+        (inputs.durationMs > 0.0 && localTargetMs >= inputs.durationMs - thresholdMs)
     val timedOut = inputs.now >= deadline
 
     return if (converged || cannotCatchUp || timedOut) {
