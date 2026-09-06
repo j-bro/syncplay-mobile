@@ -14,6 +14,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -140,6 +141,16 @@ data class Palette(
     val disabled: Color,
     val isDark: Boolean,
 ) {
+    /**
+     * What to write on a filled control, worked out from the fill itself rather than stored.
+     *
+     * A stored colour goes stale the moment a palette repurposes [accent], which is exactly what
+     * the add-media block does: it paints itself with the brand gradient and turns [accent] into
+     * the dark ink that reads on it. A label that trusted a token then matched its own button.
+     * The cut is where white and near-black give the same contrast against the fill.
+     */
+    fun inkOn(fill: Color): Color = if (fill.luminance() > 0.19f) VideoGround else Color.White
+
     fun overVideo(): Palette = copy(
         ground = VideoGround,
         panel = VideoPanel,

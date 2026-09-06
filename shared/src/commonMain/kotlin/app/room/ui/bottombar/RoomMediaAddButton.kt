@@ -13,6 +13,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.draw.alpha
 import androidx.compose.animation.core.animateFloatAsState
 import app.theme.LocalPalette
+import app.theme.Palette
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.draw.clip
@@ -81,13 +82,7 @@ fun RoomMediaAddButton() {
      * stays on it at full strength; the rows take dark ink, the way the key's label does. */
     // A plain standard curve: the emphasized decelerate the rest of the app uses reads as a spring on a block this size.
     val t by animateFloatAsState(if (expanded) 1f else 0f, tween(Motion.moveMs, easing = FastOutSlowInEasing), label = "addMorph")
-    val onBrand = p.copy(
-        ink = p.ground,
-        inkDim = p.ground.copy(alpha = 0.72f),
-        inkFaint = p.ground.copy(alpha = 0.45f),
-        rule = p.ground.copy(alpha = 0.25f),
-        accent = p.ground,
-    )
+    val onBrand = p.onBrandBlock()
     Layout(
         modifier = Modifier
             .padding(Space.gapTight)
@@ -156,6 +151,19 @@ fun RoomMediaAddButton() {
         }
     }
 }
+
+/**
+ * The palette for what sits ON the brand block. The block is painted with the gradient, so ink
+ * goes dark and an accent fill has to be dark too, or it would be the block's own colour. Labels
+ * on a filled control come from [Palette.inkOn], which reads this dark accent and answers light.
+ */
+internal fun Palette.onBrandBlock(): Palette = copy(
+    ink = ground,
+    inkDim = ground.copy(alpha = 0.72f),
+    inkFaint = ground.copy(alpha = 0.45f),
+    rule = ground.copy(alpha = 0.25f),
+    accent = ground,
+)
 
 private val MorphWidth = 340.dp
 

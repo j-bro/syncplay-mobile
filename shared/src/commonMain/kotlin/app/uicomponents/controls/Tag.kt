@@ -5,7 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.Composable
@@ -29,6 +29,7 @@ enum class Tone { Neutral, Accent, Ok, Warn, Bad }
 /**
  * A hairline rectangle carrying a state word or a badge, 22dp tall, `value` type. Filled when
  * the state is on (ready, connected). With [onToggle] it becomes a toggle with a 48dp target.
+ * [autoSize] lets a word in a narrow cell step down to the group size before it is cut.
  */
 @Composable
 fun Tag(
@@ -38,6 +39,7 @@ fun Tag(
     filled: Boolean = false,
     onToggle: ((Boolean) -> Unit)? = null,
     enabled: Boolean = true,
+    autoSize: Boolean = false,
 ) {
     val p = palette
     val source = remember { MutableInteractionSource() }
@@ -68,7 +70,8 @@ fun Tag(
     ) {
         Box(
             Modifier
-                .height(22.dp)
+                // A minimum: bigger system text makes the tag taller, not clipped.
+                .heightIn(min = 22.dp)
                 .clip(Radius.controlShape)
                 .background(if (filled) color else Color.Transparent)
                 .border(Space.hair, edge, Radius.controlShape)
@@ -78,9 +81,10 @@ fun Tag(
             Text(
                 text = text,
                 style = Type.value,
-                color = if (filled) p.ground else color,
+                color = if (filled) p.inkOn(color) else color,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                autoSize = if (autoSize) FontSizeRange(Type.group.fontSize, Type.value.fontSize) else null,
             )
         }
     }
