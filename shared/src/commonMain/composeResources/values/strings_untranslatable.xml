@@ -1,19 +1,25 @@
 <resources>
-    <!-- NOTE: Make sure each language name corresponds to a language code at that same index -->
+    <!-- Names that are the same in every language, so they are never translated.
+         The generator reads elements in order, so every <string> comes before every list. -->
 
-    <!-- Language names in their native script -->
+    <string name="uisetting_categ_mpv">mpv</string>
+    <string name="uisetting_categ_exo">Exoplayer</string>
+    <string name="uisetting_categ_vlc">VLC</string>
+
+    <!-- Language names in their own script. Each one must sit at the same index as its code
+         in language_codes below. -->
     <string-array name="language_names">
         <item>العربية</item>
         <item>English</item>
         <item>español</item>
         <item>Français</item>
-        <item>Deutsch (by AI)</item>
-        <item>Polski (by AI)</item>
+        <item>Deutsch</item>
+        <item>Polski</item>
         <item>Pусский</item>
         <item>中文</item>
     </string-array>
 
-    <!-- Language codes (ISO 639-1) -->
+    <!-- ISO 639-1 codes, in the same order as language_names. -->
     <string-array name="language_codes">
         <item>ar</item>
         <item>en</item>
@@ -24,9 +30,4 @@
         <item>ru</item>
         <item>zh</item>
     </string-array>
-
-    <string name="uisetting_categ_mpv">mpv</string>
-    <string name="uisetting_categ_exo">Exoplayer</string>
-    <string name="uisetting_categ_vlc">VLC</string>
-    
 </resources>

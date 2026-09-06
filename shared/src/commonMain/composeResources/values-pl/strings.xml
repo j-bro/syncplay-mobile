@@ -7,13 +7,11 @@
     <string name="cancel">Anuluj</string>
     <string name="done">Gotowe</string>
 
-
     <string name="edit">Edytuj</string>
 
     <string name="play">Odtwarzaj</string>
 
     <string name="delete">Usuń</string>
-
 
     <string name="save">Zapisz</string>
 
@@ -24,7 +22,7 @@
     <!-- Home Screen -->
     <string name="connect_username">Wpisz swoją nazwę użytkownika</string>
     <string name="connect_roomname">Wprowadź nazwę pokoju</string>
-    <string name="connect_server">Wybierz serwer %1$s</string>
+    <string name="connect_server">Serwer</string>
     <string name="connect_choose_video_engine">Wybierz silnik wideo</string>
     <string name="connect_button_join">Dołącz do pokoju</string>
     <string name="connect_button_saveshortcut">Zapisz konfigurację jako skrót</string>
@@ -56,7 +54,7 @@
     <string name="room_shared_playlist_updated">%1$s zaktualizował listę odtwarzania</string>
     <string name="room_shared_playlist_changed">%1$s zmienił aktualny wybór listy odtwarzania</string>
     <string name="room_custom_skip_button">Pomiń %1$s</string>
-    <string name="media_directories_setting_summary">%1$s przeszuka określone katalogi mediów w celu znalezienia pliku odtwarzanego ze wspólnej listy odtwarzania.</string>
+    <string name="media_directories_setting_summary">Foldery przeszukiwane w poszukiwaniu plików z listy.</string>
 
     <string name="room_on_newcontrolledroom">Utworzono zarządzany pokój '%1$s' z hasłem '%2$s'. Proszę zapisać te informacje do przyszłego użytku! Zostały skopiowane do schowka, abyś mógł je wkleić gdzie indziej.\n\nW zarządzanych pokojach wszyscy są synchronizowani z operatorem/operatorami pokoju, którzy są jedynymi osobami mogącymi pauzować, wznawiać, przewijać i zmieniać listę odtwarzania.\n\nPowinieneś poprosić zwykłych widzów o dołączenie do pokoju '%1$s', ale operatorzy pokoju mogą dołączyć do pokoju '%1$s:%2$s', aby automatycznie się uwierzytelnić.</string>
     <string name="room_on_controller_auth_success">%1$s uwierzytelniony jako operator pokoju</string>
@@ -133,7 +131,7 @@
 
     <!-- Settings -->
     <string name="setting_remember_join_info_title">Zapamiętuj informacje o dołączaniu</string>
-    <string name="setting_remember_join_info_summary">Domyślnie włączone. Pozwala %1$s zapisywać twoją ostatnią nazwę użytkownika, nazwę pokoju i ostatnio używany oficjalny serwer.</string>
+    <string name="setting_remember_join_info_summary">Zapamiętuje ostatnią nazwę, pokój i serwer.</string>
     <string name="setting_never_show_tips_title">Nigdy nie pokazuj wskazówek</string>
     <string name="setting_never_show_tips_summary">Zapobiega wyświetlaniu wskazówek przy uruchamianiu aplikacji.</string>
     <string name="setting_erase_shortcuts_title">Usuń wszystkie skróty</string>
@@ -161,7 +159,7 @@
     <string name="setting_unpause_action_always">Zawsze wznawiaj</string>
     <string name="room_set_as_ready">Oznaczono jako gotowy do wznowienia</string>
     <string name="setting_tls_title">Użyj bezpiecznego połączenia (TLS)</string>
-    <string name="setting_tls_summary">%1$s spróbuje ustanowić bezpieczne zaszyfrowane połączenie (głównie TLSv1.3, ale z opcjami awaryjnymi do starszych wersji) z serwerem, jeśli ten je obsługuje. To ustawienie będzie ignorowane, jeśli silnik sieciowy nie obsługuje TLS.</string>
+    <string name="setting_tls_summary">Szyfrowane, jeśli serwer to obsługuje.</string>
     <string name="setting_resetdefault_title">Przywróć ustawienia domyślne</string>
     <string name="setting_resetdefault_summary">Przywraca wszystko do wartości domyślnej (Zalecane)</string>
     <string name="setting_resetdefault_dialog">Czy na pewno chcesz wyczyścić ustawienia tego ekranu?</string>
@@ -270,19 +268,8 @@
     <string name="media_directories_add_folder">Dodaj folder</string>
     <string name="media_directories_delete">Usuń z listy</string>
 
-
     <string name="tips_dontshowmetips">Nie pokazuj mi wskazówek</string>
     <string name="tips_did_ya_know">Czy wiedziałeś?</string>
-
-    <string-array name="tips">
-        <item>Aby wspólne listy odtwarzania działały, %1$s musi wiedzieć, gdzie przechowywane są twoje pliki multimedialne. Dodaj swoje foldery z mediami w 'Ustawienia > Ogólne > Katalogi mediów dla wspólnej listy odtwarzania'.</item>
-        <item>Chcesz używać odtwarzacza wideo solo? Wybierz odtwarzacz, stuknij w logo %1$s powyżej, a następnie wybierz 'Tryb offline'.</item>
-        <item>Zawsze możesz przywrócić ustawienia do stanów domyślnych, przechodząc do 'Ustawienia -> Zaawansowane -> Przywróć domyślne'</item>
-        <item>Dołączasz wielokrotnie do tego samego pokoju? Zapisz go jako skrót na swoim urządzeniu dla dostępu jednym dotknięciem, klikając mały przycisk obok 'Dołącz do pokoju'.</item>
-        <item>Każdy odtwarzacz ma różne zalety. Jeśli jeden nie działa dobrze z twoim formatem wideo, spróbuj innego.</item>
-        <item>%1$s Mobile pozwala odtwarzać media z bezpośrednich linków. Jednak YouTube NIE jest obsługiwany, jeszcze.</item>
-        <item>Jeśli chcesz tymczasowo zminimalizować pokój bez opuszczania go, możesz przejść w tryb "Obraz w obrazie", gdzie ekran jest małym pływającym okienkiem nad innymi aplikacjami.</item>
-    </string-array>
 
     <!-- Server Hosting -->
     <string name="server_host_port">Port</string>
@@ -361,4 +348,16 @@
     <string name="uisetting_osd_duration_summary">Ile sekund wyświetlać komunikaty statusu na ekranie (np. zmiana proporcji, wybór ścieżek). Ustaw 0, aby wyłączyć komunikaty OSD.</string>
     <string name="room_roster_duration">Czas trwania: %1$s</string>
     <string name="room_roster_size">Rozmiar: %1$s</string>
+
+    <!-- Quantities and lists. The Lyricist generator reads elements in this order,
+         so these must stay after every <string>. -->
+    <string-array name="tips">
+        <item>Aby wspólne listy odtwarzania działały, %1$s musi wiedzieć, gdzie przechowywane są twoje pliki multimedialne. Dodaj swoje foldery z mediami w 'Ustawienia > Ogólne > Katalogi mediów dla wspólnej listy odtwarzania'.</item>
+        <item>Chcesz używać odtwarzacza wideo solo? Wybierz odtwarzacz, stuknij w logo %1$s powyżej, a następnie wybierz 'Tryb offline'.</item>
+        <item>Zawsze możesz przywrócić ustawienia do stanów domyślnych, przechodząc do 'Ustawienia -> Zaawansowane -> Przywróć domyślne'</item>
+        <item>Dołączasz wielokrotnie do tego samego pokoju? Zapisz go jako skrót na swoim urządzeniu dla dostępu jednym dotknięciem, klikając mały przycisk obok 'Dołącz do pokoju'.</item>
+        <item>Każdy odtwarzacz ma różne zalety. Jeśli jeden nie działa dobrze z twoim formatem wideo, spróbuj innego.</item>
+        <item>%1$s Mobile pozwala odtwarzać media z bezpośrednich linków. Jednak YouTube NIE jest obsługiwany, jeszcze.</item>
+        <item>Jeśli chcesz tymczasowo zminimalizować pokój bez opuszczania go, możesz przejść w tryb "Obraz w obrazie", gdzie ekran jest małym pływającym okienkiem nad innymi aplikacjami.</item>
+    </string-array>
 </resources>

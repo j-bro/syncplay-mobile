@@ -7,20 +7,17 @@
     <string name="cancel">Cancel</string>
     <string name="done">Done</string>
 
-
     <string name="edit">Edit</string>
 
     <string name="play">Play</string>
 
     <string name="delete">Delete</string>
 
-
     <string name="save">Save</string>
 
     <string name="undefined">Undefined</string>
 
     <string name="reset_default">Reset Default</string>
-
 
     <!-- Home Screen -->
     <string name="connect_username">Username</string>
@@ -78,10 +75,6 @@
     <string name="room_guy_joined">%1$s joined the room.</string>
     <string name="room_isplayingfile">%1$s is playing '%2$s' (%3$s)</string>
     <string name="room_you_joined_room">You have joined the room: %1$s</string>
-    <plurals name="room_user_count">
-        <item quantity="one">%1$d user</item>
-        <item quantity="other">%1$d users</item>
-    </plurals>
     <string name="room_share_invite">Share the room</string>
     <string name="room_reconnect_now">Try again now</string>
     <string name="room_chat_show_image">Show image from %1$s</string>
@@ -242,7 +235,7 @@
 
     <!-- Settings -->
     <string name="setting_remember_join_info_title">Remember joining info</string>
-    <string name="setting_remember_join_info_summary">Keeps your last name, room and server.</string>
+    <string name="setting_remember_join_info_summary">Keeps your last used name, room and server.</string>
     <string name="setting_never_show_tips_title">Never show tips</string>
     <string name="setting_never_show_tips_summary">No tips at launch.</string>
     <string name="setting_erase_shortcuts_title">Erase all home shortcuts</string>
@@ -429,8 +422,6 @@
     <string name="uisetting_custom_seek_amount_title">Custom skip duration</string>
     <string name="uisetting_custom_seek_amount_summary">How far the custom skip button jumps.</string>
 
-
-
     <string name="uisetting_doubletap_seek_title">Double-tap to seek</string>
     <string name="uisetting_doubletap_seek_summary">Double tap a side of the screen to jump.</string>
 
@@ -511,7 +502,6 @@
     <string name="media_directories_add_folder">Add folder</string>
     <string name="media_directories_delete">Remove from list</string>
 
-
     <string name="about_tagline">a Syncplay client for %1$s</string>
     <string name="about_source_button">Source code</string>
     <string name="about_report_button">Report a bug</string>
@@ -524,15 +514,6 @@
     <string name="tips_dontshowmetips">No more tips</string>
     <string name="tips_did_ya_know">Did ya know?</string>
 
-    <string-array name="tips">
-        <item>For shared playlists to work, %1$s needs to know where your media files are stored. Add your media folders in 'Settings > General > Media Directories for Shared Playlist'.</item>
-        <item>Want to use the video player solo? Select a player, tap the %1$s logo above, then choose 'Offline Mode'.</item>
-        <item>You can always reset settings to their default states by going to 'Settings -> Advanced -> Reset to Default'</item>
-        <item>Joining the same room repeatedly? Save it as a shortcut on your device for one-tap access by clicking the small button next to 'Join Room'.</item>
-        <item>Each player has different strengths. If one doesn't work well with your video format, try another.</item>
-        <item>%1$s plays direct links and, on Android, YouTube and a few other sites. Paste the link under Add media.</item>
-        <item>If you want to minimize the room temporarily without leaving, you can go into "Picture-in-Picture" mode where the screen is a small floating screen above other apps.</item>
-    </string-array>
     <string name="room_gestures_panel_title">Gestures</string>
     <string name="uisetting_chat_colors_entry_summary">Set the color of each part of chat messages</string>
     <!-- Settings console (design overhaul) -->
@@ -710,14 +691,6 @@
     <string name="server_log_stop_failed">Could not stop: %1$s</string>
     <string name="server_notification_title">%1$s server</string>
     <string name="server_notification_channel_description">Shows while you are hosting a server</string>
-    <plurals name="server_notification_text">
-        <item quantity="one">Running on port %1$d, %2$d person connected</item>
-        <item quantity="other">Running on port %1$d, %2$d people connected</item>
-    </plurals>
-    <plurals name="server_host_clients">
-        <item quantity="one">%1$d person connected</item>
-        <item quantity="other">%1$d people connected</item>
-    </plurals>
     <string name="room_notification_text">Room open</string>
     <string name="room_volume_label">Volume</string>
     <string name="room_brightness_label">Brightness</string>
@@ -730,4 +703,28 @@
     <string name="about_update_available">Version %1$s is out</string>
     <string name="about_update_failed">Could not check for updates. Try again</string>
     <string name="room_chat_image_from">Image sent by %1$s</string>
+
+    <!-- Quantities and lists. The Lyricist generator reads elements in this order,
+         so these must stay after every <string>. -->
+    <string-array name="tips">
+        <item>For shared playlists to work, %1$s needs to know where your media files are stored. Add your media folders in 'Settings > General > Media Directories for Shared Playlist'.</item>
+        <item>Want to use the video player solo? Select a player, tap the %1$s logo above, then choose 'Offline Mode'.</item>
+        <item>You can always reset settings to their default states by going to 'Settings -> Advanced -> Reset to Default'</item>
+        <item>Joining the same room repeatedly? Save it as a shortcut on your device for one-tap access by clicking the small button next to 'Join Room'.</item>
+        <item>Each player has different strengths. If one doesn't work well with your video format, try another.</item>
+        <item>%1$s plays direct links and, on Android, YouTube and a few other sites. Paste the link under Add media.</item>
+        <item>If you want to minimize the room temporarily without leaving, you can go into "Picture-in-Picture" mode where the screen is a small floating screen above other apps.</item>
+    </string-array>
+    <plurals name="room_user_count">
+        <item quantity="one">%1$d user</item>
+        <item quantity="other">%1$d users</item>
+    </plurals>
+    <plurals name="server_notification_text">
+        <item quantity="one">Running on port %1$d, %2$d person connected</item>
+        <item quantity="other">Running on port %1$d, %2$d people connected</item>
+    </plurals>
+    <plurals name="server_host_clients">
+        <item quantity="one">%1$d person connected</item>
+        <item quantity="other">%1$d people connected</item>
+    </plurals>
 </resources>

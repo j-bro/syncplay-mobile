@@ -95,6 +95,9 @@ kotlin {
          * Context, Conscrypt or a security scope is Android's alone and stays there.
          */
         val jvmShared by creating { dependsOn(commonMain.get()) }
+
+        /* Where the Lyricist processor writes Strings.kt and the per-locale objects. */
+        commonMain.get().kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
         androidMain.get().dependsOn(jvmShared)
         getByName("desktopMain").dependsOn(jvmShared)
 
@@ -127,6 +130,10 @@ kotlin {
 
             /* Official JetBrains Kotlin Date 'n time manager (i.e: generating date from epoch) */
             implementation(libs.kotlinx.datetime)
+
+            /* Holds the display language in Compose state, so switching it recomposes the app
+             * instead of restarting it. The strings themselves are generated below. */
+            implementation(libs.lyricist)
 
             /* JSON serializer/deserializer to communicate with Syncplay servers */
             implementation(libs.kotlinx.serialization.json)
@@ -276,6 +283,24 @@ configurations.configureEach {
 // wired into resource preparation; the launcher colours are on demand (syncTrinityColors).
 with(PropagationTasks) {
     registerPropagationTasks()
+}
+
+// Lyricist reads the strings.xml of every values folder and writes one Kotlin object per
+// locale. It runs on the common metadata compilation, so all targets share the output.
+dependencies {
+    add("kspCommonMainMetadata", libs.lyricist.processor.xml)
+}
+
+ksp {
+    arg("lyricist.packageName", "app.i18n")
+    arg("lyricist.xml.moduleName", "app")
+    arg("lyricist.xml.defaultLanguageTag", "en")
+    arg("lyricist.xml.resourcesPath", file("src/commonMain/composeResources").absolutePath)
+}
+
+/* Every compilation reads the generated sources, so all of them wait for the generator. */
+tasks.matching { it.name.startsWith("compile") || it.name.startsWith("ksp") }.configureEach {
+    if (name != "kspCommonMainKotlinMetadata") dependsOn("kspCommonMainKotlinMetadata")
 }
 
 ktorfit {

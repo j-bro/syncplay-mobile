@@ -16,7 +16,7 @@
     <!-- Home Screen -->
     <string name="connect_username">输入您的用户名</string>
     <string name="connect_roomname">输入房间名称</string>
-    <string name="connect_server">选择%1$s服务器</string>
+    <string name="connect_server">服务器</string>
     <string name="connect_choose_video_engine">选择您的视频引擎</string>
     <string name="connect_button_join">加入房间</string>
     <string name="connect_button_saveshortcut">保存当前配置为主屏幕快捷方式</string>
@@ -46,7 +46,7 @@
     <string name="room_shared_playlist_updated">%1$s 更新了播放列表</string>
     <string name="room_shared_playlist_changed">%1$s 更改了播放列表当前选择</string>
     <string name="room_custom_skip_button">跳过 %1$s</string>
-    <string name="media_directories_setting_summary">%1$s将搜索您在此指定的任何媒体目录，以便找到共享播放列表正在播放的文件名。</string>
+    <string name="media_directories_setting_summary">搜索播放列表文件的文件夹。</string>
     <string name="room_on_newcontrolledroom">已创建托管房间 '%1$s'，密码为 '%2$s'。请保存此信息以备将来参考！它已复制到剪贴板，您可以将其粘贴到其他地方。\n\n在托管房间中，所有人都与房间操作员保持同步，只有房间操作员可以暂停、取消暂停、跳转和更改播放列表。\n\n您应该要求普通观众加入房间 '%1$s'，但房间操作员可以加入房间 '%1$s:%2$s' 以自动验证身份。</string>
     <string name="room_on_controller_auth_success">%1$s 已验证为房间操作员</string>
     <string name="room_on_controller_auth_failed">%1$s 未能验证为房间操作员</string>
@@ -120,7 +120,7 @@
 
     <!-- Settings -->
     <string name="setting_remember_join_info_title">记住加入信息</string>
-    <string name="setting_remember_join_info_summary">默认启用。这将允许%1$s保存您最后的用户名、房间名以及您最后使用的官方服务器。</string>
+    <string name="setting_remember_join_info_summary">记住你上次使用的名称、房间和服务器。</string>
     <string name="setting_never_show_tips_title">永不显示提示</string>
     <string name="setting_never_show_tips_summary">这将防止在应用启动时显示提示。</string>
     <string name="setting_erase_shortcuts_title">删除所有主屏幕快捷方式</string>
@@ -148,7 +148,7 @@
     <string name="setting_unpause_action_always">始终恢复播放</string>
     <string name="room_set_as_ready">已设为就绪以恢复播放</string>
     <string name="setting_tls_title">使用安全连接（TLS）</string>
-    <string name="setting_tls_summary">如果服务器支持，%1$s将尝试建立安全加密连接（主要是TLSv1.3，但会回退到旧版本）。如果网络引擎不支持TLS，此设置将被忽略。</string>
+    <string name="setting_tls_summary">服务器支持时使用加密连接。</string>
     <string name="setting_resetdefault_title">重置默认设置</string>
     <string name="setting_resetdefault_summary">将所有内容重置为其默认值（推荐）</string>
     <string name="setting_resetdefault_dialog">确定清除此屏幕的设置吗？</string>
@@ -257,19 +257,8 @@
     <string name="media_directories_add_folder">添加文件夹</string>
     <string name="media_directories_delete">从列表中删除</string>
 
-
     <string name="tips_dontshowmetips">不再显示提示</string>
     <string name="tips_did_ya_know">您知道吗？</string>
-
-    <string-array name="tips">
-        <item>要使共享播放列表正常工作，%1$s需要知道您的媒体文件存储位置。在"设置 > 常规 > 共享播放列表的媒体目录"中添加您的媒体文件夹。</item>
-        <item>想单独使用视频播放器吗？选择一个播放器，点击上方的%1$s徽标，然后选择"离线模式"。</item>
-        <item>您始终可以通过转到"设置 -> 高级 -> 重置为默认"将设置重置为其默认状态。</item>
-        <item>反复加入同一个房间？点击"加入房间"旁边的小按钮，将其保存为设备上的快捷方式，以便一键访问。</item>
-        <item>每个播放器都有不同的优势。如果一个播放器不能很好地处理您的视频格式，请尝试另一个。</item>
-        <item>%1$s Mobile允许您从直接链接播放媒体。但是，目前不支持YouTube。</item>
-        <item>如果您想暂时最小化房间而不离开，可以进入"画中画"模式，屏幕将变为浮动在其他应用上方的小屏幕。</item>
-    </string-array>
 
     <!-- Host Server -->
     <string name="room_gif_no_results">未找到结果</string>
@@ -336,4 +325,16 @@
     <string name="uisetting_sync_slowdown_title">轻微不同步时减速</string>
     <string name="room_roster_duration">时长：%1$s</string>
     <string name="room_roster_size">大小：%1$s</string>
+
+    <!-- Quantities and lists. The Lyricist generator reads elements in this order,
+         so these must stay after every <string>. -->
+    <string-array name="tips">
+        <item>要使共享播放列表正常工作，%1$s需要知道您的媒体文件存储位置。在"设置 > 常规 > 共享播放列表的媒体目录"中添加您的媒体文件夹。</item>
+        <item>想单独使用视频播放器吗？选择一个播放器，点击上方的%1$s徽标，然后选择"离线模式"。</item>
+        <item>您始终可以通过转到"设置 -> 高级 -> 重置为默认"将设置重置为其默认状态。</item>
+        <item>反复加入同一个房间？点击"加入房间"旁边的小按钮，将其保存为设备上的快捷方式，以便一键访问。</item>
+        <item>每个播放器都有不同的优势。如果一个播放器不能很好地处理您的视频格式，请尝试另一个。</item>
+        <item>%1$s Mobile允许您从直接链接播放媒体。但是，目前不支持YouTube。</item>
+        <item>如果您想暂时最小化房间而不离开，可以进入"画中画"模式，屏幕将变为浮动在其他应用上方的小屏幕。</item>
+    </string-array>
 </resources>

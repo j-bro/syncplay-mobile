@@ -7,13 +7,11 @@
     <string name="cancel">Abbrechen</string>
     <string name="done">Fertig</string>
 
-
     <string name="edit">Bearbeiten</string>
 
     <string name="play">Abspielen</string>
 
     <string name="delete">Löschen</string>
-
 
     <string name="save">Speichern</string>
 
@@ -21,11 +19,10 @@
 
     <string name="reset_default">Auf Standard zurücksetzen</string>
 
-
     <!-- Home Screen -->
     <string name="connect_username">Benutzernamen eingeben</string>
     <string name="connect_roomname">Raumname eingeben</string>
-    <string name="connect_server">%1$s-Server auswählen</string>
+    <string name="connect_server">Server</string>
     <string name="connect_choose_video_engine">Video-Engine auswählen</string>
     <string name="connect_button_join">Raum beitreten</string>
     <string name="connect_button_saveshortcut">Aktuelle Konfiguration als Startbildschirm-Verknüpfung speichern</string>
@@ -57,7 +54,7 @@
     <string name="room_shared_playlist_updated">%1$s hat die Playlist aktualisiert</string>
     <string name="room_shared_playlist_changed">%1$s hat die aktuelle Playlist-Auswahl geändert</string>
     <string name="room_custom_skip_button">%1$s überspringen</string>
-    <string name="media_directories_setting_summary">%1$s durchsucht alle hier angegebenen Medienverzeichnisse, um einen Namen zu finden, der in einer gemeinsamen Playlist abgespielt wird.</string>
+    <string name="media_directories_setting_summary">Ordner, die nach Dateien der Playlist durchsucht werden.</string>
 
     <string name="room_on_newcontrolledroom">Verwalteter Raum '%1$s' mit Passwort '%2$s' erstellt. Bitte speichern Sie diese Informationen für die Zukunft! Sie wurden in Ihre Zwischenablage kopiert, damit Sie sie anderswo einfügen können.\n\nIn verwalteten Räumen werden alle mit dem Raumoperator synchron gehalten, der als Einziger pausieren, fortsetzen, suchen und die Playlist ändern kann.\n\nSie sollten normale Zuschauer bitten, dem Raum '%1$s' beizutreten, aber Raumoperatoren können dem Raum '%1$s:%2$s' beitreten, um sich automatisch zu authentifizieren.</string>
     <string name="room_on_controller_auth_success">%1$s erfolgreich als Raumoperator authentifiziert</string>
@@ -134,7 +131,7 @@
 
     <!-- Settings -->
     <string name="setting_remember_join_info_title">Beitrittsinfo merken</string>
-    <string name="setting_remember_join_info_summary">Standardmäßig aktiviert. Ermöglicht %1$s, Ihren letzten Benutzernamen, Raumnamen und den zuletzt verwendeten offiziellen Server zu speichern.</string>
+    <string name="setting_remember_join_info_summary">Merkt sich zuletzt genutzten Namen, Raum und Server.</string>
     <string name="setting_never_show_tips_title">Tipps nie anzeigen</string>
     <string name="setting_never_show_tips_summary">Verhindert, dass Tipps beim App-Start angezeigt werden.</string>
     <string name="setting_erase_shortcuts_title">Alle Startbildschirm-Verknüpfungen löschen</string>
@@ -162,7 +159,7 @@
     <string name="setting_unpause_action_always">Immer fortsetzen</string>
     <string name="room_set_as_ready">Als bereit gesetzt zum Fortsetzen</string>
     <string name="setting_tls_title">Sichere Verbindung verwenden (TLS)</string>
-    <string name="setting_tls_summary">%1$s versucht eine sichere verschlüsselte Verbindung (hauptsächlich TLSv1.3, fallback zu älteren Versionen) mit dem Server herzustellen, falls dieser es unterstützt. Diese Einstellung wird ignoriert, wenn die Netzwerk-Engine TLS nicht unterstützt.</string>
+    <string name="setting_tls_summary">Verschlüsselt, wenn der Server das unterstützt.</string>
     <string name="setting_resetdefault_title">Standardeinstellungen zurücksetzen</string>
     <string name="setting_resetdefault_summary">Alles auf Standardwerte zurücksetzen (Empfohlen)</string>
     <string name="setting_resetdefault_dialog">Einstellungen für diesen Bildschirm wirklich zurücksetzen?</string>
@@ -271,20 +268,8 @@
     <string name="media_directories_add_folder">Ordner hinzufügen</string>
     <string name="media_directories_delete">Aus Liste entfernen</string>
 
-
-
     <string name="tips_dontshowmetips">Zeige mir keine Tipps</string>
     <string name="tips_did_ya_know">Wussten Sie schon?</string>
-
-    <string-array name="tips">
-        <item>Damit gemeinsame Playlists funktionieren, muss %1$s wissen, wo Ihre Mediendateien gespeichert sind. Fügen Sie Ihre Medienordner unter 'Einstellungen > Allgemein > Medienverzeichnisse für gemeinsame Playlist' hinzu.</item>
-        <item>Möchten Sie den Video-Player solo verwenden? Wählen Sie einen Player, tippen Sie auf das %1$s-Logo oben und wählen Sie dann 'Offline-Modus'.</item>
-        <item>Sie können Einstellungen immer auf ihre Standardzustände zurücksetzen, indem Sie zu 'Einstellungen -> Erweitert -> Auf Standard zurücksetzen' gehen.</item>
-        <item>Treten Sie demselben Raum wiederholt bei? Speichern Sie ihn als Verknüpfung auf Ihrem Gerät für Ein-Klick-Zugriff, indem Sie auf die kleine Schaltfläche neben 'Raum beitreten' klicken.</item>
-        <item>Jeder Player hat unterschiedliche Stärken. Wenn einer nicht gut mit Ihrem Videoformat funktioniert, versuchen Sie einen anderen.</item>
-        <item>%1$s Mobile ermöglicht Ihnen, Medien von direkten Links abzuspielen. YouTube wird jedoch NOCH nicht unterstützt.</item>
-        <item>Wenn Sie den Raum vorübergehend minimieren möchten, ohne ihn zu verlassen, können Sie in den "Bild-in-Bild"-Modus wechseln, wo der Bildschirm ein kleiner schwebender Bildschirm über anderen Apps ist.</item>
-    </string-array>
 
     <string name="room_gif_no_results">Keine Ergebnisse gefunden</string>
     <string name="room_gif_powered_by">Bereitgestellt von Klipy</string>
@@ -350,4 +335,16 @@
     <string name="uisetting_sync_slowdown_title">Verlangsamen bei geringer Desynchronisation</string>
     <string name="room_roster_duration">Dauer: %1$s</string>
     <string name="room_roster_size">Größe: %1$s</string>
+
+    <!-- Quantities and lists. The Lyricist generator reads elements in this order,
+         so these must stay after every <string>. -->
+    <string-array name="tips">
+        <item>Damit gemeinsame Playlists funktionieren, muss %1$s wissen, wo Ihre Mediendateien gespeichert sind. Fügen Sie Ihre Medienordner unter 'Einstellungen > Allgemein > Medienverzeichnisse für gemeinsame Playlist' hinzu.</item>
+        <item>Möchten Sie den Video-Player solo verwenden? Wählen Sie einen Player, tippen Sie auf das %1$s-Logo oben und wählen Sie dann 'Offline-Modus'.</item>
+        <item>Sie können Einstellungen immer auf ihre Standardzustände zurücksetzen, indem Sie zu 'Einstellungen -> Erweitert -> Auf Standard zurücksetzen' gehen.</item>
+        <item>Treten Sie demselben Raum wiederholt bei? Speichern Sie ihn als Verknüpfung auf Ihrem Gerät für Ein-Klick-Zugriff, indem Sie auf die kleine Schaltfläche neben 'Raum beitreten' klicken.</item>
+        <item>Jeder Player hat unterschiedliche Stärken. Wenn einer nicht gut mit Ihrem Videoformat funktioniert, versuchen Sie einen anderen.</item>
+        <item>%1$s Mobile ermöglicht Ihnen, Medien von direkten Links abzuspielen. YouTube wird jedoch NOCH nicht unterstützt.</item>
+        <item>Wenn Sie den Raum vorübergehend minimieren möchten, ohne ihn zu verlassen, können Sie in den "Bild-in-Bild"-Modus wechseln, wo der Bildschirm ein kleiner schwebender Bildschirm über anderen Apps ist.</item>
+    </string-array>
 </resources>

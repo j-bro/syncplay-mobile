@@ -10,6 +10,9 @@ kSerialization = "1.11.0"
 detekt = "1.23.8"
 kover = "0.9.9"
 ktorfit = "2.7.5"
+# Runtime language switching. The XML processor reads values-*/strings.xml, so the resource
+# files stay the source of truth and translators keep Weblate.
+lyricist = "1.9.0"
 
 #KMM-Libs
 compose-multiplatform-icons = "1.7.3"
@@ -104,6 +107,8 @@ ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", 
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktorfit = { module = "de.jensklingenberg.ktorfit:ktorfit-lib", version.ref = "ktorfit" }
+lyricist = { module = "cafe.adriel.lyricist:lyricist", version.ref = "lyricist" }
+lyricist-processor-xml = { module = "cafe.adriel.lyricist:lyricist-processor-xml", version.ref = "lyricist" }
 skiko = { module = "org.jetbrains.skiko:skiko", version.ref = "skiko" }
 
 #Android

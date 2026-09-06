@@ -7,13 +7,11 @@
     <string name="cancel">إلغاء</string>
     <string name="done">تم</string>
 
-
     <string name="edit">تعديل</string>
 
     <string name="play">تشغيل</string>
 
     <string name="delete">حذف</string>
-
 
     <string name="save">حفظ</string>
 
@@ -21,11 +19,10 @@
 
     <string name="reset_default">إعادة التعيين للوضع الافتراضي</string>
 
-
     <!-- Home Screen -->
     <string name="connect_username">اكتب اسم المستخدم</string>
     <string name="connect_roomname">أدخل اسم الغرفة</string>
-    <string name="connect_server">اختر خادم %1$s</string>
+    <string name="connect_server">الخادم</string>
     <string name="connect_choose_video_engine">اختر محرك الفيديو</string>
     <string name="connect_button_join">الانضمام للغرفة</string>
     <string name="connect_button_saveshortcut">حفظ الإعدادات الحالية كاختصار على الشاشة الرئيسية</string>
@@ -57,7 +54,7 @@
     <string name="room_shared_playlist_updated">%1$s حدّث قائمة التشغيل</string>
     <string name="room_shared_playlist_changed">%1$s غيّر الاختيار الحالي لقائمة التشغيل</string>
     <string name="room_custom_skip_button">تخطي %1$s</string>
-    <string name="media_directories_setting_summary">سيبحث %1$s في أي مجلدات وسائط تحددها هنا للعثور على اسم يتم تشغيله في قائمة التشغيل المشتركة.</string>
+    <string name="media_directories_setting_summary">المجلدات التي يُبحث فيها عن ملفات قائمة التشغيل.</string>
 
     <string name="room_on_newcontrolledroom">تم إنشاء غرفة مُدارة '%1$s' بكلمة مرور '%2$s'. يرجى حفظ هذه المعلومات للرجوع إليها مستقبلاً! تم نسخها إلى الحافظة لتتمكن من لصقها في مكان آخر.\n\nفي الغرف المُدارة يتم مزامنة الجميع مع مشغل (مشغلي) الغرفة الذين هم الوحيدون القادرون على الإيقاف والاستئناف والانتقال وتغيير قائمة التشغيل.\n\nيجب أن تطلب من المشاهدين العاديين الانضمام إلى الغرفة '%1$s' ولكن يمكن لمشغلي الغرفة الانضمام إلى الغرفة '%1$s:%2$s' للمصادقة تلقائياً.</string>
     <string name="room_on_controller_auth_success">%1$s تمت المصادقة عليه كمشغل للغرفة</string>
@@ -134,7 +131,7 @@
 
     <!-- Settings -->
     <string name="setting_remember_join_info_title">تذكر معلومات الانضمام</string>
-    <string name="setting_remember_join_info_summary">مفعّل افتراضياً. سيسمح هذا لـ %1$s بحفظ آخر اسم مستخدم واسم غرفة وآخر خادم رسمي استخدمته.</string>
+    <string name="setting_remember_join_info_summary">يحفظ آخر اسم وغرفة وخادم استخدمتها.</string>
     <string name="setting_never_show_tips_title">عدم إظهار النصائح أبداً</string>
     <string name="setting_never_show_tips_summary">سيمنع هذا ظهور النصائح عند تشغيل التطبيق.</string>
     <string name="setting_erase_shortcuts_title">مسح جميع اختصارات الشاشة الرئيسية</string>
@@ -162,7 +159,7 @@
     <string name="setting_unpause_action_always">استئناف دائماً</string>
     <string name="room_set_as_ready">تم التعيين كجاهز للاستئناف</string>
     <string name="setting_tls_title">استخدام اتصال آمن (TLS)</string>
-    <string name="setting_tls_summary">سيحاول %1$s إنشاء اتصال آمن ومشفر (بشكل أساسي TLSv1.3 ولكن يعود إلى إصدارات أقدم) مع الخادم إذا كان الأخير يدعمه. سيتم تجاهل هذا الإعداد إذا كان محرك الشبكة لا يدعم TLS.</string>
+    <string name="setting_tls_summary">يُشفَّر الاتصال إذا كان الخادم يدعم ذلك.</string>
     <string name="setting_resetdefault_title">إعادة تعيين الإعدادات الافتراضية</string>
     <string name="setting_resetdefault_summary">إعادة تعيين كل شيء إلى قيمته الافتراضية (موصى به)</string>
     <string name="setting_resetdefault_dialog">هل أنت متأكد من مسح الإعدادات لهذه الشاشة؟</string>
@@ -271,20 +268,8 @@
     <string name="media_directories_add_folder">إضافة مجلد</string>
     <string name="media_directories_delete">إزالة من القائمة</string>
 
-
-
     <string name="tips_dontshowmetips">لا تظهر لي النصائح</string>
     <string name="tips_did_ya_know">هل تعلم؟</string>
-
-    <string-array name="tips">
-        <item>لكي تعمل قوائم التشغيل المشتركة، يحتاج %1$s لمعرفة مكان تخزين ملفات الوسائط. أضف مجلدات الوسائط في 'الإعدادات > عام > مجلدات الوسائط لقائمة التشغيل المشتركة'.</item>
-        <item>تريد استخدام مشغل الفيديو بمفردك؟ اختر مشغلاً، اضغط على شعار %1$s في الأعلى، ثم اختر 'الوضع غير المتصل'.</item>
-        <item>يمكنك دائماً إعادة تعيين الإعدادات إلى حالتها الافتراضية بالانتقال إلى 'الإعدادات -> متقدم -> إعادة تعيين إلى الافتراضي'</item>
-        <item>تنضم إلى نفس الغرفة بشكل متكرر؟ احفظها كاختصار على جهازك للوصول السريع بنقرة واحدة عن طريق النقر على الزر الصغير بجوار 'الانضمام للغرفة'.</item>
-        <item>لكل مشغل نقاط قوة مختلفة. إذا لم يعمل أحدها بشكل جيد مع تنسيق الفيديو، جرب آخر.</item>
-        <item>يتيح لك %1$s Mobile تشغيل الوسائط من روابط مباشرة. ومع ذلك، YouTube غير مدعوم بعد.</item>
-        <item>إذا كنت تريد تصغير الغرفة مؤقتاً دون المغادرة، يمكنك الانتقال إلى وضع "صورة داخل صورة" حيث تكون الشاشة عبارة عن شاشة عائمة صغيرة فوق التطبيقات الأخرى.</item>
-    </string-array>
 
     <!-- Server hosting -->
     <string name="room_gif_no_results">لم يتم العثور على نتائج</string>
@@ -352,4 +337,16 @@
 
     <string name="room_roster_duration">المدة: %1$s</string>
     <string name="room_roster_size">الحجم: %1$s</string>
+
+    <!-- Quantities and lists. The Lyricist generator reads elements in this order,
+         so these must stay after every <string>. -->
+    <string-array name="tips">
+        <item>لكي تعمل قوائم التشغيل المشتركة، يحتاج %1$s لمعرفة مكان تخزين ملفات الوسائط. أضف مجلدات الوسائط في 'الإعدادات > عام > مجلدات الوسائط لقائمة التشغيل المشتركة'.</item>
+        <item>تريد استخدام مشغل الفيديو بمفردك؟ اختر مشغلاً، اضغط على شعار %1$s في الأعلى، ثم اختر 'الوضع غير المتصل'.</item>
+        <item>يمكنك دائماً إعادة تعيين الإعدادات إلى حالتها الافتراضية بالانتقال إلى 'الإعدادات -> متقدم -> إعادة تعيين إلى الافتراضي'</item>
+        <item>تنضم إلى نفس الغرفة بشكل متكرر؟ احفظها كاختصار على جهازك للوصول السريع بنقرة واحدة عن طريق النقر على الزر الصغير بجوار 'الانضمام للغرفة'.</item>
+        <item>لكل مشغل نقاط قوة مختلفة. إذا لم يعمل أحدها بشكل جيد مع تنسيق الفيديو، جرب آخر.</item>
+        <item>يتيح لك %1$s Mobile تشغيل الوسائط من روابط مباشرة. ومع ذلك، YouTube غير مدعوم بعد.</item>
+        <item>إذا كنت تريد تصغير الغرفة مؤقتاً دون المغادرة، يمكنك الانتقال إلى وضع "صورة داخل صورة" حيث تكون الشاشة عبارة عن شاشة عائمة صغيرة فوق التطبيقات الأخرى.</item>
+    </string-array>
 </resources>
