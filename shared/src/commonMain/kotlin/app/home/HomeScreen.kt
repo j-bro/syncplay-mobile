@@ -113,7 +113,6 @@ import app.uicomponents.controls.pressFeedback
 import app.uicomponents.frames.NoticeHost
 import app.utils.ExitRoomMode
 import app.utils.Platform
-import app.utils.appName
 import app.utils.availablePlatformPlayerEngines
 import app.utils.consumePendingShortcut
 import app.utils.platform

@@ -61,7 +61,6 @@ import platform.UIKit.UIInterfaceOrientationMask
 import platform.UIKit.UIInterfaceOrientationMaskAll
 import platform.UIKit.UIInterfaceOrientationMaskLandscape
 import platform.UIKit.UIInterfaceOrientationMaskPortrait
-import platform.UIKit.UIViewController
 import platform.UIKit.UIWindow
 import platform.UIKit.UIWindowScene
 import platform.UIKit.UIWindowSceneGeometryPreferencesIOS
@@ -206,14 +205,18 @@ private val iosMajorVersion: Int by lazy {
  * Everything after the delegate is iOS 16 and later. `UIWindowSceneGeometryPreferencesIOS` is
  * constructed, not merely called, so `respondsToSelector` cannot guard it and an iOS 14 or 15
  * device would meet a class that does not exist. The app's deployment target is 14.1 and this
- * runs on Home as well as in the room, so the version check comes first.
+ * runs on Home as well as in the room, so the version check comes first. Below 16 the delegate
+ * answer is all there is, and it takes effect at the next rotation.
  */
 private fun applyOrientationMask(mask: UIInterfaceOrientationMask) {
     delegato.myOrientationMask = mask
 
     if (iosMajorVersion < 16) {
-        // Older systems re-read the delegate on the next rotation; ask for one now.
-        UIViewController.attemptRotationToDeviceOrientation()
+        /* The delegate answer above is the whole fix here, and it applies at the next rotation
+         * or view-controller transition rather than immediately. Forcing one sooner needs
+         * UIViewController.attemptRotationToDeviceOrientation, a class method Kotlin's UIKit
+         * bindings do not expose; it would have to come from the Swift side. Not worth a bridge
+         * for two systems, and far better than the crash this replaced. */
         return
     }
 

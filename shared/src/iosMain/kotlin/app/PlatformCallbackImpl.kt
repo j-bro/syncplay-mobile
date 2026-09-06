@@ -5,9 +5,7 @@ import app.home.JoinConfig
 import app.player.avplayer.AVPlayerEngine
 import app.player.vlc.VlcKitImpl
 import platform.AVKit.AVPictureInPictureController
-import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
-import platform.UIKit.UIApplicationOpenSettingsURLString
 import platform.UIKit.UIApplicationShortcutIcon.Companion.iconWithType
 import platform.UIKit.UIApplicationShortcutIconType
 import platform.UIKit.UIApplicationShortcutItem

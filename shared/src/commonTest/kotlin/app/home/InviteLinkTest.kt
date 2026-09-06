@@ -1,5 +1,6 @@
 package app.home
 
+import app.protocol.Session
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -55,7 +56,7 @@ class InviteLinkTest {
     fun `a hostile link cannot hand the room an unbounded name`() {
         val long = "x".repeat(5000)
         val parsed = InviteLink.parse("synkplay://join?room=$long&password=$long")!!
-        assertTrue(parsed.room.length <= 34, "room was ${parsed.room.length}")
+        assertTrue(parsed.room.length <= Session.MAX_ROOM_NAME_CHARS, "room was ${parsed.room.length}")
         assertTrue(parsed.pw.length <= 149, "password was ${parsed.pw.length}")
     }
 

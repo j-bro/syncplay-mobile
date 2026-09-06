@@ -6,7 +6,6 @@ import app.home.JoinConfig
 import app.room.RoomViewmodel
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
-import java.util.Locale
 
 /**
  * Desktop implementation of the platform callback surface. Most operations are inherently
