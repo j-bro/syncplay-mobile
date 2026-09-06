@@ -82,8 +82,6 @@
         <item quantity="one">%1$d user</item>
         <item quantity="other">%1$d users</item>
     </plurals>
-    <string name="room_details_file_properties">Duration: %1$s - Size: %2$s MBs</string>
-    <string name="room_details_user_position">At: %1$s</string>
     <string name="room_share_invite">Share the room</string>
     <string name="room_reconnect_now">Try again now</string>
     <string name="room_chat_show_image">Show image from %1$s</string>
@@ -94,7 +92,7 @@
     <string name="room_user_set_ready">Mark ready</string>
     <string name="room_user_set_not_ready">Mark not ready</string>
     <string name="setting_room_portrait_title">Follow device rotation</string>
-    <string name="setting_room_portrait_summary">Let the room turn with the device.</string>
+    <string name="setting_room_portrait_summary">Allow the room and video to rotate between portrait and landscape as you turn your device. When off, the room stays in landscape.</string>
     <string name="room_share_invite_message">Join me in %1$s on Synkplay:</string>
     <string name="room_file_mismatch_warning_core">Your file is different from %1$s's file in the following ways:</string>
     <string name="room_shared_playlist_updated">%1$s updated the playlist</string>
@@ -254,20 +252,20 @@
     <string name="setting_display_language_system">System language</string>
     <string name="setting_display_language_summry">Select your language of choice with which %1$s is displayed.</string>
     <string name="setting_language_no_preference">No preference</string>
-    <string name="setting_audio_default_language_title">Audio language</string>
-    <string name="setting_audio_default_language_summry">Automatically load an audio track with the language code you set here. For example, English code is 'en-US', Japanese is 'ja-JP'. Google 'IETF BCP 47 codes' for more information.</string>
-    <string name="setting_cc_default_language_title">Subtitle language</string>
-    <string name="setting_cc_default_language_summry">Automatically load a subtitle track with the language code you set here. For example, English code is 'en-US', Japanese is 'ja-JP'. Google 'IETF BCP 47 codes' for more information.</string>
+    <string name="setting_audio_default_language_title">Preferred audio language</string>
+    <string name="setting_audio_default_language_summry">Automatically choose an audio track in this language when the video contains one. A track you select manually takes priority.</string>
+    <string name="setting_cc_default_language_title">Preferred subtitle language</string>
+    <string name="setting_cc_default_language_summry">Automatically choose a subtitle track in this language when the video contains one. A track you select manually takes priority.</string>
     <string name="setting_max_buffer_title">Custom max buffer size</string>
     <string name="setting_max_buffer_summary">Largest buffer before playback starts.</string>
     <string name="setting_min_buffer_title">Custom min buffer size</string>
     <string name="setting_min_buffer_summary">Smallest buffer before playback starts.</string>
     <string name="setting_playback_buffer_title">Seek buffer</string>
     <string name="setting_playback_buffer_summary">Buffer used after a seek or an unpause.</string>
-    <string name="setting_ready_firsthand_title">Set as ready first-hand</string>
-    <string name="setting_ready_firsthand_summary">You are marked ready on entering a room.</string>
-    <string name="setting_autoplay_title">Start on its own</string>
-    <string name="setting_autoplay_summary">Play once everyone is ready.</string>
+    <string name="setting_ready_firsthand_title">Ready when joining a room</string>
+    <string name="setting_ready_firsthand_summary">Mark yourself as ready automatically when you enter a room. Turn this off if you want to mark yourself ready after choosing a video.</string>
+    <string name="setting_autoplay_title">Autoplay when everyone is ready</string>
+    <string name="setting_autoplay_summary">Start a countdown when you and the other viewers with a video loaded are all ready, then begin playback together.</string>
     <string name="room_waiting_for_one">Waiting for %1$s</string>
     <string name="room_waiting_for_many">Waiting for %1$d people</string>
     <string name="room_everyone_ready">Everyone is ready (%1$d)</string>
@@ -278,8 +276,8 @@
     <string name="room_resume_body">You left %1$s at %2$s.</string>
     <string name="room_resume_continue">Continue</string>
     <string name="room_resume_restart">Start over</string>
-    <string name="setting_unpause_action_title">Readiness unpause action</string>
-    <string name="setting_unpause_action_summary">What must be true before play unpauses.</string>
+    <string name="setting_unpause_action_title">When the Play button can start playback</string>
+    <string name="setting_unpause_action_summary">Choose whose readiness to check when you press Play. If the condition is not met, pressing Play marks you as ready instead.</string>
     <string name="setting_unpause_action_if_ready">Unpause if already set as ready</string>
     <string name="setting_unpause_action_if_others_ready">Unpause if others are ready</string>
     <string name="setting_unpause_action_if_min_users_ready">Unpause if others ready + min users</string>
@@ -322,23 +320,23 @@
     <!-- Sync Mechanism Settings -->
     <string name="uisetting_categ_sync_mechanisms">Sync</string>
     <string name="uisetting_sync_fastforward_title">Fast-forward to catch up</string>
-    <string name="uisetting_sync_fastforward_summary">Catch up by fast-forwarding when behind.</string>
-    <string name="uisetting_sync_slowdown_title">Slow down for others</string>
-    <string name="uisetting_sync_slowdown_summary">Slows your playback so others catch up.</string>
-    <string name="uisetting_sync_rewind_threshold_title">Rewind after</string>
-    <string name="uisetting_sync_rewind_threshold_summary">How far ahead before catching up.</string>
-    <string name="uisetting_sync_slowdown_threshold_title">Slow down after</string>
-    <string name="uisetting_sync_slowdown_threshold_summary">How far ahead before easing off.</string>
-    <string name="uisetting_sync_fastforward_threshold_title">Skip ahead after</string>
-    <string name="uisetting_sync_fastforward_threshold_summary">How far behind before catching up.</string>
-    <string name="uisetting_user_offset_title">My copy runs ahead by</string>
-    <string name="uisetting_user_offset_summary">Shift only your own playback.</string>
-    <string name="uisetting_chat_clearance_title">Keep chat off subtitles</string>
-    <string name="uisetting_chat_clearance_summary">Height chat leaves clear at the bottom.</string>
-    <string name="uisetting_sync_rewind_title">Rewind on major desync</string>
-    <string name="uisetting_sync_rewind_summary">Rewinds to anyone far behind.</string>
-    <string name="uisetting_sync_dont_slow_with_me_title">Never slow others for me</string>
-    <string name="uisetting_sync_dont_slow_with_me_summary">Others never slow or rewind for you.</string>
+    <string name="uisetting_sync_fastforward_summary">Jump your video forward when you fall behind the room. Used when following a managed room's controller or when "Don't wait for my device" is enabled.</string>
+    <string name="uisetting_sync_slowdown_title">Slow playback when ahead</string>
+    <string name="uisetting_sync_slowdown_summary">Temporarily reduce your playback speed when you are ahead of the room. Normal speed resumes once the others catch up.</string>
+    <string name="uisetting_sync_rewind_threshold_title">Rewind threshold</string>
+    <string name="uisetting_sync_rewind_threshold_summary">How many seconds ahead of the room your video can be before it jumps back to match. Default: 4.0 seconds.</string>
+    <string name="uisetting_sync_slowdown_threshold_title">Slowdown threshold</string>
+    <string name="uisetting_sync_slowdown_threshold_summary">How many seconds ahead of the room your video can be before playback slows down. Default: 1.5 seconds.</string>
+    <string name="uisetting_sync_fastforward_threshold_title">Catch-up threshold</string>
+    <string name="uisetting_sync_fastforward_threshold_summary">How many seconds behind the room your video must be before it jumps forward to catch up. Default: 5.0 seconds.</string>
+    <string name="uisetting_user_offset_title">Playback time offset</string>
+    <string name="uisetting_user_offset_summary">Align a different cut of the video with the room. Use +10.0 s if your file has a 10-second extra intro; use -10.0 s if that intro is missing from your file. 0.0 s means no offset. Only your playback position changes.</string>
+    <string name="uisetting_chat_clearance_title">Space below chat for subtitles</string>
+    <string name="uisetting_chat_clearance_summary">Keep this percentage of the screen height clear below chat so subtitles remain visible. 0 allows chat to reach the bottom of the screen.</string>
+    <string name="uisetting_sync_rewind_title">Rewind when ahead</string>
+    <string name="uisetting_sync_rewind_summary">Jump your video back when you are farther ahead of the room than the rewind threshold.</string>
+    <string name="uisetting_sync_dont_slow_with_me_title">Don't wait for my device</string>
+    <string name="uisetting_sync_dont_slow_with_me_summary">Let other viewers keep playing if your device falls behind. Your video tries to catch up locally instead of making the room wait.</string>
 
     <!-- UI Settings Categories -->
     <string name="uisetting_categ_chat_colors">Chat colors</string>
@@ -348,19 +346,19 @@
     <!-- UI Settings -->
     <string name="uisetting_timestamp_summary">Shows the time next to each message.</string>
     <string name="uisetting_msgoutline_title">Chat message outline</string>
-    <string name="uisetting_msgoutline_summary">Keeps text readable over video. 0 turns it off.</string>
+    <string name="uisetting_msgoutline_summary">Thickness of the black outline around chat text, to help it stand out against the video. 0 removes the outline.</string>
     <string name="uisetting_msgshadow_title">Chat message shadow</string>
     <string name="uisetting_msgshadow_summary">A shadow keeps text readable over video.</string>
     <string name="uisetting_msgboxaction_title">Enter sends the message</string>
     <string name="uisetting_msgboxaction_summary">Off makes Enter add a new line instead.</string>
-    <string name="uisetting_messagery_alpha_title">Message background</string>
-    <string name="uisetting_messagery_alpha_summary">How solid the ground behind messages is.</string>
+    <string name="uisetting_messagery_alpha_title">Chat background opacity</string>
+    <string name="uisetting_messagery_alpha_summary">How opaque the panel behind chat messages is over video. 0 is fully transparent; 255 is fully opaque.</string>
     <string name="uisetting_msgsize_title">Message font size</string>
-    <string name="uisetting_msgsize_summary">Changes message text size. Default is 10.</string>
-    <string name="uisetting_msgcount_title">Message max count</string>
-    <string name="uisetting_msgcount_summary">How many recent lines show over the video.</string>
-    <string name="uisetting_msglife_title">Message hold time</string>
-    <string name="uisetting_msglife_summary">How long a message stays over the video.</string>
+    <string name="uisetting_msgsize_summary">Size of chat message text, from 5 to 24. Default: 10.</string>
+    <string name="uisetting_msgcount_title">Messages shown over video</string>
+    <string name="uisetting_msgcount_summary">Maximum number of recent chat messages visible over the video while the room controls are hidden.</string>
+    <string name="uisetting_msglife_title">Chat message display time</string>
+    <string name="uisetting_msglife_summary">How many seconds recent chat messages stay visible over the video before fading out while the controls are hidden.</string>
     <string name="uisetting_timestamp_color_title">Timestamp text color</string>
     <string name="uisetting_self_color_title">Self tag color</string>
     <string name="uisetting_self_color_summary">Your own name.</string>
@@ -375,13 +373,13 @@
     <string name="uisetting_subtitle_size_title">Subtitle size</string>
     <string name="uisetting_subtitle_size_summary">Size of subtitles loaded from a file.</string>
     <string name="uisetting_subtitle_delay_title">Subtitle delay</string>
-    <string name="uisetting_subtitle_delay_summary">Negative shows subtitles earlier.</string>
+    <string name="uisetting_subtitle_delay_summary">Shift subtitle timing without moving the video. Negative values show subtitles earlier; positive values show them later.</string>
     <string name="uisetting_audio_delay_title">Audio delay</string>
-    <string name="uisetting_audio_delay_summary">Negative plays sound earlier.</string>
-    <string name="uisetting_seek_forward_jump_title">Forward jump</string>
-    <string name="uisetting_seek_forward_jump_summary">How far a forward jump goes.</string>
-    <string name="uisetting_seek_backward_jump_title">Backward jump</string>
-    <string name="uisetting_seek_backward_jump_summary">How far a backward jump goes.</string>
+    <string name="uisetting_audio_delay_summary">Shift audio timing relative to the video. Negative values play the sound earlier; positive values play it later.</string>
+    <string name="uisetting_seek_forward_jump_title">Forward seek duration</string>
+    <string name="uisetting_seek_forward_jump_summary">How many seconds the forward button skips each time you press it.</string>
+    <string name="uisetting_seek_backward_jump_title">Backward seek duration</string>
+    <string name="uisetting_seek_backward_jump_summary">How many seconds the rewind button moves back each time you press it.</string>
     <string name="uisetting_reconnect_interval_title">Reconnection interval</string>
     <string name="uisetting_reconnect_interval_summary">Wait between reconnection attempts.</string>
     <string name="uisetting_resetdefault_title">Reset default settings</string>
@@ -394,9 +392,9 @@
     <string name="uisetting_kite_sub_autoselect_title">Auto-select subtitles</string>
     <string name="uisetting_kite_sub_autoselect_summary">Shows the default subtitle track on open.</string>
     <string name="uisetting_kite_sub_delay_title">Subtitle delay (ms)</string>
-    <string name="uisetting_kite_sub_delay_summary">Positive shows subtitles later.</string>
+    <string name="uisetting_kite_sub_delay_summary">Shift subtitle timing in milliseconds. Positive values show subtitles later; negative values show them earlier. 1000 ms is one second.</string>
     <string name="uisetting_kite_audio_delay_title">Audio delay (ms)</string>
-    <string name="uisetting_kite_audio_delay_summary">Positive shows video earlier, for late sound.</string>
+    <string name="uisetting_kite_audio_delay_summary">Adjust picture timing to compensate for audio delay. Positive values show the picture earlier; negative values show it later. 1000 ms is one second.</string>
     <string name="uisetting_video_bg_color_title">Video background color</string>
     <string name="uisetting_video_bg_color_summary">The letterbox bars around the picture.</string>
     <string name="uisetting_kite_preserve_pitch_title">Keep pitch at speed</string>
@@ -459,14 +457,14 @@
     <string name="room_msg_resolving_url">Resolving stream URL…</string>
     <string name="room_msg_resolved_url">Resolved: %1$s</string>
 
-    <string name="uisetting_osd_duration_title">OSD message duration</string>
-    <string name="uisetting_osd_duration_summary">How long a notice stays. 0 turns them off.</string>
+    <string name="uisetting_osd_duration_title">Room notice display time</string>
+    <string name="uisetting_osd_duration_summary">How many seconds room events and warnings stay on screen. 0 hides these notices.</string>
 
     <!-- OSD message control settings (mirrors Syncplay PC's "Messages" tab toggles) -->
     <string name="uisetting_osd_sameroom_title">Events from your room</string>
     <string name="uisetting_osd_sameroom_summary">Pauses, plays, seeks, joins and leaves.</string>
-    <string name="uisetting_osd_nonoperator_title">Non-operator events</string>
-    <string name="uisetting_osd_nonoperator_summary">Also events from non-operators when controlled.</string>
+    <string name="uisetting_osd_nonoperator_title">Events from viewers without control</string>
+    <string name="uisetting_osd_nonoperator_summary">In a managed room, also show notices about viewers who do not have permission to control playback.</string>
     <string name="uisetting_osd_otherroom_title">Events from other rooms</string>
     <string name="uisetting_osd_otherroom_summary">Activity in other rooms.</string>
     <string name="uisetting_osd_slowdown_title">Sync notices</string>
@@ -552,7 +550,7 @@
     <string name="settings_group_messages">Messages</string>
     <string name="settings_group_notices">Notices</string>
     <string name="settings_group_seeking">Seeking</string>
-    <string name="settings_group_subtitles">Subtitles</string>
+    <string name="settings_group_subtitles">Audio and subtitles</string>
     <string name="settings_group_chapters">Chapters</string>
     <string name="settings_group_picture">Picture</string>
     <string name="settings_group_privacy">Privacy</string>
@@ -571,9 +569,14 @@
     <string name="room_undo_seek">Undo seek</string>
     <string name="room_tracks">Audio and subtitles</string>
     <string name="room_tracks_none">No tracks</string>
+    <string name="room_user_you">You</string>
+    <string name="room_user_details_shown">Expanded</string>
+    <string name="room_user_details_hidden">Collapsed</string>
+    <string name="room_user_controller">Room operator</string>
+    <string name="room_roster_duration">Duration: %1$s</string>
+    <string name="room_roster_size">Size: %1$s</string>
     <string name="room_roster_view_compact">Compact</string>
-    <string name="room_roster_view_standard">Standard</string>
-    <string name="room_roster_view_files">By file</string>
+    <string name="room_roster_view_standard">Expanded</string>
     <string name="room_rail_more">More</string>
     <string name="room_seek_toposition_hint">Type a time, for example 1:23:45 or 12:30.</string>
     <string name="room_audio_track_selected">Audio: %1$s</string>
@@ -581,7 +584,7 @@
     <string name="room_sub_search_language">Language</string>
     <!-- Room shell (design overhaul) -->
     <string name="room_hud_auto_hide_title">Auto-hide controls</string>
-    <string name="room_hud_auto_hide_summary">Idle seconds before they hide. 0 keeps them up.</string>
+    <string name="room_hud_auto_hide_summary">Hide the room controls after this many seconds without interaction while video is playing. Pausing or loading stops the timer. 0 keeps the controls visible. Open panels and unfinished chat messages keep them visible too.</string>
     <string name="room_leave_question">Leave the room?</string>
     <string name="room_managed_room">Managed room</string>
     <string name="room_lock">Lock the screen</string>
@@ -599,9 +602,6 @@
     <string name="room_alone">Nobody else is here yet.</string>
     <string name="room_file_same">Same file</string>
     <string name="room_file_different">Different file</string>
-    <string name="room_file_group_mine">Your file: %1$s</string>
-    <string name="room_file_group_other">Someone else's file: %1$s</string>
-    <string name="room_file_group_none">Nobody has opened a file</string>
     <string name="room_file_none">No file</string>
     <string name="room_file_has">Has a file</string>
     <!-- Chat (design overhaul) -->
@@ -728,6 +728,6 @@
     <string name="about_update_checking">Checking…</string>
     <string name="about_update_current">You are on the newest release</string>
     <string name="about_update_available">Version %1$s is out</string>
-    <string name="about_update_failed">Could not reach the release list</string>
+    <string name="about_update_failed">Could not check for updates. Try again</string>
     <string name="room_chat_image_from">Image sent by %1$s</string>
 </resources>

@@ -42,7 +42,6 @@
     <string name="room_guy_joined">%1$s 加入了房间。</string>
     <string name="room_isplayingfile">%1$s 正在播放 '%2$s' (%3$s)</string>
     <string name="room_you_joined_room">您已加入房间：%1$s</string>
-    <string name="room_details_file_properties">时长：%1$s - 大小：%2$s MB</string>
     <string name="room_file_mismatch_warning_core">您的文件与 %1$s 的文件在以下方面不同：</string>
     <string name="room_shared_playlist_updated">%1$s 更新了播放列表</string>
     <string name="room_shared_playlist_changed">%1$s 更改了播放列表当前选择</string>
@@ -335,4 +334,6 @@
     <string name="uisetting_sync_rewind_title">严重不同步时回退</string>
     <string name="uisetting_sync_slowdown_summary">当其他人稍微落后时，您的播放速度将降低以让他们追上。</string>
     <string name="uisetting_sync_slowdown_title">轻微不同步时减速</string>
+    <string name="room_roster_duration">时长：%1$s</string>
+    <string name="room_roster_size">大小：%1$s</string>
 </resources>

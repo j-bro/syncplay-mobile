@@ -52,7 +52,6 @@
     <string name="room_guy_joined">%1$s a rejoint la salle.</string>
     <string name="room_isplayingfile">%1$s lit '%2$s' (%3$s)</string>
     <string name="room_you_joined_room">Vous avez rejoint la salle : %1$s</string>
-    <string name="room_details_file_properties">Durée : %1$s - Taille : %2$s Mo</string>
     <string name="room_file_mismatch_warning_core">Votre fichier diffère de celui de %1$s dans les aspects suivants :</string>
     <string name="room_shared_playlist_updated">%1$s a mis à jour la playlist</string>
     <string name="room_shared_playlist_changed">%1$s a changé la sélection actuelle de la playlist</string>
@@ -364,4 +363,6 @@
     <string name="uisetting_haptic_on_playlist_summary">Vibrer lorsque la playlist partagée est mise à jour.</string>
     <string name="uisetting_haptic_on_connection_title">Événement de connexion</string>
     <string name="uisetting_haptic_on_connection_summary">Vibrer en cas d'échec de connexion ou de déconnexion.</string>
+    <string name="room_roster_duration">Durée : %1$s</string>
+    <string name="room_roster_size">Taille : %1$s</string>
 </resources>

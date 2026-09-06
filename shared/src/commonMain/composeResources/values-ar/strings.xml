@@ -53,7 +53,6 @@
     <string name="room_guy_joined">%1$s انضم إلى الغرفة.</string>
     <string name="room_isplayingfile">%1$s يشغل '%2$s' (%3$s)</string>
     <string name="room_you_joined_room">لقد انضممت إلى الغرفة: %1$s</string>
-    <string name="room_details_file_properties">المدة: %1$s - الحجم: %2$s ميغابايت</string>
     <string name="room_file_mismatch_warning_core">ملفك يختلف عن ملف %1$s بالطرق التالية:</string>
     <string name="room_shared_playlist_updated">%1$s حدّث قائمة التشغيل</string>
     <string name="room_shared_playlist_changed">%1$s غيّر الاختيار الحالي لقائمة التشغيل</string>
@@ -351,4 +350,6 @@
     <string name="uisetting_sync_slowdown_summary">عندما يكون الآخرون متأخرين قليلاً، سيتم تقليل سرعة التشغيل للسماح لهم باللحاق.</string>
     <string name="uisetting_sync_slowdown_title">الإبطاء عند عدم التزامن البسيط</string>
 
+    <string name="room_roster_duration">المدة: %1$s</string>
+    <string name="room_roster_size">الحجم: %1$s</string>
 </resources>

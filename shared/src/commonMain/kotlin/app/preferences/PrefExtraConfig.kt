@@ -28,6 +28,8 @@ sealed interface PrefExtraConfig {
         val unit: String = "",
         /** Shows "Off" instead of "0", for sliders where zero switches the feature off. */
         val zeroMeansOff: Boolean = false,
+        /** Converts the stored integer to the number users see and hear; [unit] is appended. */
+        val formatValue: (Int) -> String = { it.toString() },
         val onValueChanged: (suspend SyncplayViewmodel.(newValue: Int) -> Unit)? = null,
     ) : PrefExtraConfig
 

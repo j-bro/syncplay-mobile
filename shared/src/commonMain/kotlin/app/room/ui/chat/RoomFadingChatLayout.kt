@@ -48,8 +48,8 @@ fun FadingMessageLayout() {
     val outlineThickness by MSG_OUTLINE_THICKNESS.watchPref()
     val shadowOn by MSG_SHADOW_ACTIVATE.watchPref()
     val fontSize by MSG_FONTSIZE.watchPref()
-    // Picture in picture drops to the floor, never below it.
-    val style = MessageStyle(if (isInPiPMode) 11 else fontSize, outlineThickness.toFloat().takeIf { it > 0f }, shadowOn, showTime = false)
+    // PiP caps large text at the default, while respecting a smaller size chosen by the user.
+    val style = MessageStyle(if (isInPiPMode) minOf(fontSize, MSG_FONTSIZE.default) else fontSize, outlineThickness.toFloat().takeIf { it > 0f }, shadowOn, showTime = false)
 
     val messages by viewmodel.session.messageSequence.collectAsState()
     var shown by remember { mutableStateOf<List<Message>>(emptyList()) }

@@ -673,7 +673,7 @@ object Preferences {
         icon = Icons.Filled.FastRewind
         dependencyEnable = { SYNC_REWIND.value() }
 
-        extraConfig = PrefExtraConfig.Slider(minValue = 30, maxValue = 150, unit = "ds")
+        extraConfig = PrefExtraConfig.Slider(minValue = 30, maxValue = 150, unit = "s", formatValue = { formatTenths(it) })
     }
 
     /** How far ahead you may drift before playback slows to let the room catch up, in tenths. */
@@ -683,7 +683,7 @@ object Preferences {
         icon = Icons.Filled.SlowMotionVideo
         dependencyEnable = { SYNC_SLOWDOWN.value() }
 
-        extraConfig = PrefExtraConfig.Slider(minValue = 5, maxValue = 60, unit = "ds")
+        extraConfig = PrefExtraConfig.Slider(minValue = 5, maxValue = 60, unit = "s", formatValue = { formatTenths(it) })
     }
 
     /** How far behind you may fall before the room pulls you forward, in tenths. */
@@ -693,7 +693,7 @@ object Preferences {
         icon = Icons.Filled.FastForward
         dependencyEnable = { SYNC_FASTFORWARD.value() }
 
-        extraConfig = PrefExtraConfig.Slider(minValue = 20, maxValue = 200, unit = "ds")
+        extraConfig = PrefExtraConfig.Slider(minValue = 20, maxValue = 200, unit = "s", formatValue = { formatTenths(it) })
     }
 
     /**
@@ -709,7 +709,10 @@ object Preferences {
         summary = Res.string.uisetting_user_offset_summary
         icon = Icons.Filled.MoreTime
 
-        extraConfig = PrefExtraConfig.Slider(minValue = 0, maxValue = 1200, unit = "ds")
+        extraConfig = PrefExtraConfig.Slider(
+            minValue = 0, maxValue = 1200, unit = "s",
+            formatValue = { formatTenths(it, zeroPoint = 600, signed = true) },
+        )
     }
 
     /**
@@ -836,13 +839,13 @@ object Preferences {
 
         extraConfig = PrefExtraConfig.Slider(maxValue = 255, minValue = 0)
     }
-    /** 11 to 24; a stored value under 11 is read as 11 (see MessageRow), nothing is rewritten. */
-    val MSG_FONTSIZE = Pref("pref_inroom_msg_fontsize", 13) {
+    /** 5 to 24, default 10; existing choices are preserved. MessageStyle uses the same floor. */
+    val MSG_FONTSIZE = Pref("pref_inroom_msg_fontsize", 10) {
         title = Res.string.uisetting_msgsize_title
         summary = Res.string.uisetting_msgsize_summary
         icon = Icons.Filled.FormatSize
 
-        extraConfig = PrefExtraConfig.Slider(maxValue = 24, minValue = 11)
+        extraConfig = PrefExtraConfig.Slider(maxValue = 24, minValue = 5)
     }
     /** How many recent unseen lines the fading layout shows over the video. */
     val MSG_MAXCOUNT = Pref("pref_inroom_msg_maxcount", 3) {
@@ -877,7 +880,8 @@ object Preferences {
      *  Mirrors Syncplay PC's "Messages" tab toggles (showSameRoomOSD / showNonControllerOSD /
      *  showDifferentRoomOSD / showSlowdownOSD / showOSDWarnings). These gate which event-driven
      *  OSD overlays bubble up via [RoomViewmodel.dispatchOSD]. They do NOT affect the chat log. */
-    val OSD_SAME_ROOM = Pref("pref_inroom_osd_same_room", true) {
+    /** Routine room events stay in chat by default instead of crowding the video with notices. */
+    val OSD_SAME_ROOM = Pref("pref_inroom_osd_same_room", false) {
         title = Res.string.uisetting_osd_sameroom_title
         summary = Res.string.uisetting_osd_sameroom_summary
         icon = Icons.Filled.SupervisedUserCircle
@@ -975,8 +979,8 @@ object Preferences {
         icon = Icons.Filled.Swipe
     }
 
-    /** Idle seconds before the HUD hides itself; zero keeps it up until tapped away. */
-    val HUD_AUTO_HIDE_SECONDS = Pref("pref_inroom_hud_auto_hide_seconds", 5) {
+    /** Idle seconds during playback before the HUD hides; zero keeps it up until tapped away. */
+    val HUD_AUTO_HIDE_SECONDS = Pref("pref_inroom_hud_auto_hide_seconds", 15) {
         title = Res.string.room_hud_auto_hide_title
         summary = Res.string.room_hud_auto_hide_summary
         icon = Icons.Filled.Timer
@@ -984,7 +988,7 @@ object Preferences {
         extraConfig = PrefExtraConfig.Slider(maxValue = 30, minValue = 0, unit = "s", zeroMeansOff = true)
     }
 
-    /** How the roster panel is laid out: compact, standard or by file. Never shown as a row. */
+    /** Compact or expanded roster (stored as "standard"); legacy "files" falls back to expanded. */
     val USER_INFO_VIEW = Pref("pref_inroom_user_info_view", "standard")
 
     /** ------------ KitePlayer Settings -------------*/

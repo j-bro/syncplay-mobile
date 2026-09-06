@@ -1,9 +1,13 @@
 package app.design
 
+import androidx.compose.runtime.CompositionLocalProvider
 import app.preferences.settings.GLOBAL_ADVANCED
 import app.preferences.settings.GLOBAL_NETWORK
 import app.preferences.settings.INROOM_CHAT_PROPERTIES
 import app.preferences.settings.INROOM_PLAYER_SETTINGS
+import app.preferences.settings.INROOM_SYNC
+import app.preferences.settings.LocalSettingsDensity
+import app.preferences.settings.SettingsDensity
 import app.preferences.settings.SETTINGS_GLOBAL
 import app.preferences.settings.SettingsCategoryBody
 import app.preferences.settings.SettingsCategoryList
@@ -15,6 +19,23 @@ import kotlin.test.assertTrue
  * DESIGN/PREF_SYSTEM. A change that reintroduces a seven line row fails here.
  */
 class SettingsGolden {
+
+    @Test
+    fun roomExplanationsRemainReadableOnNarrowScreens() {
+        for ((name, category) in listOf("sync" to INROOM_SYNC, "player" to INROOM_PLAYER_SETTINGS)) {
+            for (scale in listOf(1f, 2f)) {
+                // The real host scrolls. Give the complete, expanded category enough room here
+                // that the fixture's viewport does not clip its last rows at 200% text.
+                val result = DesignHarness.render("settings-$name-explained", 320, heightDp = 5000, fontScale = scale) {
+                    CompositionLocalProvider(LocalSettingsDensity provides SettingsDensity(showInlineExplanations = true)) {
+                        SettingsCategoryBody(category)
+                    }
+                }
+                assertTrue(result.contentHeightDp < 5000, "Expanded settings exceeded the render canvas")
+                result.assertAllTextFits()
+            }
+        }
+    }
 
     @Test
     fun categories() {

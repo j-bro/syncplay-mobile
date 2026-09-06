@@ -52,7 +52,6 @@
     <string name="room_guy_joined">%1$s dołączył do pokoju.</string>
     <string name="room_isplayingfile">%1$s odtwarza '%2$s' (%3$s)</string>
     <string name="room_you_joined_room">Dołączyłeś do pokoju: %1$s</string>
-    <string name="room_details_file_properties">Czas trwania: %1$s - Rozmiar: %2$s MB</string>
     <string name="room_file_mismatch_warning_core">Twój plik różni się od pliku %1$s w następujący sposób:</string>
     <string name="room_shared_playlist_updated">%1$s zaktualizował listę odtwarzania</string>
     <string name="room_shared_playlist_changed">%1$s zmienił aktualny wybór listy odtwarzania</string>
@@ -360,4 +359,6 @@
     <string name="uisetting_chapter_dots_clickable_summary">Stuknij kropkę rozdziału, aby przejść do tej pozycji.</string>
     <string name="uisetting_osd_duration_title">Czas wyświetlania komunikatów OSD</string>
     <string name="uisetting_osd_duration_summary">Ile sekund wyświetlać komunikaty statusu na ekranie (np. zmiana proporcji, wybór ścieżek). Ustaw 0, aby wyłączyć komunikaty OSD.</string>
+    <string name="room_roster_duration">Czas trwania: %1$s</string>
+    <string name="room_roster_size">Rozmiar: %1$s</string>
 </resources>
