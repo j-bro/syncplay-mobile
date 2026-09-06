@@ -24,7 +24,7 @@ val attributions: List<Attribution> = listOf(
     Attribution("mpv", "GPL 2.0 or later", "https://mpv.io"),
     Attribution("VLCKit and libVLC", "LGPL 2.1 or later", "https://code.videolan.org/videolan/VLCKit"),
     Attribution("FFmpeg", "GPL 3.0 as built here", "https://ffmpeg.org"),
-    Attribution("KitePlayer and KiteCodec", "Apache 2.0", "https://github.com/yuroyami"),
+    Attribution("KitePlayer and KiteFFmpeg", "Apache 2.0", "https://github.com/yuroyami"),
     Attribution("NewPipe Extractor", "GPL 3.0", "https://github.com/TeamNewPipe/NewPipeExtractor"),
     Attribution("YouTubeKit", "MIT", "https://github.com/alexeichhorn/YouTubeKit"),
     Attribution("Coil", "Apache 2.0", "https://coil-kt.github.io/coil"),

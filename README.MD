@@ -139,7 +139,7 @@ Switch engines at runtime in the room settings. `✔` in **Default** marks the e
 
 | Engine | Default | Formats | Subtitles | Chapters | Licence | Notes |
 |:---|:---:|:---|:---:|:---:|:---|:---|
-| **KitePlayer** (FFmpeg) | ✔ | Broad (HEVC, mkv, …) | ✔ | ✔ | LGPL-2.1-or-later FFmpeg | The only desktop engine; its decoder rides inside the KiteCodec jar |
+| **KitePlayer** (FFmpeg) | ✔ | Broad (HEVC, mkv, …) | ✔ | ✔ | LGPL-2.1-or-later FFmpeg | The only desktop engine; its decoder rides inside the KiteFFmpeg jar |
 
 ---
 
@@ -201,7 +201,7 @@ Thanks to **[@Zhaodaidai](https://github.com/Zhaodaidai)** (Chinese), **[@Doncan
 **Desktop:** `./gradlew :desktopApp:run` to try it, and `packageDmg`, `packageMsi` or `packageDeb`
 to build an installer. jpackage can only build for the machine it runs on, so each installer
 comes from its own OS. Nothing native is downloaded: the only engine is KitePlayer and its
-decoder is inside the KiteCodec jar.
+decoder is inside the KiteFFmpeg jar.
 
 ### Running the tests
 

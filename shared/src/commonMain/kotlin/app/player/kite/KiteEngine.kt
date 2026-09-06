@@ -10,7 +10,7 @@ import syncplaymobile.shared.generated.resources.kiteplayer
 
 /**
  * KitePlayer: a media engine written in Kotlin Multiplatform from the ground up, decoding through
- * FFmpeg (KiteCodec) and rendering through the platform's own output.
+ * FFmpeg (KiteFFmpeg) and rendering through the platform's own output.
  *
  * It is the only engine here whose implementation is shared: [KiteImpl] is written once and runs
  * unchanged on Android and iOS, because the engine itself is common code and only the audio
