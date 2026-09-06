@@ -1,273 +1,184 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/yuroyami/syncplay-mobile/master/androidApp/src/main/res/mipmap-xxxhdpi/ic_launcher.png" width="160" alt="Synkplay">
-</p>
-
-<h1 align="center">Synkplay</h1>
-
-<p align="center">
-  <b>Watch videos together, in sync. An unofficial <a href="https://syncplay.pl">Syncplay</a> client for Android, iOS, Windows, macOS and Linux.</b><br>
-  <sub>The "k" stands for Kotlin.</sub>
+  <img src="art/readme-feature.webp" width="960" alt="Synkplay — Your video. Everyone in sync. Watch together on phones and computers.">
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Android-8.0+-a4c639?logo=android&logoColor=white" alt="Android 8.0+">
-  <img src="https://img.shields.io/badge/iOS-14.0+-555?logo=apple&logoColor=white" alt="iOS 14.0+">
-  <img src="https://img.shields.io/badge/Kotlin_Multiplatform-7F52FF?logo=kotlin&logoColor=white" alt="Kotlin Multiplatform">
-  <img src="https://img.shields.io/badge/License-AGPL--3.0-blue" alt="License">
+  <b>Android · iOS · Windows · macOS · Linux</b><br>
+  No sign-up. No ads. Open source.
 </p>
 
----
+<p align="center">
+  <a href="#download">Download</a> &nbsp;·&nbsp;
+  <a href="#start-a-room">Start a room</a> &nbsp;·&nbsp;
+  <a href="#screenshots">Screenshots</a> &nbsp;·&nbsp;
+  <a href="#help">Help</a> &nbsp;·&nbsp;
+  <a href="docs/DEVELOPING.md">Build</a>
+</p>
+
+Play, pause and seek together. Synkplay is an independent [Syncplay](https://syncplay.pl/) client,
+compatible with the official desktop app.
+
+> [!NOTE]
+> Everyone opens the same video from their own file or link. Synkplay syncs playback; it does not send video or share your screen.
 
 ## Download
 
+<!-- Rows have the same purpose on both platforms: store, direct file, other source. -->
 <table align="center">
   <tr>
-    <th></th>
-    <th>Recommended</th>
-    <th>Alternative</th>
-    <th>Store</th>
+    <th align="center">Android</th>
+    <th align="center">iPhone &amp; iPad</th>
   </tr>
   <tr>
-    <td><b>Android</b></td>
-    <td>
-      <a href="https://github.com/yuroyami/syncplay-mobile/releases/latest">
-        <img src="https://raw.githubusercontent.com/yuroyami/syncplay-mobile/master/art/badges/get-it-on-github.png" width="140" alt="GitHub Releases">
-      </a>
-    </td>
-    <td>
-      <a href="https://apt.izzysoft.de/fdroid/index/apk/com.reddnek.syncplay">
-        <img src="https://raw.githubusercontent.com/yuroyami/syncplay-mobile/master/art/badges/IzzyOnDroid.png" width="140" alt="IzzyOnDroid">
-      </a>
-    </td>
-    <td>
+    <td align="center">
       <a href="https://play.google.com/store/apps/details?id=com.yuroyami.syncplay">
-        <img src="https://raw.githubusercontent.com/yuroyami/syncplay-mobile/master/art/badges/google-play.png" width="140" alt="Google Play">
-      </a>
+        <img src="art/badges/google-play.png" width="140" height="42" alt="Install from Google Play">
+      </a><br><sub>Store install</sub>
+    </td>
+    <td align="center">
+      <a href="https://apps.apple.com/app/id6760187432">
+        <img src="art/badges/app-store.png" width="140" height="42" alt="Install from the App Store">
+      </a><br><sub>Store install</sub>
     </td>
   </tr>
   <tr>
-    <td><b>iOS</b></td>
-    <td>
-      <a href="https://apps.apple.com/us/app/syncplay-mobile/id6760187432">
-        <img src="https://developer.apple.com/assets/elements/icons/download-on-the-app-store/download-on-the-app-store.svg" width="140" alt="App Store">
-      </a>
-    </td>
-    <td>
-      <a href="https://celloserenity.github.io/altdirect/?url=https://raw.githubusercontent.com/yuroyami/syncplay-mobile/refs/heads/master/altstore_yuroyami.json">
-        <img src="https://raw.githubusercontent.com/yuroyami/syncplay-mobile/master/art/badges/AltSource_Blue.png" width="140" alt="AltStore Source">
-      </a>
-    </td>
-    <td>
+    <td align="center">
       <a href="https://github.com/yuroyami/syncplay-mobile/releases/latest">
-        <img src="https://raw.githubusercontent.com/yuroyami/syncplay-mobile/master/art/badges/Download_Blue.png" width="140" alt="Download IPA">
-      </a>
+        <img src="art/badges/get-it-on-github.png" width="140" height="42" alt="Get the Android APK from GitHub Releases">
+      </a><br><sub>Full Android APK</sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/yuroyami/syncplay-mobile/releases/latest">
+        <img src="art/badges/Download_Blue.png" width="140" height="42" alt="Get the IPA from GitHub Releases for sideloading">
+      </a><br><sub>IPA for sideloading</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://apt.izzysoft.de/fdroid/index/apk/com.reddnek.syncplay">
+        <img src="art/badges/IzzyOnDroid.png" width="140" height="42" alt="Get the ExoPlayer-only Android app from IzzyOnDroid">
+      </a><br><sub>ExoPlayer only</sub>
+    </td>
+    <td align="center">
+      <a href="https://celloserenity.github.io/altdirect/?url=https://raw.githubusercontent.com/yuroyami/syncplay-mobile/refs/heads/master/altstore_yuroyami.json">
+        <img src="art/badges/AltSource_Blue.png" width="140" height="42" alt="Add the Synkplay source to AltStore">
+      </a><br><sub>Add to AltStore</sub>
     </td>
   </tr>
 </table>
 
-<details>
-<summary>Notes on downloads</summary>
+**Android:** 8.0+ · **Latest IPA:** iOS 14.1+ · Store versions may arrive later.
 
-- **Android (GitHub):** Each release ships one `universal` APK that carries every CPU type. There are no per-ABI files any more.
-- **Android (IzzyOnDroid):** A smaller APK built from the `exoOnly` flavor, carrying only the ExoPlayer engine (no bundled mpv native libraries). It uses package id `com.reddnek.syncplay`, so it installs **alongside** the GitHub / Play Store build (`com.yuroyami.syncplay`) rather than updating it. Keep one or the other to avoid two copies.
-- **Android (Play Store):** Same build as GitHub, but a new version can appear here a little later because of store review.
-- **iOS:** The "Download IPA" button always points to the latest release. No App Store access? Sideload via [AltStore](https://github.com/yuroyami/syncplay-mobile/wiki/How-to-install-the-app-on-iOS) with no jailbreak, or install the `.ipa` directly. See the [iOS install guide](https://github.com/yuroyami/syncplay-mobile/wiki/How-to-install-the-app-on-iOS) for both paths.
+**On a computer?** [Run Synkplay from source](docs/DEVELOPING.md#desktop), or install [official Syncplay](https://syncplay.pl/download/) to join the same rooms.
+
+<details>
+<summary><b>Which download should I choose?</b></summary>
+
+- **Android:** choose Google Play for a store install, or the latest full GitHub APK for mpv, ExoPlayer and KitePlayer. The universal APK covers all supported CPU types.
+- **IzzyOnDroid:** a smaller, ExoPlayer-only app. It installs alongside the full app and has separate settings.
+- **iPhone / iPad:** install from the App Store. For an IPA, [set up AltStore Classic](https://faq.altstore.io/), then use **Add to AltStore** above.
+
 </details>
 
----
+## Start a room
+
+1. **Meet in the same room.** Use the same server, port and room name. The default public server is fine.
+2. **Open your video.** Each person loads their file or video link.
+3. **Mark yourself ready.** When everyone is ready, press play.
+
+You can share an invite from inside the room. Friends need Synkplay installed to open its invite links.
+
+**Watching alone?** Tap the logo on Home, then **Watch alone**. No server needed; your playback position is saved.
+
+## What you can do
+
+| Want to… | Use… |
+|:---|:---|
+| Pause or skip together | Shared playback controls |
+| Talk during the video | Text, emoji and GIF chat |
+| Queue the next episode | Shared playlists with auto-advance |
+| Adjust for a different intro | Your own time offset |
+| Use your subtitle files | External tracks on supported players |
+| Host your own room | **Host mine** on Home |
+
+<details>
+<summary><b>More controls, when you need them</b></summary>
+
+Themes, gesture controls, reduced motion, shared-playlist undo, and audio/subtitle language preferences.
+Picture-in-Picture is available on Android and with AVPlayer or VLCKit on iOS.
+Managed rooms let a controller decide playback. Filename and file-size sharing can be hidden or hashed.
+Encrypted connections are available when the server supports them.
+
+</details>
 
 ## Screenshots
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/yuroyami/syncplay-mobile/master/art/SS1.png" width="180" alt="Home screen">
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="https://raw.githubusercontent.com/yuroyami/syncplay-mobile/master/art/SS2.png" width="500" alt="Room screen">
+  <a href="art/screenshots/android-portrait.png"><img src="art/screenshots/android-portrait.webp" width="180" alt="Android home in portrait: room details, server and video engine choices"></a>
+  &nbsp;&nbsp;
+  <a href="art/screenshots/android-landscape.png"><img src="art/screenshots/android-landscape.webp" width="500" alt="Android room in landscape: video, playback controls, chat and user info"></a>
 </p>
 
----
+<p align="center"><sub>Android home (portrait) · Android room (landscape)</sub></p>
 
-## Features
+<p align="center">
+  <a href="art/screenshots/macos.png"><img src="art/screenshots/macos.webp" width="720" alt="macOS room: video, chat, playback controls and player settings"></a>
+</p>
 
-- **Syncplay compatible.** Connects to the same servers and works alongside the official PC client. Position, pause, seek, and speed stay in sync.
-- **Protocol rewritten** from Python to Kotlin, covering every core feature.
-- **Multiple video engines.** Three per platform, switchable at runtime to suit your device and format.
-- **Real-time chat** with emoji and inline GIFs.
-- **Shared playlists** for sequential group viewing, with auto-advance.
-- **Managed rooms** and a readiness system.
-- **Picture-in-Picture** (Android, and iOS on AVPlayer or VLCKit).
-- **TLS encryption** for secure connections.
-- **Built-in server.** Host a room straight from the app, no PC required.
-- **Solo mode.** Watch on your own with no server, from the solo button in the About popup.
-- **Privacy controls.** The filename and file size you share with a room can be hashed or withheld.
-- **Deep customization.** Settings for the UI, playback, gestures, and haptics.
-- **Multi-language** via community translations.
+<p align="center"><sub>macOS room · Select any screenshot to see it full size.</sub></p>
 
----
+## Help
 
-## Getting Started
+<details>
+<summary><b>Can my friends use Syncplay on PC?</b></summary>
 
-1. Open the app and enter a **username** and a **room** name.
-2. Pick a **server** (the official `syncplay.pl` is preselected) and a **port** (`8995` to `8999`). Add a password only if your server needs one.
-3. Tap **Join**, then load a video from device storage or paste a direct URL.
-4. Anyone in the same room on the same file plays in sync, mobile or PC.
+Yes. Join the same server, port and room, then open the same video. You can mix Synkplay and the official Syncplay desktop client.
 
-No server of your own? Use the built-in server to host a room, or solo mode to watch offline.
+</details>
 
----
+<details>
+<summary><b>A video or subtitle will not play correctly.</b></summary>
 
-## Video Engines
+Leave the room and choose a different player on Home before joining again.
+The defaults are **mpv** on full Android builds and **VLCKit** on iOS.
+KitePlayer is experimental on mobile. AVPlayer cannot load external subtitle files.
+[Compare the players](docs/DEVELOPING.md#player-capabilities).
 
-Switch engines at runtime in the room settings. `✔` in **Default** marks the engine selected out of the box.
+</details>
 
-**Android**
+<details>
+<summary><b>Why do I have two Android apps?</b></summary>
 
-| Engine | Default | Formats | Subtitles | Chapters | Licence | Notes |
-|:---|:---:|:---|:---:|:---:|:---|:---|
-| **mpv** (libmpv) | ✔ | Broad (HEVC, mkv, …) | Best (libass) | ✔ | GPL-2.0-or-later, and its FFmpeg is built GPLv3 | Recommended: best subtitles and performance |
-| **ExoPlayer** (Media3) | ✗ | Device codecs | Basic | ✗ | Apache-2.0 | Lightweight; the only engine in the `exoOnly` / IzzyOnDroid build |
-| **KitePlayer** (FFmpeg) | ✗ | Broad (HEVC, mkv, …) | ✔ | ✔ | LGPL-2.1-or-later FFmpeg | Experimental; not bundled in the `exoOnly` build |
+The IzzyOnDroid app and the full GitHub / Google Play app use different app IDs, so they can coexist.
+One does not update the other. Each keeps its own settings.
 
-**iOS**
+</details>
 
-| Engine | Default | Formats | Subtitles | Chapters | Licence | Notes |
-|:---|:---:|:---|:---:|:---:|:---|:---|
-| **VLCKit 4** | ✔ | Broad | ✔ | ✔ | LGPL-2.1-or-later | Recommended: external subtitles, chapters and Picture-in-Picture |
-| **AVPlayer** (AVFoundation) | ✗ | Device codecs | ✗ | ✗ | Apple system framework | Native Apple player; no external subtitles or chapters |
-| **KitePlayer** (FFmpeg) | ✗ | Broad (HEVC, mkv, …) | ✔ | ✔ | LGPL-2.1-or-later FFmpeg | Experimental |
+**Still stuck?** [Report a bug](https://github.com/yuroyami/syncplay-mobile/issues/new?template=bug_report.yml) · [Ask a question](https://github.com/yuroyami/syncplay-mobile/discussions) · [Request a feature](https://github.com/yuroyami/syncplay-mobile/issues/new?template=feature_request.yml)
 
-**Desktop**
+## Make it better
 
-| Engine | Default | Formats | Subtitles | Chapters | Licence | Notes |
-|:---|:---:|:---|:---:|:---:|:---|:---|
-| **KitePlayer** (FFmpeg) | ✔ | Broad (HEVC, mkv, …) | ✔ | ✔ | LGPL-2.1-or-later FFmpeg | The only desktop engine; its decoder rides inside the KiteFFmpeg jar |
+Small fixes help. A clearer translation, a reproducible bug report, or a tested patch is welcome.
 
----
+**[Translate on Weblate](https://hosted.weblate.org/engage/syncplay-mobile/)** &nbsp;·&nbsp;
+**[Build & test](docs/DEVELOPING.md)** &nbsp;·&nbsp;
+**[Support development](https://ko-fi.com/sidenaakram)**
 
-## Architecture
+<details>
+<summary><b>Thanks to the people behind it</b></summary>
 
-Built with **Kotlin Multiplatform** and **Compose Multiplatform**: one shared codebase for Android, iOS and desktop (the desktop app is built from source for now; no packaged downloads yet). The networking and sync protocol is a direct port of the official Syncplay client.
+[Syncplay](https://syncplay.pl/) and [Et0h](https://github.com/Et0h) for the original project and help;
+[soredake](https://github.com/soredake) for testing;
+[Osanosa](https://github.com/Osanosa) for contributions;
+[Zhaodaidai](https://github.com/Zhaodaidai), [DoncanC](https://github.com/DoncanC), [ivy-reps](https://github.com/ivy-reps), and everyone translating on Weblate.
 
-| Layer | Technology |
-|:---|:---|
-| **UI** | Compose Multiplatform |
-| **Networking** | Netty (Android) &middot; SwiftNIO (iOS) &middot; Ktor (shared fallback, no TLS) |
-| **Players** | See [Video Engines](#video-engines) |
-
----
-
-## How this differs from official Syncplay
-
-**Mobile adds:** Picture-in-Picture, gesture controls (double-tap seek, swipe brightness/volume), haptic feedback, GIF chat, a built-in server, runtime engine switching, solo/offline mode, custom themes, and Android TV support.
-
-**Not yet ported from desktop:** persistent server rooms (the built-in server keeps rooms in memory only), the file-switch manager that hunts for a matching file on every machine, and per-user time offset. The desktop build does take the same command-line join arguments.
-
----
-
-## FAQ
-
-**Can I watch with friends who use Syncplay on PC?**
-> Yes, fully compatible. Same protocol, same servers, same core features.
-
-**Android says "App not installed" when updating?**
-> You are likely mixing release channels. The IzzyOnDroid build (`com.reddnek.syncplay`) and the GitHub / Play build (`com.yuroyami.syncplay`) are separate apps and cannot update over each other. Uninstall the old one first, then install the build you want.
-
-**I don't have access to the iOS App Store.**
-> Sideload via [AltStore](https://github.com/yuroyami/syncplay-mobile/wiki/How-to-install-the-app-on-iOS) (no jailbreak required) using the shipped source, or install the `.ipa` directly.
-
----
-
-## Translating
-
-<a href="https://hosted.weblate.org/engage/syncplay-mobile">
-  <img src="https://hosted.weblate.org/widget/syncplay-mobile/syncplay-mobile/multi-auto.svg" alt="Translation status">
-</a>
-
-Add or improve translations on Weblate by clicking the badge above.
-
-Thanks to **[@Zhaodaidai](https://github.com/Zhaodaidai)** (Chinese), **[@DoncanC](https://github.com/DoncanC)** (Spanish), and **[@ivy-reps](https://github.com/ivy-reps)** (Russian) for their translations.
-
----
-
-## Building
-
-**Requirements:** an Android Studio recent enough to open AGP 9.x projects, and a recent Xcode for iOS.
-
-**Android:** clone the repo and open it in Android Studio. No extra configuration needed: mpv arrives prebuilt from [libmpvKt](https://github.com/yuroyami/libmpvKt), so nothing native is compiled. Two product flavors are available:
-- `full` (default): ExoPlayer + mpv + KitePlayer.
-- `exoOnly`: ExoPlayer only, used for the IzzyOnDroid build. Select it with `-PexoOnly=true` or the matching Gradle variant.
-
-**iOS:** run `pod install` in `iosApp/`, then open `iosApp.xcworkspace` (not the `.xcodeproj`) in Xcode and build for `arm64`.
-
-**Desktop:** `./gradlew :desktopApp:run` to try it, and `packageDmg`, `packageMsi` or `packageDeb`
-to build an installer. jpackage can only build for the machine it runs on, so each installer
-comes from its own OS. Nothing native is downloaded: the only engine is KitePlayer and its
-decoder is inside the KiteFFmpeg jar.
-
-### Running the tests
-
-```bash
-./gradlew :shared:desktopTest :shared:testAndroidHostTest
-```
-
-The same shared tests run twice over, once on the desktop target and once against the Android
-actuals. Alongside them:
-
-```bash
-./gradlew qualityGates   # the build-time gates, all of them
-./gradlew detekt         # static analysis, tuned to this repo
-./gradlew koverVerify    # coverage floor over app.protocol and app.server
-```
-
-**What the tests cover:** the sync decision and the position it reports, the wire format, the
-hosted server's protocol flow, room passwords, invite links, file comparison, ping and clock
-offset, the slash-command parser, the resume store, settings backup, and rate limiting. The
-design goldens render real composables headlessly and write PNGs into
-`shared/build/design-goldens`.
-
-**What they do not cover, and cannot:** anything that needs a device. The five player engines on
-real hardware, picture-in-picture, backgrounding, the media session, TV remotes, how the glass
-looks, and any two-device sync session. Nothing in this list is verified by a green build.
-
-### Releasing
-
-The release runs from GitHub Actions (`Release`, `workflow_dispatch`) and does everything in one
-go: the universal APK, the exo-only APK, the AAB, the IPA, and, when the `build_desktop` switch is
-on, a desktop installer for each of the three platforms. The GitHub release itself is written by
-`.github/scripts/release-body.sh`: a downloads table, the changelog since the previous tag folded
-under a click, and the dependency table from `./gradlew printDependencyTable`. Before starting one:
-
-1. Bump `version` in the root `build.gradle.kts` `kiteConfig { }` block. Nothing else holds the
-   version; `./gradlew printReleaseIdentity` prints what the release will use.
-2. Write the section for it in `CHANGELOG.md`. The workflow reads it for the GitHub release and
-   the AltStore feed, and fails if there is not one.
-3. Write a short version into `fastlane/metadata/android/en-US/changelogs/<versionCode>.txt`.
-   Google Play caps this at 500 characters and `checkStoreMetadata` will tell you if it is over.
-4. Run `./gradlew kiteRewriteXcode` so the iOS project carries the new version.
-5. Start the workflow, choosing the Play track. The store uploads and the desktop installers are
-   switches on the run; the GitHub release is cut whether or not they are on, and a run of a
-   version that already has a release replaces its files and notes.
-
-Signing secrets live in `local.properties` for a local build and in repository secrets for CI. A
-release build with no keystore fails rather than producing an unsigned artifact.
-
----
-
-## Acknowledgments
-
-- [Official Syncplay](https://syncplay.pl/) for building and maintaining Syncplay
-- [Et0h](https://github.com/Et0h/) for his work on official Syncplay and help in our issue tracker
-- [soredake](https://github.com/soredake) for thorough testing
-- [Osanosa](https://github.com/Osanosa) for valuable contributions
-- Everyone who contributed translations
-
----
-
-## Feedback
-
-[Open an issue](https://github.com/yuroyami/syncplay-mobile/issues/new) for bugs or feature requests, or start a [discussion](https://github.com/yuroyami/syncplay-mobile/discussions) for general questions.
+</details>
 
 ---
 
 <p align="center">
-  <sub>Licensed under <a href="./LICENSE">AGPL-3.0</a></sub>
+  Built by <a href="https://github.com/yuroyami">yuroyami</a> with Kotlin &amp; Compose Multiplatform.<br>
+  <a href="CHANGELOG.md">Release notes</a> &nbsp;·&nbsp;
+  <a href="PRIVACY_POLICY.md">Privacy</a> &nbsp;·&nbsp;
+  <a href="LICENSE">AGPL-3.0 license</a>
 </p>

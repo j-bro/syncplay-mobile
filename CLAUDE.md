@@ -125,7 +125,26 @@ applicationId and the iOS deployment target as `KEY=VALUE`. The release workflow
 of re-deriving KiteConfig's version-code scheme in bash. `CHANGELOG.md` is where release notes
 live; the workflow fails if the version being built has no section in it.
 
-**Release artifacts.** `androidReleaseAll` (class + registration in `buildSrc/AndroidReleaseAllTask.kt`) shells out to **two** separate `./gradlew` runs to produce 3 files into `AndroidAppOutput/`: the full universal APK, the exoOnly universal APK, and the full AAB. Two processes because only one product flavor exists per Gradle invocation; the full APK and the AAB share one now that ABI splits are gone (0.24.0, owner decision: one universal APK per flavor, and Play serves per-ABI from the AAB). `printDependencyTable` (`buildSrc/ReleaseDependencies.kt`, whose `ToolVersions` reader also feeds `checkDocVersions`) prints the dependency table the release notes carry; `.github/scripts/release-body.sh` composes the GitHub release body (downloads table, changelog since the previous tag folded in a `<details>`, dependency table), and the workflow's `release` job runs it. Store uploads and the desktop installers are separate, switchable jobs the release does not wait on.
+**Download artwork.** `art/badges/generate.py` builds all six download badges from one
+240×72 layout, the bundled Lexend font outlined into paths, and the marks in `art/badges/marks/`.
+The SVGs and 480×144 PNG exports share the same plate, border, corner radius, icon slot and text
+baselines. README and release notes use these local PNGs, including App Store. Release-note
+images are pinned to the source checkout's commit so reruns of an existing tag include new art.
+They are marketing assets, not runtime drawables or KiteConfig launcher assets. See `art/badges/README.md` for
+regeneration, source attribution and the embedded raster in the official IzzyOnDroid mark.
+The README's feature graphic is `art/readme-feature.webp` (1600×800). Its frame artwork is
+`art/readme-feature-frame.webp`; `art/render-readme-feature.sh` inserts the real screenshot
+pixels, with proportional scaling and padding. Source notes are in `art/readme-feature.md`.
+The README gallery uses compact WebPs linked to the three original PNGs in `art/screenshots/`:
+Android Home, Android room, and macOS room. The old screenshots are retired, including their
+AltStore feed references. The Android fastlane copies use padded, uncropped store proportions.
+Build, player and release guidance lives in `docs/DEVELOPING.md`; the README concentrates on
+installing, joining and getting help.
+Google Play has separate, simpler artwork in `art/play-store/`: a 1024×500 RGB feature graphic
+and a 512×512 RGBA icon, with an editable icon SVG and export notes in that directory's README.
+The store icon uses the canonical mark on a plum plate; launcher resources remain KiteConfig-owned.
+
+**Release artifacts.** `androidReleaseAll` (class + registration in `buildSrc/AndroidReleaseAllTask.kt`) shells out to **two** separate `./gradlew` runs to produce 3 files into `AndroidAppOutput/`: the full universal APK, the exoOnly universal APK, and the full AAB. Two processes because only one product flavor exists per Gradle invocation; the full APK and the AAB share one now that ABI splits are gone (0.24.0, owner decision: one universal APK per flavor, and Play serves per-ABI from the AAB). `printDependencyTable` (`buildSrc/ReleaseDependencies.kt`, whose `ToolVersions` reader also feeds `checkDocVersions`) prints the dependency table the release notes carry; `.github/scripts/release-body.sh` composes the GitHub release body (downloads table, changelog since the previous tag folded in a `<details>`, dependency table), and the workflow's `release` job runs it. Store uploads and desktop packaging are switchable jobs. The GitHub release waits for enabled desktop builds to succeed, but does not wait for store uploads.
 
 **mpv arrives prebuilt.** `io.github.yuroyami:libmpvkt` (the libmpvKt repository) carries libmpv, its FFmpeg, the JNI library and `libc++_shared.so` for four ABIs; nothing native is compiled in this repository and there is no NDK gate. It is served from the static Maven repository `https://yuroyami.github.io/maven`, declared in `settings.gradle.kts` with a filter that keeps the other `io.github.yuroyami` artifacts on Central; `-PuseMavenLocal=true` overrides it like the others. The exoOnly flavor keeps the dependency so the engine code compiles and strips every library in it at packaging time (`AppConfig.libmpvNativeLibs`), which `verifyExoOnlyApk` checks on the finished APK. The AAR's `libc++_shared.so` is the NDK r29 one mpv needs; if another dependency ever ships its own copy, AGP fails the merge, and that failure is the moment to compare the two, not the moment to add a pickFirst.
 

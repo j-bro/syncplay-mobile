@@ -58,9 +58,10 @@ row() {
   done
 }
 
-# Images come from the tag, not from master, so an old release page keeps its pictures if the
-# assets ever move. The App Store button is Apple's own, as the README uses it.
-RAW="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/v${VERSION}"
+# Pin images to this checkout's commit. A version tag may predate new artwork on a rerun.
+# Old release pages still keep immutable image URLs if the assets later move.
+ASSET_COMMIT=$(git rev-parse --verify HEAD)
+RAW="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${ASSET_COMMIT}"
 ALTSTORE="https://celloserenity.github.io/altdirect/?url=https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/refs/heads/master/altstore_yuroyami.json"
 
 {
@@ -70,7 +71,7 @@ ALTSTORE="https://celloserenity.github.io/altdirect/?url=https://raw.githubuserc
   echo '<p align="center">'
   echo "  <a href=\"https://play.google.com/store/apps/details?id=com.yuroyami.syncplay\"><img src=\"${RAW}/art/badges/google-play.png\" width=\"150\" alt=\"Get it on Google Play\"></a>"
   echo "  &nbsp;&nbsp;"
-  echo "  <a href=\"https://apps.apple.com/us/app/synkplay/id6760187432\"><img src=\"https://developer.apple.com/assets/elements/icons/download-on-the-app-store/download-on-the-app-store.svg\" width=\"150\" alt=\"Download on the App Store\"></a>"
+  echo "  <a href=\"https://apps.apple.com/us/app/synkplay/id6760187432\"><img src=\"${RAW}/art/badges/app-store.png\" width=\"150\" alt=\"Download on the App Store\"></a>"
   echo "  &nbsp;&nbsp;"
   echo "  <a href=\"https://apt.izzysoft.de/fdroid/index/apk/com.reddnek.syncplay\"><img src=\"${RAW}/art/badges/IzzyOnDroid.png\" width=\"150\" alt=\"Get it on IzzyOnDroid\"></a>"
   echo "  &nbsp;&nbsp;"

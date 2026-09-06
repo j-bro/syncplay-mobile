@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 40">
+  <defs>
+    <clipPath id="play-outline"><path d="M5.3 0.7C2.9-0.7 0 1 0 3.8v32.4c0 2.8 2.9 4.5 5.3 3.1l28.8-16.2c2.5-1.4 2.5-4.8 0-6.2Z"/></clipPath>
+  </defs>
+  <g clip-path="url(#play-outline)">
+    <path fill="#4285F4" d="M0 0 20 20 0 40Z"/>
+    <path fill="#34A853" d="M0 0h36v4L20 20Z"/>
+    <path fill="#EA4335" d="m0 40 20-20 16 16v4Z"/>
+    <path fill="#FBBC04" d="m20 20 16-16v32Z"/>
+  </g>
+</svg>

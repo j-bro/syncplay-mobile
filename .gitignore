@@ -35,6 +35,7 @@ Pods/
 syncplay-pc-src-master
 # Hide python files which i offload into my project for quickly viewing syncplay official code
 *.py
+!art/badges/generate.py
 
 #we should also hide claude hidden dir which is used by Claude Code
 .claude
