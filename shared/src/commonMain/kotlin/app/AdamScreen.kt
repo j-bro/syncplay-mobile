@@ -58,6 +58,8 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.scene.Scene
 import app.uicomponents.lexendFont
@@ -130,6 +132,9 @@ fun AdamScreen(onGlobalViewmodel: (SyncplayViewmodel) -> Unit) {
         val savedLanguage by DISPLAY_LANG.watchPref()
         remember(savedLanguage) { Localization.apply(savedLanguage) }
 
+        /* The layout stays left to right in every language, Arabic included: only the words
+         * change. Pinned here so an Arabic device does not mirror the app either. */
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         ProvideAppStrings(Localization.lyricist) {
         // The ground is the theme's: every page sits on it, so no window colour shows through.
         Box(Modifier.fillMaxSize().background(designPalette.ground)) {
@@ -199,6 +204,7 @@ fun AdamScreen(onGlobalViewmodel: (SyncplayViewmodel) -> Unit) {
                 }
                 )
             }
+        }
         }
         }
     }

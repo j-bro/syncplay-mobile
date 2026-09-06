@@ -10,6 +10,9 @@ import cafe.adriel.lyricist.Lyricist
  *
  * Screens read [strings]; anything outside a composable reads [Localization.strings]. Both come
  * from the same [Lyricist], so changing the language moves the whole app at once with no restart.
+ *
+ * The layout stays left to right in every language, Arabic included: only the words change.
+ * That is a deliberate choice, not an oversight.
  */
 object Localization {
 

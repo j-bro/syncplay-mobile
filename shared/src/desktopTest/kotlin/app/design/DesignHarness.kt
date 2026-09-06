@@ -27,6 +27,8 @@ import app.LocalTheme
 import app.i18n.EnAppStrings
 import app.i18n.LocalAppStrings
 import app.i18n.appStrings
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import app.theme.LocalPalette
 import app.theme.Palette
 import app.theme.SaveableTheme
@@ -98,6 +100,8 @@ object DesignHarness {
             LocalPrefsState provides prefs,
             LocalGlobalViewmodel provides vm,
             LocalAppStrings provides (appStrings[language] ?: EnAppStrings),
+            // The app pins this in AdamScreen; the harness has to match or Arabic renders mirrored.
+            LocalLayoutDirection provides LayoutDirection.Ltr,
         ) {
             run {
                 Box(Modifier.fillMaxSize().background(pal.ground)) { content() }
