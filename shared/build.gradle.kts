@@ -178,7 +178,7 @@ kotlin {
             /* KitePlayerVideo, the runtime-choice layer: one coordinate re-exports both
              * rendering products plus KitePlayer's default assembly, facade and core API.
              * The in-room renderer toggle rides its path parameter. */
-            implementation(libs.kiteplayer.compose.ui)
+            implementation(libs.kiteplayer.compose)
 
             /* Coil for async image loading (GIF panel) */
             implementation(libs.bundles.coil)

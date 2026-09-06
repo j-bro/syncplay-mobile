@@ -54,7 +54,7 @@ newpipeExtractor = "v0.26.5"
 
 # Resolved from Maven Central. -PuseMavenLocal=true overrides it while a new version is
 # published locally but not yet served by Central.
-kiteplayer = "0.0.22"
+kiteplayer = "0.0.23"
 
 #iOS (VLCKit pod)
 libvlc-ios = "4.0.0a19"
@@ -135,7 +135,7 @@ netty-handler = { module = "io.netty:netty-handler", version.ref = "netty" }
 netty-codec = { module = "io.netty:netty-codec", version.ref = "netty" }
 netty-transport = { module = "io.netty:netty-transport", version.ref = "netty" }
 conscrypt = { module = "org.conscrypt:conscrypt-android", version.ref = "conscrypt" }
-kiteplayer-compose-ui = { module = "io.github.yuroyami:kiteplayer-compose-ui", version.ref = "kiteplayer" }
+kiteplayer-compose = { module = "io.github.yuroyami:kiteplayer-compose", version.ref = "kiteplayer" }
 newpipe-extractor = { module = "com.github.TeamNewPipe:NewPipeExtractor", version.ref = "newpipeExtractor" }
 
 #Desktop

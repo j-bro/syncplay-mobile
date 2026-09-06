@@ -124,7 +124,7 @@ Kotlin 2.4.10, AGP 9.3.2, Compose Multiplatform 1.12.0, Gradle 9.7.1, NDK 29.0.1
 | kotlinx-datetime | 0.8.0 |
 | Media3 / ExoPlayer | 1.11.0 |
 | VLCKit (iOS) | 4.0.0a19 |
-| KitePlayer | 0.0.22 |
+| KitePlayer | 0.0.23 |
 | Coil3 | 3.6.1 |
 | Haze | 2.0.0-beta02 |
 | MaterialKolor | 5.0.1 |
@@ -484,7 +484,7 @@ SwiftNIO throws `NetworkManager.SocketGoneException().asError()` when no socket 
 | MPV (libmpv/JNI) | Android | ✓ | ✓ | ✗ | `full` flavor only and the default there; precise double `time-pos` seeking; needs NDK r29 libc++; `MpvSubfont` for subs; tracker 500 ms |
 | AVPlayer (AVFoundation) | iOS | ✗ | ✗ | ✓ | The iOS **system** engine (badge "System"); KVO on `timeControlStatus` - only `Playing` counts (buffering must not); MP4/HLS only; per-inject new AVPlayer instance |
 | VLCKit 4 | iOS | ✓ | ✓ | ✓ | **Default iOS engine**; 250 ms main-thread position tracker (NOT libvlc callbacks - lock assert); `VLCEventsLegacyConfiguration` for async callbacks; `:start-paused`; seek-shadow convergence; every play/pause/seek guarded on `media != null`; configures AVAudioSession; volume 0-200 |
-| KitePlayer (KiteFFmpeg) | Android, iOS, Desktop | ✓ | ✓ | (Android PiP) | Experimental everywhere, and the only desktop engine (default there). One `KiteImpl` in commonMain; hardware decode is MediaCodec / VideoToolbox inside FFmpeg with a measured software fallback. Presentation is `KitePlayerVideo` (native view or pure Compose, switched live by the in-room `KITE_COMPOSE_RENDERER` toggle; desktop pins the Compose canvas because the JVM native view swallows clicks meant for the HUD). Subtitles cover SubRip and WebVTT, embedded or external; styled ASS shows as a track but is not drawn. Speed 0.25x-4x pitch-preserved; no screenshot path; tracker 250 ms. Absent from `exoOnly` (its `libkitecodec_jni.so` is stripped) |
+| KitePlayer (KiteFFmpeg) | Android, iOS, Desktop | ✓ | ✓ | (Android PiP) | Experimental everywhere, and the only desktop engine (default there). One `KiteImpl` in commonMain; hardware decode is MediaCodec / VideoToolbox inside FFmpeg with a measured software fallback. Presentation is `KitePlayerVideo` (native view or pure Compose, switched live by the in-room `KITE_COMPOSE_RENDERER` toggle; desktop pins the Compose canvas because the JVM native view swallows clicks meant for the HUD). Subtitles cover SubRip and WebVTT, embedded or external, and styled ASS is typeset by libass. Network media arrives through the app's own HTTP stack, because the bundled FFmpeg has no https protocol and the transport module supplies the bytes instead. Speed 0.25x-4x pitch-preserved; no screenshot path; tracker 250 ms. Absent from `exoOnly` (its `libkitecodec_jni.so` is stripped) |
 
 **Engine badges** (home wheel, `PlayerEngine.isSystem`/`isDefault`/`isExperimental`, one badge per engine, ladder Unavailable > Experimental > Default > System): Android = ExoPlayer System, mpv Default, KitePlayer Experimental. iOS = AVPlayer System, VLCKit Default, KitePlayer Experimental. Desktop = KitePlayer Default. `isDefault` is also what `Preferences.PLAYER_ENGINE` resolves its default value from, so moving it moves the engine new installs get.
 
@@ -505,9 +505,13 @@ only one on all three platforms, so it is where an unfamiliar reader gets stuck.
   itself attached, so decoder selection cannot race video output.
 - **Hardware decode** is MediaCodec on Android and VideoToolbox on Apple, both inside FFmpeg,
   with a measured software fallback.
-- **What it does not do.** No screenshot path, no iOS picture-in-picture controller, and styled
-  ASS subtitles appear as a track but are not drawn. It ships in the `full` flavor only; the
-  exoOnly build strips `libkitecodec_jni.so`.
+- **What it does not do.** No screenshot path and no iOS picture-in-picture controller. It ships
+  in the `full` flavor only; the exoOnly build strips `libkitecodec_jni.so`.
+- **How http and https play.** The bundled FFmpeg is built without the https protocol, so a URL
+  it opened itself would fail. `kiteplayer-network` supplies the bytes instead, over Ktor with the
+  platform supplying TLS. Nothing configures it: a services file registers it on Android and the
+  desktop, an eager initializer does the same on Apple, and it arrives transitively with
+  `kiteplayer-compose`. The module also carries its own R8 keep rules.
 
 **iOS PiP** dispatches per engine in `ApplePlatformCallback.onPictureInPicture`: AVPlayer uses `AVPictureInPictureController(avPlayerLayer)`; VLCKit 4 uses its own `enter/exitPictureInPicture` via the `VlcDrawable` PiP protocol stack; **KitePlayer has no iOS PiP controller yet**. All gated on `AVPictureInPictureController.isPictureInPictureSupported()`.
 
