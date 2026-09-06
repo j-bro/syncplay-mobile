@@ -311,6 +311,18 @@ class SyncplayServer(
             roomManager.broadcastRoom(watcher) { w ->
                 _connections[w]?.sendPlaylist(watcher.name, files)
             }
+            /* A shorter list can leave the selection pointing past the end. Correct it here
+             * rather than letting every client work it out, or they work it out differently. */
+            val stored = room.getPlaylistIndex()
+            if (stored != null && stored !in files.indices) {
+                val corrected = files.lastIndex.takeIf { it >= 0 }
+                if (corrected != null) {
+                    room.setPlaylistIndex(corrected, watcher)
+                    roomManager.broadcastRoom(watcher) { w ->
+                        _connections[w]?.sendPlaylistIndex(watcher.name, corrected)
+                    }
+                }
+            }
         } else {
             _connections[watcher]?.sendPlaylist(room.name, room.getPlaylist())
             room.getPlaylistIndex()?.let {
@@ -321,7 +333,10 @@ class SyncplayServer(
 
     fun setPlaylistIndex(watcher: ServerWatcher, index: Int) {
         val room = watcher.room ?: return
-        if (room.canControl(watcher)) {
+        // An index outside the playlist names nothing. Storing it makes every watcher that
+        // joins later ask for a file the room does not have.
+        val valid = index in room.getPlaylist().indices
+        if (room.canControl(watcher) && valid) {
             room.setPlaylistIndex(index, watcher)
             roomManager.broadcastRoom(watcher) { w ->
                 _connections[w]?.sendPlaylistIndex(watcher.name, index)

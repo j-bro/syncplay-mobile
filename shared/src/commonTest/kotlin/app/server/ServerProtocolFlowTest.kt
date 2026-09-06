@@ -4,6 +4,7 @@ import app.protocol.WireMessage
 import app.protocol.WireMessageDeserializer
 import app.protocol.syncplayJson
 import app.protocol.wire.HelloData
+import app.protocol.wire.IgnoringOnTheFlyData
 import app.protocol.wire.PingData
 import app.protocol.wire.PlaystateData
 import app.protocol.wire.StateData
@@ -323,6 +324,26 @@ class ServerProtocolFlowTest {
         )
     )
 
+    /**
+     * The server sends its own State 100 ms after Hello, with `doSeek` and a server counter on
+     * it. Until the client echoes that counter, the server is ignoring what the client says
+     * about its position, so a test that reports one straight away is racing the timer.
+     */
+    private suspend fun TestClient.ackInitialState() {
+        var counter: Int? = null
+        repeat(50) {
+            counter = lastOf<WireMessage.State>()?.data?.ignoringOnTheFly?.server
+            if (counter != null) return@repeat
+            kotlinx.coroutines.delay(20)
+        }
+        val n = counter ?: error("no initial State within a second")
+        receive(
+            WireMessage.State(
+                StateData(playstate = null, ping = null, ignoringOnTheFly = IgnoringOnTheFlyData(server = n))
+            )
+        )
+    }
+
     private suspend fun TestClient.positionSeenByServer(name: String, room: String): Double? {
         clearSent()
         receive(WireMessage.listRequest())
@@ -334,6 +355,7 @@ class ServerProtocolFlowTest {
         val srv = server()
         val alice = TestClient(srv)
         alice.receive(helloFor("alice", "lobby"))
+        alice.ackInitialState()
         alice.receive(WireMessage.file(app.protocol.wire.FileData(name = "movie.mkv", duration = 7200.0, size = "1")))
 
         alice.receive(stateOf(position = 100.0, paused = true))
@@ -349,6 +371,7 @@ class ServerProtocolFlowTest {
         val srv = server()
         val alice = TestClient(srv)
         alice.receive(helloFor("alice", "lobby"))
+        alice.ackInitialState()
         alice.receive(WireMessage.file(app.protocol.wire.FileData(name = "movie.mkv", duration = 7200.0, size = "1")))
 
         // Playing, with a ping block that carries no latencyCalculation echo: the server must not
@@ -520,5 +543,50 @@ class ServerProtocolFlowTest {
         alice.clearSent()
         alice.receive(WireMessage.controllerAuth(room = minted.roomName, password = minted.password))
         assertEquals(true, alice.lastOf<WireMessage.Set>()?.data?.controllerAuth?.success)
+    }
+
+    // -----------------------------------------------------------
+    // Dropped connections and playlist indexes
+    // -----------------------------------------------------------
+
+    @Test
+    fun `a rejected connection ignores what it had already buffered`(): Unit = runBlocking {
+        val srv = server()
+        val alice = TestClient(srv)
+        alice.receiveRaw("{}")
+        assertTrue(alice.dropped)
+
+        // Lines that were already in the mailbox when the drop happened must not be dispatched:
+        // handling this Hello would put a watcher back that the server has just thrown out.
+        alice.clearSent()
+        alice.receive(helloFor("alice", "lobby"))
+        assertEquals(null, alice.lastOf<WireMessage.Hello>())
+        assertEquals(0, srv.connectedClients.value)
+    }
+
+    @Test
+    fun `an index outside the playlist is not broadcast`(): Unit = runBlocking {
+        val srv = server()
+        val alice = TestClient(srv)
+        alice.receive(helloFor("alice", "lobby"))
+        alice.receive(WireMessage.playlistChange(listOf("a.mkv")))
+        alice.clearSent()
+        alice.receive(WireMessage.playlistIndex(Int.MAX_VALUE))
+        assertEquals(
+            null,
+            alice.allOf<WireMessage.Set>().firstOrNull { it.data.playlistIndex?.index == Int.MAX_VALUE },
+        )
+    }
+
+    @Test
+    fun `a shorter playlist drags the selection back inside it`(): Unit = runBlocking {
+        val srv = server()
+        val alice = TestClient(srv)
+        alice.receive(helloFor("alice", "lobby"))
+        alice.receive(WireMessage.playlistChange(listOf("a.mkv", "b.mkv", "c.mkv")))
+        alice.receive(WireMessage.playlistIndex(2))
+        alice.clearSent()
+        alice.receive(WireMessage.playlistChange(listOf("a.mkv")))
+        assertEquals(0, alice.allOf<WireMessage.Set>().lastOrNull { it.data.playlistIndex != null }?.data?.playlistIndex?.index)
     }
 }

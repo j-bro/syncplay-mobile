@@ -44,7 +44,12 @@ object WireMessageDeserializer : JsonContentPolymorphicSerializer<WireMessage>(W
                 if (payload is JsonPrimitive && payload.isString) WireMessage.ChatRequest.serializer()
                 else WireMessage.ChatBroadcast.serializer()
             }
-            else -> throw SerializationException("Unknown wire message type: $key")
+            // The key came from a peer and can be as long as a whole frame; the message it
+            // ends up in is logged twice and shown once.
+            else -> throw SerializationException("Unknown wire message type: ${key?.take(UNKNOWN_KEY_MAX)}")
         }
     }
 }
+
+/** How much of a peer-supplied key a parse error may quote. Enough to identify, not to flood. */
+private const val UNKNOWN_KEY_MAX = 40

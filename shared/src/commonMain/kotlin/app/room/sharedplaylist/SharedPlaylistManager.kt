@@ -320,6 +320,14 @@ class SharedPlaylistManager(val viewmodel: RoomViewmodel) : AbstractManager(view
             i < current -> current - 1
             else -> current.coerceAtMost(session.sharedPlaylist.lastIndex)
         }
+
+        /* And tell the room. The move was only ever local, so everyone else kept a highlight on
+         * whatever slid into that position. One writer drains the queue in order, so the shorter
+         * list lands first and the index that follows it still names our file. */
+        val moved = session.spIndex.intValue
+        if (moved != current && moved >= 0) {
+            viewmodel.networkManager.sendAsync(WireMessage.playlistIndex(moved))
+        }
     }
 
     /** Selects a playlist item. Online, this announces the index to the server, whose echo

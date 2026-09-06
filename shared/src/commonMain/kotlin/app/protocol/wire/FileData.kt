@@ -52,12 +52,18 @@ internal object FileSizeSerializer : KSerializer<String> {
     }
 
     override fun serialize(encoder: Encoder, value: String) {
-        // Match the python wire shape: a raw byte count (and the hidden-size sentinel 0)
-        // goes out as a JSON number, only the 12-char privacy hash is a string. PC's
-        // comparisons survive a stringified number via the hash path, but its UI parses
-        // the size as an int — and exact parity costs nothing here.
+        /* Match the python wire shape: a raw byte count (and the hidden-size sentinel 0) goes
+         * out as a JSON number, only the 12-char privacy hash is a string. PC's comparisons
+         * survive a stringified number via the hash path, but its UI parses the size as an int,
+         * and exact parity costs nothing here.
+         *
+         * A privacy hash is twelve digits and can start with a zero, and about one in 2500 does.
+         * Sent as a number it loses that zero, so the two people comparing the same file are
+         * told they have different ones. A real byte count never starts with a zero, which is
+         * how the two are told apart. */
         val asLong = value.toLongOrNull()
-        if (encoder is JsonEncoder && asLong != null) {
+        val isByteCount = asLong != null && (value == "0" || !value.startsWith("0"))
+        if (encoder is JsonEncoder && isByteCount) {
             encoder.encodeJsonElement(JsonPrimitive(asLong))
         } else {
             encoder.encodeString(value)

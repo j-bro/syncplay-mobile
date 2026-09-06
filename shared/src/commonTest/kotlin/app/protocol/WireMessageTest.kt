@@ -562,4 +562,28 @@ class WireMessageTest {
         val decoded = syncplayJson.decodeFromString(WireMessageDeserializer, json)
         assertions(decoded)
     }
+
+    @Test
+    fun `a digit-only hash with a leading zero stays a string, a byte count stays a number`() {
+        // A privacy hash is twelve digits and about one in 2500 begins with a zero. As a number
+        // it loses that zero and two people with the same file are told they differ.
+        val hashed = syncplayJson.encodeToString(FileData(name = "a", duration = 1.0, size = "045784691835"))
+        assertTrue("\"045784691835\"" in hashed, hashed)
+
+        val counted = syncplayJson.encodeToString(FileData(name = "a", duration = 1.0, size = "4064"))
+        assertTrue(":4064" in counted && "\"4064\"" !in counted, counted)
+
+        // The hidden-size sentinel is a real zero, not a hash that starts with one.
+        val hidden = syncplayJson.encodeToString(FileData(name = "a", duration = 1.0, size = "0"))
+        assertTrue(":0" in hidden, hidden)
+    }
+
+    @Test
+    fun `an unknown key is cut in the error message`() {
+        val key = "x".repeat(512)
+        val e = assertFailsWith<SerializationException> {
+            syncplayJson.decodeFromString(WireMessageDeserializer, """{"$key": 1}""")
+        }
+        assertTrue((e.message?.length ?: 0) < 120, e.message)
+    }
 }

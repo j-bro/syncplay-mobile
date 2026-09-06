@@ -79,7 +79,16 @@ class ClientConnection(
         sendFn(message.toJson())
     }
 
+    /**
+     * Set by the first drop. The mailbox behind this connection may already hold lines that
+     * arrived before the drop, and dispatching those puts a watcher back in a room the server
+     * has just thrown out of it.
+     */
+    private var dropped = false
+
     fun dropWithError(error: String) {
+        if (dropped) return
+        dropped = true
         loggy("Server: Dropping client - $error")
         sendTyped(WireMessage.error(error))
         dropFn()
@@ -87,6 +96,8 @@ class ClientConnection(
 
     /** Closes the socket with no error line, PC's plain `drop()`. */
     fun drop() {
+        if (dropped) return
+        dropped = true
         logged = false
         dropFn()
     }
@@ -106,12 +117,14 @@ class ClientConnection(
         // All inbound dispatch and the shared-state mutations it triggers are confined to the
         // server's single thread, matching PC's single-reactor model.
         server.onServerThread {
+            // Anything buffered behind a drop is not this connection's business any more.
+            if (dropped) return@onServerThread
             try {
                 val message = syncplayJson.decodeFromString(WireMessageDeserializer, jsonString)
                 message.dispatch(this)
             } catch (e: SerializationException) {
                 // A bounded excerpt: an unauthenticated peer must not write 64 KiB frames into the log.
-                loggy("Server: failed to decode line '${jsonString.take(LOGGED_LINE_MAX)}' — ${e.message}")
+                loggy("Server: failed to decode line '${jsonString.take(LOGGED_LINE_MAX)}' — ${e.message?.take(LOGGED_LINE_MAX)}")
                 dropWithError("Failed to parse message")
             }
         }

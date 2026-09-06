@@ -304,7 +304,7 @@ abstract class NetworkManager(val viewmodel: RoomViewmodel) : AbstractManager(vi
             // still flows. Mirrors the server side's ClientConnection.handlePacket. Only an
             // excerpt is logged: a hostile server must not fill the disk through the log.
             loggy("Skipping unparseable server message: ${jsonString.take(LOGGED_LINE_MAX)}")
-            loggy("Reason: ${e.message}")
+            loggy("Reason: ${e.message?.take(LOGGED_LINE_MAX)}")
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
