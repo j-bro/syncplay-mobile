@@ -169,8 +169,11 @@ androidComponents {
             if (output is com.android.build.api.variant.impl.VariantOutputImpl) {
                 val v = kiteConfig.version.get()
                 // "universal" stays in the full name: it tells a downloader every ABI is inside.
+                // The exo name is spelled "syncplay" on purpose, whatever the app is called now:
+                // IzzyOnDroid's updater fetches the release asset by that name, and 0.24.0 broke
+                // it for a day by following the rename.
                 val fileName = if (exoOnly) {
-                    "${kiteConfig.appName.get().lowercase()}-$v-exo-only.apk"
+                    "syncplay-$v-exo-only.apk"
                 } else {
                     "${kiteConfig.appName.get().lowercase()}-$v-full-universal.apk"
                 }

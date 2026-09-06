@@ -46,48 +46,25 @@ internal class ToolVersions(root: File) {
 private class Row(val component: String, val where: String, val version: String?)
 
 /**
- * The dependency table the release notes carry, as Markdown. Curated rather than a dump of the
- * catalog: the rows are what someone deciding whether to trust or debug the app wants to know,
- * which is the players, the network stack and the toolchain, not every AndroidX artifact.
+ * The dependency table the release notes carry, as Markdown. Only the main ones: the toolchain,
+ * the network stack and the video engines. Someone deciding whether to trust or debug the app
+ * wants those; nobody reads forty rows of AndroidX artifacts on a release page.
  */
 internal fun releaseDependencyTable(v: ToolVersions): String {
     fun c(key: String) = v.catalog[key]
-    val ffmpeg = v.native["ci_ffmpeg"]?.let { " (FFmpeg $it" } ?: " (FFmpeg"
+    val ffmpeg = v.native["ci_ffmpeg"]?.let { ", FFmpeg $it" }.orEmpty()
     val rows = listOf(
         Row("Kotlin", "Toolchain", c("kotlin")),
         Row("Compose Multiplatform", "Toolchain", c("compose-multiplatform")),
         Row("Android Gradle Plugin", "Toolchain", c("agp")),
         Row("Gradle", "Toolchain", v.gradle),
-        Row("KSP", "Toolchain", c("ksp")),
-        Row("Android NDK", "Toolchain", v.props["android.ndkVersion"]),
-        Row("KiteConfig", "Toolchain", c("kiteconfig")),
-        Row("KitePlayer, with KiteFFmpeg inside", "All platforms, the experimental engine", c("kiteplayer")),
-        Row("kotlinx-coroutines", "All platforms", c("koroutines")),
-        Row("kotlinx-serialization", "All platforms", c("kSerialization")),
-        Row("kotlinx-datetime", "All platforms", c("datetime")),
-        Row("atomicfu", "All platforms", c("atomicfu")),
-        Row("Ktor", "All platforms", c("ktor")),
-        Row("Ktorfit", "All platforms", c("ktorfit")),
-        Row("DataStore", "All platforms", c("datastore")),
-        Row("Lyricist", "All platforms", c("lyricist")),
-        Row("Navigation 3", "All platforms", c("navigation3Runtime")),
-        Row("Coil", "All platforms", c("coil")),
-        Row("Haze", "All platforms", c("haze")),
-        Row("MaterialKolor", "All platforms", c("materialkolor")),
-        Row("KolorPicker", "All platforms", c("kolorpicker")),
-        Row("FileKit", "All platforms", c("filekit")),
-        Row("Kermit", "All platforms", c("kermit")),
-        Row("Media3 / ExoPlayer", "Android", c("media3")),
-        Row("mpv, built from source$ffmpeg, libass, dav1d, libplacebo)", "Android, full build only", "latest git at build time"),
-        Row("Netty", "Android and desktop", c("netty")),
-        Row("Conscrypt", "Android", c("conscrypt")),
-        Row("NewPipe Extractor", "Android and desktop", c("newpipeExtractor")?.removePrefix("v")),
-        Row("VLCKit", "iOS", v.pods["VLCKit"]),
-        Row("SwiftNIO", "iOS", v.swift["swift-nio"]),
-        Row("SwiftNIO SSL", "iOS", v.swift["swift-nio-ssl"]),
-        Row("YouTubeKit", "iOS", v.swift["youtubekit"]),
-        Row("detekt", "Build checks", c("detekt")),
-        Row("kover", "Build checks", c("kover")),
+        Row("Ktor", "Network, all platforms", c("ktor")),
+        Row("Netty", "Network, Android and desktop", c("netty")),
+        Row("SwiftNIO", "Network, iOS", v.swift["swift-nio"]),
+        Row("ExoPlayer (Media3)", "Video engine, Android", c("media3")),
+        Row("mpv (built from source$ffmpeg)", "Video engine, Android", "latest git at build time"),
+        Row("VLCKit", "Video engine, iOS", v.pods["VLCKit"]),
+        Row("KitePlayer, with KiteFFmpeg inside", "Video engine, all platforms, experimental", c("kiteplayer")),
     )
     return buildString {
         appendLine("| Component | Where | Version |")

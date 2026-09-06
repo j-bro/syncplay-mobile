@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Writes the GitHub release notes for one version, in three sections: a downloads table, the
-# changelog since the previous release folded under a click, and the dependency table.
+# Writes the GitHub release notes for one version: a header with the logo and the store
+# buttons, then three sections: a downloads table, the changelog since the previous release
+# folded under a click, and the main dependencies folded the same way.
 #
 #   release-body.sh <dir with the release files> <dependencies.md>
 #
@@ -57,7 +58,25 @@ row() {
   done
 }
 
+# Images come from the tag, not from master, so an old release page keeps its pictures if the
+# assets ever move. The App Store button is Apple's own, as the README uses it.
+RAW="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/v${VERSION}"
+ALTSTORE="https://celloserenity.github.io/altdirect/?url=https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/refs/heads/master/altstore_yuroyami.json"
+
 {
+  echo '<p align="center">'
+  echo "  <img src=\"${RAW}/androidApp/src/main/res/mipmap-xxxhdpi/ic_launcher.png\" width=\"96\" alt=\"Synkplay\">"
+  echo '</p>'
+  echo '<p align="center">'
+  echo "  <a href=\"https://play.google.com/store/apps/details?id=com.yuroyami.syncplay\"><img src=\"${RAW}/art/badges/google-play.png\" width=\"150\" alt=\"Get it on Google Play\"></a>"
+  echo "  &nbsp;&nbsp;"
+  echo "  <a href=\"https://apps.apple.com/us/app/synkplay/id6760187432\"><img src=\"https://developer.apple.com/assets/elements/icons/download-on-the-app-store/download-on-the-app-store.svg\" width=\"150\" alt=\"Download on the App Store\"></a>"
+  echo "  &nbsp;&nbsp;"
+  echo "  <a href=\"https://apt.izzysoft.de/fdroid/index/apk/com.reddnek.syncplay\"><img src=\"${RAW}/art/badges/IzzyOnDroid.png\" width=\"150\" alt=\"Get it on IzzyOnDroid\"></a>"
+  echo "  &nbsp;&nbsp;"
+  echo "  <a href=\"${ALTSTORE}\"><img src=\"${RAW}/art/badges/AltSource_Blue.png\" width=\"150\" alt=\"Add the AltStore source\"></a>"
+  echo '</p>'
+  echo
   echo "## Downloads"
   echo
   echo "| File | Platform | What it is | Size |"
@@ -71,8 +90,6 @@ row() {
   row "*.dmg" "macOS" "The desktop app."
   row "*.msi" "Windows" "The desktop app."
   row "*.deb" "Linux (Debian and Ubuntu)" "The desktop app."
-  echo
-  echo "Also on the [App Store](https://apps.apple.com/us/app/synkplay/id6760187432) and [Google Play](https://play.google.com/store/apps/details?id=com.yuroyami.syncplay)."
   echo
   echo "## Changelog"
   echo
@@ -88,7 +105,11 @@ row() {
   echo
   echo "## Dependencies"
   echo
+  echo "<details><summary><b>The main ones</b>: toolchain, network stack, video engines. Click to unfold.</summary>"
+  echo
   cat "$DEPS"
+  echo
+  echo "</details>"
 } > release-body.md
 
 echo "release-body.md written: $(wc -l < release-body.md) lines, changelog since ${PREV:-the beginning}"
