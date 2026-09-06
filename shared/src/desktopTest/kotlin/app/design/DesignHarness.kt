@@ -24,6 +24,9 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import app.LocalTheme
+import app.i18n.EnAppStrings
+import app.i18n.LocalAppStrings
+import app.i18n.appStrings
 import app.theme.LocalPalette
 import app.theme.Palette
 import app.theme.SaveableTheme
@@ -48,6 +51,8 @@ object DesignHarness {
         fun assertAllTextFits() {
             assertTrue(textLayouts.isNotEmpty(), "No text layouts in ${file.name}")
             for (layout in textLayouts) {
+                // An empty label has nothing to clip; a value column with no value draws one.
+                if (layout.layoutInput.text.text.isEmpty()) continue
                 val label = "${file.name}: ${layout.layoutInput.text.text}"
                 assertFalse(layout.multiParagraph.didExceedMaxLines, "Clipped lines: $label")
                 for (line in 0 until layout.lineCount) {
@@ -82,7 +87,7 @@ object DesignHarness {
     }
 
     @Composable
-    fun Frame(theme: SaveableTheme, overVideo: Boolean = false, content: @Composable () -> Unit) {
+    fun Frame(theme: SaveableTheme, overVideo: Boolean = false, language: String = "en", content: @Composable () -> Unit) {
         val base = Palette.from(theme.dynamicScheme, theme)
         val pal = if (overVideo) base.overVideo() else base
         val prefs = datastoreStateFlow.collectAsState()
@@ -92,6 +97,7 @@ object DesignHarness {
             LocalPalette provides pal,
             LocalPrefsState provides prefs,
             LocalGlobalViewmodel provides vm,
+            LocalAppStrings provides (appStrings[language] ?: EnAppStrings),
         ) {
             run {
                 Box(Modifier.fillMaxSize().background(pal.ground)) { content() }
@@ -106,6 +112,8 @@ object DesignHarness {
         fontScale: Float = 1f,
         theme: SaveableTheme = TRINITY,
         overVideo: Boolean = false,
+        /** Renders the screen in one of the shipped languages. English unless a test says otherwise. */
+        language: String = "en",
         content: @Composable () -> Unit,
     ): Result {
         initDatastore()
@@ -116,7 +124,7 @@ object DesignHarness {
             height = (heightDp * density.density).toInt(),
             density = density,
         ) {
-            Frame(theme, overVideo) {
+            Frame(theme, overVideo, language) {
                 Box(Modifier.width(widthDp.dp).onSizeChanged { measuredPx = it.height }) { content() }
             }
         }
@@ -129,6 +137,7 @@ object DesignHarness {
                 if (fontScale != 1f) append("-fs${fontScale}")
                 if (theme !== TRINITY) append("-${theme.name.lowercase().replace(' ', '_')}")
                 if (overVideo) append("-video")
+                if (language != "en") append("-$language")
             }
             val file = File(outDir, "$name$suffix.png")
             image.encodeToData(EncodedImageFormat.PNG)?.bytes?.let(file::writeBytes)

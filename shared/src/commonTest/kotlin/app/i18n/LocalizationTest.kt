@@ -1,0 +1,96 @@
+package app.i18n
+
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
+
+/**
+ * The language is state, not a restart. These pin the parts of that which are not visual:
+ * switching, falling back, and picking the right plural form.
+ */
+class LocalizationTest {
+
+    @AfterTest
+    fun restore() = Localization.apply("en")
+
+    @Test
+    fun `switching the language changes what the app says`() {
+        Localization.apply("en")
+        val english = Localization.strings.cancel
+        Localization.apply("de")
+        assertNotEquals(english, Localization.strings.cancel, "German should not read like English")
+        Localization.apply("en")
+        assertEquals(english, Localization.strings.cancel)
+    }
+
+    @Test
+    fun `a region tag falls back to its language`() {
+        Localization.apply("de-AT")
+        assertEquals(appStrings[Locales.De]?.cancel, Localization.strings.cancel)
+    }
+
+    @Test
+    fun `a language we do not ship falls back to English`() {
+        Localization.apply("is-IS")
+        assertEquals(EnAppStrings.cancel, Localization.strings.cancel)
+    }
+
+    @Test
+    fun `a blank preference follows the device`() {
+        Localization.apply("")
+        assertTrue(Localization.lyricist.languageTag.isNotBlank())
+    }
+
+    @Test
+    fun `an untranslated key still says something`() {
+        Localization.apply("pl")
+        assertTrue(Localization.strings.cancel.isNotBlank())
+    }
+
+    @Test
+    fun `english counts one thing apart from the rest`() {
+        assertEquals(PluralForm.One, pluralForm("en", 1))
+        assertEquals(PluralForm.Other, pluralForm("en", 0))
+        assertEquals(PluralForm.Other, pluralForm("en", 21))
+    }
+
+    @Test
+    fun `russian and polish use three forms`() {
+        assertEquals(PluralForm.One, pluralForm("ru", 21))
+        assertEquals(PluralForm.Few, pluralForm("ru", 22))
+        assertEquals(PluralForm.Many, pluralForm("ru", 25))
+        assertEquals(PluralForm.Many, pluralForm("ru", 11))
+
+        assertEquals(PluralForm.One, pluralForm("pl", 1))
+        assertEquals(PluralForm.Many, pluralForm("pl", 21))
+        assertEquals(PluralForm.Few, pluralForm("pl", 22))
+        assertEquals(PluralForm.Many, pluralForm("pl", 25))
+    }
+
+    @Test
+    fun `arabic counts zero one and two on their own`() {
+        assertEquals(PluralForm.Zero, pluralForm("ar", 0))
+        assertEquals(PluralForm.One, pluralForm("ar", 1))
+        assertEquals(PluralForm.Two, pluralForm("ar", 2))
+        assertEquals(PluralForm.Few, pluralForm("ar", 3))
+        assertEquals(PluralForm.Many, pluralForm("ar", 11))
+        assertEquals(PluralForm.Other, pluralForm("ar", 100))
+    }
+
+    @Test
+    fun `french groups zero with one and chinese has one form`() {
+        assertEquals(PluralForm.One, pluralForm("fr", 0))
+        assertEquals(PluralForm.One, pluralForm("fr", 1))
+        assertEquals(PluralForm.Other, pluralForm("fr", 2))
+        assertEquals(PluralForm.Other, pluralForm("zh", 1))
+    }
+
+    @Test
+    fun `the room count reads correctly at both ends`() {
+        Localization.apply("en")
+        assertEquals("1 user", Localization.strings.roomUserCount(1))
+        assertEquals("4 users", Localization.strings.roomUserCount(4))
+    }
+}
