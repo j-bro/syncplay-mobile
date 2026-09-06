@@ -4,6 +4,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.Screen
+import app.home.components.UpdateCheckController
 import app.uicomponents.frames.NoticeQueue
 import app.uicomponents.frames.NoticeSeverity
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +14,8 @@ import kotlinx.coroutines.withContext
 
 /** The home screen's viewmodel: joining, and the notices the screen shows at its bottom edge. */
 class HomeViewmodel(val backStack: SnapshotStateList<Screen>) : ViewModel() {
+
+    val updateCheck = UpdateCheckController(viewModelScope)
 
     /** Saves the configuration when remembering is on, then opens the room; null joins alone. */
     suspend fun joinRoom(joinConfig: JoinConfig?) {

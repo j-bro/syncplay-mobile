@@ -3,6 +3,8 @@ package app.home.components
 import SyncplayMobile.shared.KiteBuildConfig
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
@@ -25,10 +29,12 @@ import app.home.HomeViewmodel
 import app.theme.Space
 import app.theme.Type
 import app.theme.palette
+import app.uicomponents.LocalWidthClass
 import app.uicomponents.SynkplayLogo
+import app.uicomponents.WidthClass
 import app.uicomponents.SyncplayishText
 import app.uicomponents.controls.AccentAction
-import app.uicomponents.controls.SecondaryAction
+import app.uicomponents.controls.SecondaryActionPair
 import app.uicomponents.frames.Modal
 import app.uicomponents.frames.ModalSize
 import app.utils.appName
@@ -47,139 +53,155 @@ import syncplaymobile.shared.generated.resources.about_source_button
 import syncplaymobile.shared.generated.resources.about_tagline
 import syncplaymobile.shared.generated.resources.about_version_value
 import syncplaymobile.shared.generated.resources.connect_watch_alone
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import app.uicomponents.controls.ListRow
 import syncplaymobile.shared.generated.resources.about_licences_button
 import syncplaymobile.shared.generated.resources.about_licences_note
 import syncplaymobile.shared.generated.resources.about_licences_title
-import syncplaymobile.shared.generated.resources.about_update_available
-import syncplaymobile.shared.generated.resources.about_update_button
-import syncplaymobile.shared.generated.resources.about_update_checking
-import syncplaymobile.shared.generated.resources.about_update_current
-import syncplaymobile.shared.generated.resources.about_update_failed
 
 object PopupAPropos {
 
     /** About: the mark, the wordmark, what the app is, the facts, and the links. */
     @Composable
     fun AProposPopup(visibilityState: MutableState<Boolean>, homeViewmodel: HomeViewmodel) {
-        val p = palette
         val globalViewmodel = LocalGlobalViewmodel.current
         val uriHandler = LocalUriHandler.current
         val licencesOpen = remember { mutableStateOf(false) }
-        var updateState by remember { mutableStateOf<UpdateState>(UpdateState.Idle) }
+        val updateCheck = homeViewmodel.updateCheck
 
         Modal(
             open = visibilityState.value,
             onDismiss = { visibilityState.value = false },
             size = ModalSize.Panel,
         ) {
-            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                SynkplayLogo(modifier = Modifier.size(84.dp))
-                Spacer(Modifier.height(Space.gap))
-                SyncplayishText(string = appName, textAlign = TextAlign.Center, size = 26f)
-                Text(
-                    text = stringResource(Res.string.about_tagline, platform.label),
-                    style = Type.value,
-                    color = platform.color,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Spacer(Modifier.height(Space.gap))
-                Text(
-                    text = stringResource(Res.string.about_blurb),
-                    style = Type.note,
-                    color = p.ink,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Spacer(Modifier.height(Space.gapTight))
-                Text(
-                    text = stringResource(Res.string.about_independent),
-                    style = Type.note,
-                    color = p.inkDim,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Spacer(Modifier.height(Space.gap))
-                Row(Modifier.fillMaxWidth().padding(bottom = Space.gapTight), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    Text(stringResource(Res.string.about_version_value, KiteBuildConfig.APP_VERSION), style = Type.value, color = p.inkDim, maxLines = 1)
-                    Text(stringResource(Res.string.about_author), style = Type.value, color = p.inkDim, maxLines = 1)
-                    Text(stringResource(Res.string.about_website), style = Type.value, color = p.inkDim, maxLines = 1)
-                }
-                Spacer(Modifier.height(Space.gap))
-                // Two links side by side; watching alone gets its own row, the one way in from here.
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.gap)) {
-                    SecondaryAction(stringResource(Res.string.about_source_button), onClick = { uriHandler.openUri("https://www.github.com/yuroyami/syncplay-mobile") }, modifier = Modifier.weight(1f))
-                    SecondaryAction(stringResource(Res.string.about_report_button), onClick = { uriHandler.openUri(bugReportUrl()) }, modifier = Modifier.weight(1f))
-                }
-                Spacer(Modifier.height(Space.gapTight))
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.gap)) {
-                    SecondaryAction(
-                        stringResource(Res.string.about_privacy_button),
-                        onClick = { uriHandler.openUri("https://github.com/yuroyami/syncplay-mobile/blob/master/PRIVACY_POLICY.md") },
-                        modifier = Modifier.weight(1f),
-                    )
-                    SecondaryAction(
-                        stringResource(Res.string.about_licences_button),
-                        onClick = { licencesOpen.value = true },
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-                Spacer(Modifier.height(Space.gapTight))
-                // Asked for, never automatic: a direct download has nothing else that would say a
-                // newer version exists.
-                SecondaryAction(
-                    text = when (val state = updateState) {
-                        UpdateState.Idle -> stringResource(Res.string.about_update_button)
-                        UpdateState.Checking -> stringResource(Res.string.about_update_checking)
-                        UpdateState.UpToDate -> stringResource(Res.string.about_update_current)
-                        UpdateState.Failed -> stringResource(Res.string.about_update_failed)
-                        is UpdateState.Newer -> stringResource(Res.string.about_update_available, state.version)
-                    },
-                    onClick = {
-                        val state = updateState
-                        if (state is UpdateState.Newer) {
-                            uriHandler.openUri(state.url)
-                        } else if (state != UpdateState.Checking) {
-                            updateState = UpdateState.Checking
-                            globalViewmodel.viewModelScope.launch {
-                                updateState = when (val result = UpdateCheck.latest()) {
-                                    UpdateCheck.Result.UpToDate -> UpdateState.UpToDate
-                                    UpdateCheck.Result.Unreachable -> UpdateState.Failed
-                                    is UpdateCheck.Result.Newer -> UpdateState.Newer(result.version, result.url)
-                                }
-                            }
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Spacer(Modifier.height(Space.gap))
-                AccentAction(
-                    text = stringResource(Res.string.connect_watch_alone),
-                    onClick = {
-                        visibilityState.value = false
-                        globalViewmodel.viewModelScope.launch { homeViewmodel.joinRoom(null) }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
+            AboutBody(
+                updateResult = updateCheck.result,
+                updateChecking = updateCheck.isChecking,
+                onCheckUpdate = updateCheck::check,
+                onOpenUri = uriHandler::openUri,
+                onLicences = { licencesOpen.value = true },
+                onWatchAlone = {
+                    visibilityState.value = false
+                    globalViewmodel.viewModelScope.launch { homeViewmodel.joinRoom(null) }
+                },
+            )
         }
 
         LicencesModal(licencesOpen)
     }
 
-    /** Where the update button is in its own little life. */
-    private sealed interface UpdateState {
-        data object Idle : UpdateState
-        data object Checking : UpdateState
-        data object UpToDate : UpdateState
-        data object Failed : UpdateState
-        data class Newer(val version: String, val url: String) : UpdateState
+    /**
+     * The body of About, without its dialog so the render harness can draw it. Two arrangements:
+     * the story over the links, or, in a window too short for that stack (a phone on its side,
+     * where the panel is 330dp tall), the story beside the links, so Watch alone and the update
+     * check are on screen without a scroll.
+     */
+    @Composable
+    internal fun AboutBody(
+        updateResult: UpdateCheck.Result?,
+        updateChecking: Boolean,
+        onCheckUpdate: () -> Unit,
+        onOpenUri: (String) -> Unit,
+        onLicences: () -> Unit,
+        onWatchAlone: () -> Unit,
+    ) {
+        val windowHeight = with(LocalDensity.current) { LocalWindowInfo.current.containerSize.height.toDp() }
+        val sideBySide = windowHeight < SHORT_WINDOW && LocalWidthClass.current != WidthClass.Compact
+        if (sideBySide) {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.gutter), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) { Story(compact = true) }
+                Column(Modifier.weight(1f)) { Links(updateResult, updateChecking, onCheckUpdate, onOpenUri, onLicences, onWatchAlone) }
+            }
+        } else {
+            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Story(compact = false)
+                Spacer(Modifier.height(Space.gap))
+                Links(updateResult, updateChecking, onCheckUpdate, onOpenUri, onLicences, onWatchAlone)
+            }
+        }
     }
+
+    /** The mark, the wordmark, what the app is, and the three facts; [compact] halves the mark. */
+    @Composable
+    private fun ColumnScope.Story(compact: Boolean) {
+        val p = palette
+        SynkplayLogo(modifier = Modifier.size(if (compact) 48.dp else 84.dp))
+        Spacer(Modifier.height(Space.gap))
+        SyncplayishText(string = appName, textAlign = TextAlign.Center, size = 26f)
+        Text(
+            text = stringResource(Res.string.about_tagline, platform.label),
+            style = Type.value,
+            color = platform.color,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Spacer(Modifier.height(Space.gap))
+        Text(
+            text = stringResource(Res.string.about_blurb),
+            style = Type.note,
+            color = p.ink,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Spacer(Modifier.height(Space.gapTight))
+        Text(
+            text = stringResource(Res.string.about_independent),
+            style = Type.note,
+            color = p.inkDim,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Spacer(Modifier.height(Space.gap))
+        // Three facts that wrap to a second line rather than run into each other when the type grows.
+        FlowRow(
+            modifier = Modifier.fillMaxWidth().padding(bottom = Space.gapTight),
+            horizontalArrangement = Arrangement.spacedBy(Space.gutter, Alignment.CenterHorizontally),
+        ) {
+            Text(stringResource(Res.string.about_version_value, KiteBuildConfig.APP_VERSION), style = Type.value, color = p.inkDim, maxLines = 1)
+            Text(stringResource(Res.string.about_author), style = Type.value, color = p.inkDim, maxLines = 1)
+            Text(stringResource(Res.string.about_website), style = Type.value, color = p.inkDim, maxLines = 1)
+        }
+    }
+
+    /** The links, the update check and the one way to watch alone. */
+    @Composable
+    private fun Links(
+        updateResult: UpdateCheck.Result?,
+        updateChecking: Boolean,
+        onCheckUpdate: () -> Unit,
+        onOpenUri: (String) -> Unit,
+        onLicences: () -> Unit,
+        onWatchAlone: () -> Unit,
+    ) {
+        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Space.gapTight)) {
+            SecondaryActionPair(
+                firstText = stringResource(Res.string.about_source_button),
+                onFirstClick = { onOpenUri("https://www.github.com/yuroyami/syncplay-mobile") },
+                secondText = stringResource(Res.string.about_report_button),
+                onSecondClick = { onOpenUri(bugReportUrl()) },
+            )
+            SecondaryActionPair(
+                firstText = stringResource(Res.string.about_privacy_button),
+                onFirstClick = { onOpenUri("https://github.com/yuroyami/syncplay-mobile/blob/master/PRIVACY_POLICY.md") },
+                secondText = stringResource(Res.string.about_licences_button),
+                onSecondClick = onLicences,
+            )
+            // Asked for, never automatic: a direct download has nothing else that would say a
+            // newer version exists.
+            UpdateCheckAction(
+                result = updateResult,
+                isChecking = updateChecking,
+                onCheck = onCheckUpdate,
+                onOpenRelease = onOpenUri,
+            )
+            Spacer(Modifier.height(Space.gapTight))
+            AccentAction(text = stringResource(Res.string.connect_watch_alone), onClick = onWatchAlone, modifier = Modifier.fillMaxWidth())
+        }
+    }
+
+    /** Under this window height the story sits beside the links instead of above them. */
+    private val SHORT_WINDOW = 480.dp
 
     /** Every third-party piece inside the app, with its licence and a link to it. */
     @Composable
