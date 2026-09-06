@@ -27,6 +27,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import app.LocalRoomViewmodel
+import app.i18n.strings
 import app.protocol.WireMessage
 import app.theme.Radius
 import app.theme.Space
@@ -38,10 +39,6 @@ import app.uicomponents.controls.Text
 import app.uicomponents.controls.controlStates
 import app.uicomponents.controls.pressFeedback
 import app.uicomponents.controls.touchTarget
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_not_ready
-import syncplaymobile.shared.generated.resources.room_ready
 
 /**
  * Readiness as a 36dp cell in the transport: a 6dp square in the readiness colour and the state
@@ -56,8 +53,8 @@ fun RoomReadyButton() {
     val p = palette
     val source = remember { MutableInteractionSource() }
     // One width for both words, so flipping the state never reshapes the seekbar beside it.
-    val readyLabel = stringResource(Res.string.room_ready)
-    val notReadyLabel = stringResource(Res.string.room_not_ready)
+    val readyLabel = strings.roomReady
+    val notReadyLabel = strings.roomNotReady
     val measurer = rememberTextMeasurer()
     val labelStyle = Type.label
     val cellWidth = with(LocalDensity.current) {

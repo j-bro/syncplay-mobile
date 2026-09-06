@@ -1,15 +1,9 @@
 package app.room
 
+import app.i18n.Localization
 import app.player.Playback
 import app.protocol.WireMessage
 import app.utils.loggy
-import org.jetbrains.compose.resources.getString
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_command_bad_argument
-import syncplaymobile.shared.generated.resources.room_command_help
-import syncplaymobile.shared.generated.resources.room_command_needs_media
-import syncplaymobile.shared.generated.resources.room_command_unknown
-import syncplaymobile.shared.generated.resources.room_command_users
 
 /**
  * Carries out a [SlashCommand]. Everything here already existed somewhere in the app; the
@@ -26,22 +20,22 @@ suspend fun RoomViewmodel.runSlashCommand(command: SlashCommand): Boolean {
         SlashCommand.NotACommand -> return false
 
         is SlashCommand.Unknown -> reply(isError = true) {
-            getString(Res.string.room_command_unknown, command.name)
+            Localization.strings.roomCommandUnknown(command.name)
         }
 
         is SlashCommand.BadArgument -> reply(isError = true) {
-            getString(Res.string.room_command_bad_argument, command.name, command.expected)
+            Localization.strings.roomCommandBadArgument(command.name, command.expected)
         }
 
         SlashCommand.Help -> reply {
-            getString(Res.string.room_command_help, SLASH_COMMANDS.joinToString(", ") { "/$it" })
+            Localization.strings.roomCommandHelp(SLASH_COMMANDS.joinToString(", ") { "/$it" })
         }
 
         SlashCommand.ListUsers -> {
             val names = session.userList.value.joinToString(", ") { user ->
                 user.name + if (user.readiness) " ✓" else ""
             }
-            reply { getString(Res.string.room_command_users, names.ifEmpty { "-" }) }
+            reply { Localization.strings.roomCommandUsers(names.ifEmpty { "-" }) }
         }
 
         is SlashCommand.SetReady -> {
@@ -71,7 +65,7 @@ suspend fun RoomViewmodel.runSlashCommand(command: SlashCommand): Boolean {
 
         is SlashCommand.Seek -> {
             if (media == null) {
-                reply(isError = true) { getString(Res.string.room_command_needs_media) }
+                reply(isError = true) { Localization.strings.roomCommandNeedsMedia }
             } else {
                 val target =
                     if (command.relative) playerManager.estimatedPositionMs() + command.millis

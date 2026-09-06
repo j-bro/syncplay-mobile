@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import app.i18n.strings
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -50,23 +51,7 @@ import app.uicomponents.frames.NoticeSeverity
 import app.uicomponents.frames.ScreenFrame
 import com.materialkolor.PaletteStyle
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
 import syncplaymobile.shared.generated.resources.save
-import syncplaymobile.shared.generated.resources.theme_auto
-import syncplaymobile.shared.generated.resources.theme_customize_already_exists_warning
-import syncplaymobile.shared.generated.resources.theme_customize_contrast
-import syncplaymobile.shared.generated.resources.theme_customize_dark
-import syncplaymobile.shared.generated.resources.theme_customize_is_amoled
-import syncplaymobile.shared.generated.resources.theme_customize_name
-import syncplaymobile.shared.generated.resources.theme_customize_neutral_color
-import syncplaymobile.shared.generated.resources.theme_customize_neutral_variant_color
-import syncplaymobile.shared.generated.resources.theme_customize_palette_style
-import syncplaymobile.shared.generated.resources.theme_customize_primary_color
-import syncplaymobile.shared.generated.resources.theme_customize_secondary_color
-import syncplaymobile.shared.generated.resources.theme_customize_tertiary_color
-import syncplaymobile.shared.generated.resources.theme_customize_title
-import syncplaymobile.shared.generated.resources.theme_save_as_new
 import kotlin.math.roundToInt
 
 /**
@@ -81,7 +66,7 @@ fun ThemeCreatorScreenUI(themeToEdit: SaveableTheme? = null) {
     val scheme = remember(theme) { theme.dynamicScheme }
     val livePalette = remember(theme) { Palette.from(scheme, theme) }
     val notices = remember { NoticeQueue() }
-    val exists = stringResource(Res.string.theme_customize_already_exists_warning)
+    val exists = strings.themeCustomizeAlreadyExistsWarning
 
     fun close() = globalViewmodel.backstack.removeAt(globalViewmodel.backstack.lastIndex)
 
@@ -94,7 +79,7 @@ fun ThemeCreatorScreenUI(themeToEdit: SaveableTheme? = null) {
 
     CompositionLocalProvider(LocalTheme provides theme, LocalPalette provides livePalette) {
         run {
-            ScreenFrame(title = stringResource(Res.string.theme_customize_title), onBack = { close() }) {
+            ScreenFrame(title = strings.themeCustomizeTitle, onBack = { close() }) {
                 BoxWithConstraints(Modifier.fillMaxSize()) {
                     val wide = maxWidth >= 720.dp
                     if (wide) {
@@ -129,47 +114,47 @@ private fun Controls(
             Field(
                 value = theme.name,
                 onValueChange = { onTheme(theme.copy(name = it)) },
-                placeholder = stringResource(Res.string.theme_customize_name),
-                name = stringResource(Res.string.theme_customize_name),
+                placeholder = strings.themeCustomizeName,
+                name = strings.themeCustomizeName,
             )
         }
 
-        GroupHeading(stringResource(Res.string.theme_customize_palette_style))
-        ColorRow(stringResource(Res.string.theme_customize_primary_color), Color(theme.primaryColor), onColor = { onTheme(theme.copy(primaryColor = it.toArgb())) })
-        ColorRow(stringResource(Res.string.theme_customize_secondary_color), theme.secondaryColor?.let(::Color), onColor = { onTheme(theme.copy(secondaryColor = it.toArgb())) }, onReset = { onTheme(theme.copy(secondaryColor = null)) })
-        ColorRow(stringResource(Res.string.theme_customize_tertiary_color), theme.tertiaryColor?.let(::Color), onColor = { onTheme(theme.copy(tertiaryColor = it.toArgb())) }, onReset = { onTheme(theme.copy(tertiaryColor = null)) })
-        ColorRow(stringResource(Res.string.theme_customize_neutral_color), theme.neutralColor?.let(::Color), onColor = { onTheme(theme.copy(neutralColor = it.toArgb())) }, onReset = { onTheme(theme.copy(neutralColor = null)) })
-        ColorRow(stringResource(Res.string.theme_customize_neutral_variant_color), theme.neutralVariantColor?.let(::Color), onColor = { onTheme(theme.copy(neutralVariantColor = it.toArgb())) }, onReset = { onTheme(theme.copy(neutralVariantColor = null)) })
+        GroupHeading(strings.themeCustomizePaletteStyle)
+        ColorRow(strings.themeCustomizePrimaryColor, Color(theme.primaryColor), onColor = { onTheme(theme.copy(primaryColor = it.toArgb())) })
+        ColorRow(strings.themeCustomizeSecondaryColor, theme.secondaryColor?.let(::Color), onColor = { onTheme(theme.copy(secondaryColor = it.toArgb())) }, onReset = { onTheme(theme.copy(secondaryColor = null)) })
+        ColorRow(strings.themeCustomizeTertiaryColor, theme.tertiaryColor?.let(::Color), onColor = { onTheme(theme.copy(tertiaryColor = it.toArgb())) }, onReset = { onTheme(theme.copy(tertiaryColor = null)) })
+        ColorRow(strings.themeCustomizeNeutralColor, theme.neutralColor?.let(::Color), onColor = { onTheme(theme.copy(neutralColor = it.toArgb())) }, onReset = { onTheme(theme.copy(neutralColor = null)) })
+        ColorRow(strings.themeCustomizeNeutralVariantColor, theme.neutralVariantColor?.let(::Color), onColor = { onTheme(theme.copy(neutralVariantColor = it.toArgb())) }, onReset = { onTheme(theme.copy(neutralVariantColor = null)) })
 
         ListRow {
-            RowLabel(stringResource(Res.string.theme_customize_palette_style))
+            RowLabel(strings.themeCustomizePaletteStyle)
             val styles = PaletteStyle.entries
             Stepper(options = styles.map { it.name }, index = styles.indexOf(theme.style).coerceAtLeast(0), onIndex = { onTheme(theme.copy(style = styles[it])) }, wrap = true)
         }
         ListRow {
-            RowLabel(stringResource(Res.string.theme_customize_dark))
-            Rocker(on = theme.isDark, onChange = { onTheme(theme.copy(isDark = it)) }, name = stringResource(Res.string.theme_customize_dark))
+            RowLabel(strings.themeCustomizeDark)
+            Rocker(on = theme.isDark, onChange = { onTheme(theme.copy(isDark = it)) }, name = strings.themeCustomizeDark)
         }
         ListRow(enabled = theme.isDark) {
-            RowLabel(stringResource(Res.string.theme_customize_is_amoled))
-            Rocker(on = theme.isAMOLED, onChange = { onTheme(theme.copy(isAMOLED = it)) }, enabled = theme.isDark, name = stringResource(Res.string.theme_customize_is_amoled))
+            RowLabel(strings.themeCustomizeIsAmoled)
+            Rocker(on = theme.isAMOLED, onChange = { onTheme(theme.copy(isAMOLED = it)) }, enabled = theme.isDark, name = strings.themeCustomizeIsAmoled)
         }
         // Contrast starts from the theme's stored value, never from zero.
         Column(Modifier.padding(horizontal = Space.gutter, vertical = Space.gapTight)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(Res.string.theme_customize_contrast), style = Type.label, color = p.ink, modifier = Modifier.weight(1f))
+                Text(strings.themeCustomizeContrast, style = Type.label, color = p.ink, modifier = Modifier.weight(1f))
                 Text(((theme.contrast * 10).roundToInt() / 10.0).toString(), style = Type.value, color = p.inkDim)
             }
             ScrubTrack(
                 value = ((theme.contrast + 1.0) / 2.0).toFloat().coerceIn(0f, 1f),
                 onValueChange = { onTheme(theme.copy(contrast = (it * 2.0 - 1.0))) },
-                name = stringResource(Res.string.theme_customize_contrast),
+                name = strings.themeCustomizeContrast,
             )
         }
 
         Column(Modifier.padding(Space.gutter), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(Space.gap)) {
-            PrimaryAction(stringResource(Res.string.save), onClick = { onSave(false) }, modifier = Modifier.fillMaxWidth())
-            if (editing) SecondaryAction(stringResource(Res.string.theme_save_as_new), onClick = { onSave(true) }, modifier = Modifier.fillMaxWidth())
+            PrimaryAction(strings.save, onClick = { onSave(false) }, modifier = Modifier.fillMaxWidth())
+            if (editing) SecondaryAction(strings.themeSaveAsNew, onClick = { onSave(true) }, modifier = Modifier.fillMaxWidth())
         }
         Spacer(Modifier.height(Space.gutter))
     }
@@ -182,7 +167,7 @@ private fun ColorRow(label: String, color: Color?, onColor: (Color) -> Unit, onR
     val p = palette
     ListRow(onClick = { open.value = true }) {
         RowLabel(label)
-        RowValue(color?.hex() ?: stringResource(Res.string.theme_auto), width = 90.dp)
+        RowValue(color?.hex() ?: strings.themeAuto, width = 90.dp)
         RowGap(Space.gapTight)
         Swatch(color ?: p.panel, name = label)
     }

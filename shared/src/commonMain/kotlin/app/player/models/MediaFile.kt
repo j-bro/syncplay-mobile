@@ -2,6 +2,7 @@ package app.player.models
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import app.i18n.Localization
 import app.utils.getFileName
 import app.utils.getFileSize
 import com.eygraber.uri.Uri
@@ -10,8 +11,6 @@ import io.github.vinceglb.filekit.name
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
-import org.jetbrains.compose.resources.getString
-import syncplaymobile.shared.generated.resources.Res
 import syncplaymobile.shared.generated.resources.undefined
 
 /**************************************************************************************
@@ -55,7 +54,7 @@ data class MediaFile(
                     location = loc
 
                     fileName = Uri.Companion.parseOrNull(loc.url)?.pathSegments?.lastOrNull()?.takeIf { it.isNotBlank() }
-                        ?: getString(Res.string.undefined)
+                        ?: Localization.strings.undefined
                     fileSize = "0"
                 }
             }

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import app.i18n.strings
 import app.theme.Radius
 import app.theme.Space
 import app.theme.Type
@@ -35,9 +36,6 @@ import app.theme.palette
 import app.uicomponents.chromeSurface
 import app.utils.Platform
 import app.utils.platform
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.help_tip
 import kotlinx.coroutines.delay
 
 /**
@@ -52,7 +50,7 @@ fun HelpTip(text: String, modifier: Modifier = Modifier) {
     val source = remember { MutableInteractionSource() }
     val hovered by source.collectIsHoveredAsState()
     var open by remember { mutableStateOf(false) }
-    val name = stringResource(Res.string.help_tip)
+    val name = strings.helpTip
     LaunchedEffect(hovered) {
         if (hovered && platform == Platform.Desktop) {
             delay(400)

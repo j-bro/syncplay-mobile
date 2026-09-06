@@ -29,6 +29,7 @@ import androidx.lifecycle.lifecycleScope
 import app.home.HomeViewmodel
 import app.home.InviteLink
 import app.home.JoinConfig
+import app.i18n.Localization
 import app.player.Playback
 import app.player.exo.ExoImpl
 import app.preferences.Preferences.DISPLAY_LANG
@@ -53,10 +54,6 @@ import androidx.compose.runtime.collectAsState
 import java.lang.ref.WeakReference
 import android.graphics.Rect
 import app.room.VideoBounds
-import org.jetbrains.compose.resources.getString
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_pause
-import syncplaymobile.shared.generated.resources.room_play
 
 /**
  * Main Activity for the Syncplay Android application.
@@ -145,8 +142,8 @@ class SyncplayActivity : ComponentActivity() {
         // The room's own words for the two picture-in-picture actions, resolved once.
         lifecycleScope.launch {
             runCatching {
-                pipPauseLabel = getString(Res.string.room_pause)
-                pipPlayLabel = getString(Res.string.room_play)
+                pipPauseLabel = Localization.strings.roomPause
+                pipPlayLabel = Localization.strings.roomPlay
             }
         }
 

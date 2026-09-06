@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import app.i18n.Localization
 import app.player.PlayerImpl
 import app.player.models.Chapter
 import app.player.models.MediaFile
@@ -67,12 +68,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
-import org.jetbrains.compose.resources.getString
 import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_aspect_fill
-import syncplaymobile.shared.generated.resources.room_aspect_fit
-import syncplaymobile.shared.generated.resources.room_aspect_stretch
-import syncplaymobile.shared.generated.resources.room_playback_error
 import syncplaymobile.shared.generated.resources.uisetting_categ_kite
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -267,9 +263,9 @@ internal class KiteImpl(
                         if (error != null && error !== reportedError) {
                             reportedError = error
                             val reason = error.message
-                            viewmodel.dispatchOSD(OSDCategory.WARNING) { getString(Res.string.room_playback_error, reason) }
+                            viewmodel.dispatchOSD(OSDCategory.WARNING) { Localization.strings.roomPlaybackError(reason) }
                             viewmodel.dispatcher.broadcastMessage(isChat = false, isError = true) {
-                                getString(Res.string.room_playback_error, reason)
+                                Localization.strings.roomPlaybackError(reason)
                             }
                         }
                     }
@@ -651,9 +647,9 @@ internal class KiteImpl(
         }
         player.setVideoScale(next)
         return when (next) {
-            VideoScale.Fit -> getString(Res.string.room_aspect_fit)
-            VideoScale.Fill -> getString(Res.string.room_aspect_fill)
-            VideoScale.Stretch -> getString(Res.string.room_aspect_stretch)
+            VideoScale.Fit -> Localization.strings.roomAspectFit
+            VideoScale.Fill -> Localization.strings.roomAspectFill
+            VideoScale.Stretch -> Localization.strings.roomAspectStretch
         }
     }
 

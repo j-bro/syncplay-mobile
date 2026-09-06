@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import app.LocalRoomUiState
 import app.LocalRoomViewmodel
+import app.i18n.strings
 import app.player.models.MediaFile
 import app.preferences.Preferences.USER_INFO_VIEW
 import app.preferences.set
@@ -76,29 +77,6 @@ import app.utils.FileComparison
 import app.utils.timestampFromMillis
 import io.ktor.http.encodeURLParameter
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_alone
-import syncplaymobile.shared.generated.resources.room_card_title_user_info
-import syncplaymobile.shared.generated.resources.room_file_different
-import syncplaymobile.shared.generated.resources.room_file_has
-import syncplaymobile.shared.generated.resources.room_file_none
-import syncplaymobile.shared.generated.resources.room_file_same
-import syncplaymobile.shared.generated.resources.room_roster_duration
-import syncplaymobile.shared.generated.resources.room_roster_size
-import syncplaymobile.shared.generated.resources.room_roster_view_compact
-import syncplaymobile.shared.generated.resources.room_roster_view_standard
-import syncplaymobile.shared.generated.resources.room_user_controller
-import syncplaymobile.shared.generated.resources.room_user_details_hidden
-import syncplaymobile.shared.generated.resources.room_user_details_shown
-import syncplaymobile.shared.generated.resources.room_user_mute
-import syncplaymobile.shared.generated.resources.room_user_not_ready_label
-import syncplaymobile.shared.generated.resources.room_user_ready_label
-import syncplaymobile.shared.generated.resources.room_user_report
-import syncplaymobile.shared.generated.resources.room_user_set_not_ready
-import syncplaymobile.shared.generated.resources.room_user_set_ready
-import syncplaymobile.shared.generated.resources.room_user_unmute
-import syncplaymobile.shared.generated.resources.room_user_you
 import kotlin.math.roundToLong
 
 object CardUserInfo {
@@ -147,7 +125,7 @@ internal fun UserRosterPanel(
 ) {
     var selectedUser by remember(compact) { mutableStateOf<String?>(null) }
     PanelFrame(
-        title = stringResource(Res.string.room_card_title_user_info),
+        title = strings.roomCardTitleUserInfo,
         modifier = Modifier.fillMaxSize(),
         shape = shape,
         scrollable = false,
@@ -155,7 +133,7 @@ internal fun UserRosterPanel(
     ) {
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
             if (users.size <= 1) {
-                Text(stringResource(Res.string.room_alone), color = palette.inkDim,
+                Text(strings.roomAlone, color = palette.inkDim,
                     modifier = Modifier.padding(horizontal = Space.gutter, vertical = Space.gapTight))
             }
             users.forEach { user ->
@@ -172,10 +150,10 @@ internal fun UserRosterPanel(
                             modifier = Modifier.fillMaxWidth().padding(start = Space.gutter, end = Space.gutter, bottom = Space.gapTight),
                             horizontalArrangement = Arrangement.spacedBy(Space.gapTight),
                         ) {
-                            SecondaryAction(stringResource(if (user.name in mutedUsers) Res.string.room_user_unmute else Res.string.room_user_mute), { onToggleMute(user.name) })
-                            SecondaryAction(stringResource(Res.string.room_user_report), { onReport(user.name) })
+                            SecondaryAction(if (user.name in mutedUsers) strings.roomUserUnmute else strings.roomUserMute, { onToggleMute(user.name) })
+                            SecondaryAction(strings.roomUserReport, { onReport(user.name) })
                             if (onSetReady != null) {
-                                SecondaryAction(stringResource(if (user.readiness) Res.string.room_user_set_not_ready else Res.string.room_user_set_ready), { onSetReady(user) })
+                                SecondaryAction(if (user.readiness) strings.roomUserSetNotReady else strings.roomUserSetReady, { onSetReady(user) })
                             }
                         }
                     }
@@ -197,10 +175,10 @@ private fun RosterViewSwitcher(compact: Boolean, onCompactChange: (Boolean) -> U
         },
         label = "rosterView",
     ) { isCompact ->
-        val current = stringResource(if (isCompact) Res.string.room_roster_view_compact else Res.string.room_roster_view_standard)
+        val current = if (isCompact) strings.roomRosterViewCompact else strings.roomRosterViewStandard
         GlyphButton(
             icon = if (isCompact) Icons.Filled.ViewCompact else Icons.AutoMirrored.Filled.ViewList,
-            name = stringResource(if (isCompact) Res.string.room_roster_view_standard else Res.string.room_roster_view_compact),
+            name = if (isCompact) strings.roomRosterViewStandard else strings.roomRosterViewCompact,
             modifier = Modifier.semantics { stateDescription = current },
             tint = palette.accent,
             onClick = { Feedback.tick(); onCompactChange(!compact) },
@@ -217,17 +195,17 @@ private fun RosterUserRow(user: User, isSelf: Boolean, myFile: MediaFile?, compa
     val sameFile = file != null && myFile != null && FileComparison.sameFilename(myFile.fileName, file.fileName) &&
         FileComparison.sameFilesize(myFile.fileSize, file.fileSize) &&
         (myDuration == null || peerDuration == null || FileComparison.sameFileduration(myDuration, peerDuration))
-    val fileState = stringResource(when {
-        file == null -> Res.string.room_file_none
-        myFile == null -> Res.string.room_file_has
-        sameFile -> Res.string.room_file_same
-        else -> Res.string.room_file_different
-    })
-    val ready = stringResource(if (user.readiness) Res.string.room_user_ready_label else Res.string.room_user_not_ready_label, user.name)
-    val controller = if (user.isController) stringResource(Res.string.room_user_controller) else ""
-    val self = if (isSelf) stringResource(Res.string.room_user_you) else ""
-    val filename = file?.fileName ?: stringResource(Res.string.room_file_none)
-    val expansion = if (onClick != null) stringResource(if (expanded) Res.string.room_user_details_shown else Res.string.room_user_details_hidden) else ""
+    val fileState = when {
+        file == null -> strings.roomFileNone
+        myFile == null -> strings.roomFileHas
+        sameFile -> strings.roomFileSame
+        else -> strings.roomFileDifferent
+    }
+    val ready = (if (user.readiness) strings.roomUserReadyLabel else strings.roomUserNotReadyLabel)(user.name)
+    val controller = if (user.isController) strings.roomUserController else ""
+    val self = if (isSelf) strings.roomUserYou else ""
+    val filename = file?.fileName ?: strings.roomFileNone
+    val expansion = if (onClick != null) if (expanded) strings.roomUserDetailsShown else strings.roomUserDetailsHidden else ""
     val state = listOf(ready, self, controller, fileState, expansion).filter { it.isNotEmpty() }.joinToString(", ")
     ListRow(
         modifier = Modifier.background(if (isSelf) p.ink.copy(alpha = 0.045f) else Color.Transparent)
@@ -284,8 +262,8 @@ private fun RosterUserRow(user: User, isSelf: Boolean, myFile: MediaFile?, compa
                     if (file != null) {
                         FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.gap), verticalArrangement = Arrangement.spacedBy(Space.gapTight)) {
                             val duration = peerDuration?.let { timestampFromMillis((it * 1000).toLong()) } ?: "—"
-                            Text(stringResource(Res.string.room_roster_duration, duration), style = metadataStyle, color = p.inkDim)
-                            Text(stringResource(Res.string.room_roster_size, rosterFileSize(file.fileSize)), style = metadataStyle, color = p.inkDim)
+                            Text(strings.roomRosterDuration(duration), style = metadataStyle, color = p.inkDim)
+                            Text(strings.roomRosterSize(rosterFileSize(file.fileSize)), style = metadataStyle, color = p.inkDim)
                             if (!isSelf && myFile != null) {
                                 Text(fileState, style = metadataStyle, color = if (sameFile) p.ok else p.warn)
                             }

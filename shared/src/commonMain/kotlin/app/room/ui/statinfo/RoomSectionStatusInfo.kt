@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import app.i18n.strings
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -34,20 +35,9 @@ import app.uicomponents.controls.GlyphButton
 import app.uicomponents.controls.RowGap
 import app.uicomponents.controls.Tag
 import org.jetbrains.compose.resources.pluralStringResource
-import org.jetbrains.compose.resources.stringResource
 import syncplaymobile.shared.generated.resources.Res
 import app.protocol.sync.AutoplayState
-import syncplaymobile.shared.generated.resources.room_everyone_ready
-import syncplaymobile.shared.generated.resources.room_starting_in
-import syncplaymobile.shared.generated.resources.room_waiting_for_many
-import syncplaymobile.shared.generated.resources.room_waiting_for_one
-import syncplaymobile.shared.generated.resources.room_connecting
-import syncplaymobile.shared.generated.resources.room_connection_encrypted
-import syncplaymobile.shared.generated.resources.room_connection_plaintext
 import syncplaymobile.shared.generated.resources.room_user_count
-import syncplaymobile.shared.generated.resources.room_ping_disconnected
-import syncplaymobile.shared.generated.resources.room_reconnect_now
-import syncplaymobile.shared.generated.resources.room_reconnecting
 
 private val EPISODE = Regex("(?:s|season)(\\d{1,2})(?:e|episode)(\\d{1,2})")
 
@@ -81,19 +71,19 @@ fun RoomStatusInfoSection(modifier: Modifier = Modifier) {
     val readinessLine: String? = when {
         connectionState != ConnectionState.CONNECTED -> null
         autoplay is AutoplayState.CountingDown ->
-            stringResource(Res.string.room_starting_in, (autoplay as AutoplayState.CountingDown).secondsLeft)
+            strings.roomStartingIn((autoplay as AutoplayState.CountingDown).secondsLeft)
         readiness.alone -> null
-        readiness.notReady.size == 1 -> stringResource(Res.string.room_waiting_for_one, readiness.notReady.single())
-        readiness.notReady.size > 1 -> stringResource(Res.string.room_waiting_for_many, readiness.notReady.size)
-        else -> stringResource(Res.string.room_everyone_ready, readiness.participantCount)
+        readiness.notReady.size == 1 -> strings.roomWaitingForOne(readiness.notReady.single())
+        readiness.notReady.size > 1 -> strings.roomWaitingForMany(readiness.notReady.size)
+        else -> strings.roomEveryoneReady(readiness.participantCount)
     }
 
     val state = when (connectionState) {
         ConnectionState.CONNECTED -> readinessLine
             ?: pluralStringResource(Res.plurals.room_user_count, totalUsers, totalUsers)
-        ConnectionState.CONNECTING -> stringResource(Res.string.room_connecting)
-        ConnectionState.SCHEDULING_RECONNECT -> stringResource(Res.string.room_reconnecting)
-        ConnectionState.DISCONNECTED -> stringResource(Res.string.room_ping_disconnected)
+        ConnectionState.CONNECTING -> strings.roomConnecting
+        ConnectionState.SCHEDULING_RECONNECT -> strings.roomReconnecting
+        ConnectionState.DISCONNECTED -> strings.roomPingDisconnected
     }
     val media by viewmodel.playerManager.media.collectAsState()
     val episode = remember(media?.fileName) {
@@ -117,10 +107,8 @@ fun RoomStatusInfoSection(modifier: Modifier = Modifier) {
             RowGap(Space.gapTight)
             Icon(
                 imageVector = if (encrypted) LockGlyph else UnlockGlyph,
-                contentDescription = stringResource(
-                    if (encrypted) Res.string.room_connection_encrypted
-                    else Res.string.room_connection_plaintext
-                ),
+                contentDescription = if (encrypted) strings.roomConnectionEncrypted
+                    else strings.roomConnectionPlaintext,
                 tint = if (encrypted) p.ok else p.inkDim,
                 modifier = Modifier.size(14.dp),
             )
@@ -142,7 +130,7 @@ fun RoomStatusInfoSection(modifier: Modifier = Modifier) {
             RowGap(Space.gapTight)
             GlyphButton(
                 icon = Icons.Filled.Refresh,
-                name = stringResource(Res.string.room_reconnect_now),
+                name = strings.roomReconnectNow,
                 tint = p.accent,
                 size = Space.glyph,
             ) { viewmodel.networkManager.reconnectNow() }

@@ -29,6 +29,7 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.CaptionStyleCompat
 import androidx.media3.ui.PlayerView
 import app.R
+import app.i18n.Localization
 import app.player.PlayerImpl
 import app.player.models.MediaFile
 import app.player.models.MediaFileLocation
@@ -49,14 +50,7 @@ import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.compose.resources.getString
 import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_playback_error
-import syncplaymobile.shared.generated.resources.room_scaling_fill_screen
-import syncplaymobile.shared.generated.resources.room_scaling_fit_screen
-import syncplaymobile.shared.generated.resources.room_scaling_fixed_height
-import syncplaymobile.shared.generated.resources.room_scaling_fixed_width
-import syncplaymobile.shared.generated.resources.room_scaling_zoom
 import syncplaymobile.shared.generated.resources.uisetting_categ_exo
 import java.util.Collections
 import kotlin.math.abs
@@ -211,9 +205,9 @@ class ExoImpl(vm: RoomViewmodel) : PlayerImpl(vm, ExoEngine) {
             override fun onPlayerError(error: PlaybackException) {
                 loggy("Player error: ${error.errorCodeName} ${error.message ?: ""}")
                 val reason = error.errorCodeName
-                viewmodel.dispatchOSD(OSDCategory.WARNING) { getString(Res.string.room_playback_error, reason) }
+                viewmodel.dispatchOSD(OSDCategory.WARNING) { Localization.strings.roomPlaybackError(reason) }
                 viewmodel.dispatcher.broadcastMessage(isChat = false, isError = true) {
-                    getString(Res.string.room_playback_error, reason)
+                    Localization.strings.roomPlaybackError(reason)
                 }
             }
         })
@@ -528,11 +522,11 @@ class ExoImpl(vm: RoomViewmodel) : PlayerImpl(vm, ExoEngine) {
         if (!isInitialized) return ""
         val resolutions = mutableMapOf<Int, String>()
 
-        resolutions[AspectRatioFrameLayout.RESIZE_MODE_FIT] = getString(Res.string.room_scaling_fit_screen)
-        resolutions[AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH] = getString(Res.string.room_scaling_fixed_width)
-        resolutions[AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT] = getString(Res.string.room_scaling_fixed_height)
-        resolutions[AspectRatioFrameLayout.RESIZE_MODE_FILL] = getString(Res.string.room_scaling_fill_screen)
-        resolutions[AspectRatioFrameLayout.RESIZE_MODE_ZOOM] = getString(Res.string.room_scaling_zoom)
+        resolutions[AspectRatioFrameLayout.RESIZE_MODE_FIT] = Localization.strings.roomScalingFitScreen
+        resolutions[AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH] = Localization.strings.roomScalingFixedWidth
+        resolutions[AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT] = Localization.strings.roomScalingFixedHeight
+        resolutions[AspectRatioFrameLayout.RESIZE_MODE_FILL] = Localization.strings.roomScalingFillScreen
+        resolutions[AspectRatioFrameLayout.RESIZE_MODE_ZOOM] = Localization.strings.roomScalingZoom
 
         var nextRes = (exoView.resizeMode + 1)
         if (nextRes == 5) nextRes = 0

@@ -56,7 +56,7 @@
     <string name="room_custom_skip_button">%1$s überspringen</string>
     <string name="media_directories_setting_summary">Ordner, die nach Dateien der Playlist durchsucht werden.</string>
 
-    <string name="room_on_newcontrolledroom">Verwalteter Raum '%1$s' mit Passwort '%2$s' erstellt. Bitte speichern Sie diese Informationen für die Zukunft! Sie wurden in Ihre Zwischenablage kopiert, damit Sie sie anderswo einfügen können.\n\nIn verwalteten Räumen werden alle mit dem Raumoperator synchron gehalten, der als Einziger pausieren, fortsetzen, suchen und die Playlist ändern kann.\n\nSie sollten normale Zuschauer bitten, dem Raum '%1$s' beizutreten, aber Raumoperatoren können dem Raum '%1$s:%2$s' beitreten, um sich automatisch zu authentifizieren.</string>
+    <string name="room_on_newcontrolledroom">Verwalteter Raum '%1$s' mit dem Passwort '%2$s' erstellt. Beides liegt in der Zwischenablage, also speichere es sicher ab.\n\nIn einem verwalteten Raum folgen alle den Operatoren. Nur sie können pausieren, fortsetzen, springen und die Playlist ändern.\n\nNormale Zuschauer treten nur mit dem Raumnamen bei. Operatoren treten mit '%3$s' bei, um gleich erkannt zu werden.</string>
     <string name="room_on_controller_auth_success">%1$s erfolgreich als Raumoperator authentifiziert</string>
     <string name="room_on_controller_auth_failed">%1$s konnte sich nicht als Raumoperator identifizieren</string>
 

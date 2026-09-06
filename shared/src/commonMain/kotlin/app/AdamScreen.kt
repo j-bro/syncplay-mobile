@@ -15,7 +15,11 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import app.i18n.Localization
+import app.i18n.ProvideAppStrings
 import app.preferences.LocalPrefsState
+import app.preferences.Preferences.DISPLAY_LANG
+import app.preferences.watchPref
 import app.preferences.datastoreStateFlow
 import app.preferences.settings.SettingsScreenUI
 import app.uicomponents.GlassBackdrop
@@ -121,6 +125,12 @@ fun AdamScreen(onGlobalViewmodel: (SyncplayViewmodel) -> Unit) {
         LocalPalette provides designPalette,
         LocalWidthClass provides currentWidthClass(),
     ) {
+        /* The display language, applied before anything below reads a string so the first frame
+         * is already in the right one. A change moves the whole app with no restart. */
+        val savedLanguage by DISPLAY_LANG.watchPref()
+        remember(savedLanguage) { Localization.apply(savedLanguage) }
+
+        ProvideAppStrings(Localization.lyricist) {
         // The ground is the theme's: every page sits on it, so no window colour shows through.
         Box(Modifier.fillMaxSize().background(designPalette.ground)) {
             GlassBackdrop {
@@ -189,6 +199,7 @@ fun AdamScreen(onGlobalViewmodel: (SyncplayViewmodel) -> Unit) {
                 }
                 )
             }
+        }
         }
     }
 }

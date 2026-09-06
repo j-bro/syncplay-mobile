@@ -4,6 +4,7 @@ import androidx.annotation.CallSuper
 import androidx.annotation.UiThread
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import app.i18n.Localization
 import app.player.models.Chapter
 import app.player.models.MediaFile
 import app.player.models.MediaFile.Companion.mediaFromFile
@@ -43,16 +44,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlin.concurrent.Volatile
-import org.jetbrains.compose.resources.getString
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_msg_problem_loading_file
-import syncplaymobile.shared.generated.resources.room_msg_resolve_failed
-import syncplaymobile.shared.generated.resources.room_msg_resolved_url
-import syncplaymobile.shared.generated.resources.room_msg_resolving_url
-import syncplaymobile.shared.generated.resources.room_selected_sub
-import syncplaymobile.shared.generated.resources.room_selected_sub_error
-import syncplaymobile.shared.generated.resources.room_selected_vid
-import syncplaymobile.shared.generated.resources.room_sub_error_load_vid_first
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -285,17 +276,17 @@ abstract class PlayerImpl(val viewmodel: RoomViewmodel, val engine: PlayerEngine
                     false
                 }
                 viewmodel.dispatchOSD {
-                    if (loaded) getString(Res.string.room_selected_sub, filename)
-                    else getString(Res.string.room_selected_sub_error)
+                    if (loaded) Localization.strings.roomSelectedSub(filename)
+                    else Localization.strings.roomSelectedSubError
                 }
             } else {
                 viewmodel.dispatchOSD {
-                    getString(Res.string.room_selected_sub_error)
+                    Localization.strings.roomSelectedSubError
                 }
             }
         } else {
             viewmodel.dispatchOSD {
-                getString(Res.string.room_sub_error_load_vid_first)
+                Localization.strings.roomSubErrorLoadVidFirst
             }
         }
     }
@@ -367,16 +358,16 @@ abstract class PlayerImpl(val viewmodel: RoomViewmodel, val engine: PlayerEngine
         !MEDIA_RESOLVER_ENABLED.value() -> null
         urlLooksLikeDirectMedia(url) -> null
         else -> {
-            viewmodel.dispatchOSD { getString(Res.string.room_msg_resolving_url) }
+            viewmodel.dispatchOSD { Localization.strings.roomMsgResolvingUrl }
             val resolved = mediaResolver.resolve(url)
             if (resolved != null) {
                 viewmodel.dispatchOSD {
-                    getString(Res.string.room_msg_resolved_url, resolved.title ?: resolved.directUrl)
+                    Localization.strings.roomMsgResolvedUrl(resolved.title ?: resolved.directUrl)
                 }
             } else {
                 // Said out loud: the raw page URL is handed to the engine next, and its failure
                 // would otherwise be the first sign that nothing was resolved.
-                viewmodel.dispatchOSD(OSDCategory.WARNING) { getString(Res.string.room_msg_resolve_failed) }
+                viewmodel.dispatchOSD(OSDCategory.WARNING) { Localization.strings.roomMsgResolveFailed }
             }
             resolved
         }
@@ -414,7 +405,7 @@ abstract class PlayerImpl(val viewmodel: RoomViewmodel, val engine: PlayerEngine
                 } catch (e: Exception) {
                     e.printStackTrace()
                     viewmodel.dispatchOSD {
-                        getString(Res.string.room_msg_problem_loading_file)
+                        Localization.strings.roomMsgProblemLoadingFile
                     }
                 }
             }
@@ -462,7 +453,7 @@ abstract class PlayerImpl(val viewmodel: RoomViewmodel, val engine: PlayerEngine
         // happened in [installMedia] before the engine load command; this stage only handles
         // the user-visible OSD, the iOS no-event announce path, and subtitle sizing.
         viewmodel.dispatchOSD {
-            getString(Res.string.room_selected_vid, "${viewmodel.media?.fileName}")
+            Localization.strings.roomSelectedVid("${viewmodel.media?.fileName}")
         }
 
         if (platform == Platform.IOS && !announcesFileLoadViaEvent) {

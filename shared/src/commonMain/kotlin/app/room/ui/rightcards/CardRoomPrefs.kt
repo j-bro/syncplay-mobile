@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import app.i18n.strings
 import app.theme.Radius
 import app.LocalRoomViewmodel
 import app.preferences.settings.LocalSettingsDensity
@@ -29,9 +30,6 @@ import app.uicomponents.controls.GlyphButton
 import app.uicomponents.controls.ProgressBar
 import app.uicomponents.frames.PanelFrame
 import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.action_back
-import syncplaymobile.shared.generated.resources.room_card_title_in_room_prefs
 
 object CardRoomPrefs {
 
@@ -49,7 +47,7 @@ object CardRoomPrefs {
             categories = roomSettings(viewmodel.player.configurableSettings())
         }
 
-        val title = pages.lastOrNull()?.title ?: open?.let { stringResource(it.title) } ?: stringResource(Res.string.room_card_title_in_room_prefs)
+        val title = pages.lastOrNull()?.title ?: open?.let { stringResource(it.title) } ?: strings.roomCardTitleInRoomPrefs
         PanelFrame(
             title = title,
             modifier = Modifier.fillMaxSize(),
@@ -57,7 +55,7 @@ object CardRoomPrefs {
             scrollable = pages.lastOrNull()?.scrollable != false,
             actions = {
                 if (open != null || pages.isNotEmpty()) {
-                    GlyphButton(BackGlyph, name = stringResource(Res.string.action_back)) {
+                    GlyphButton(BackGlyph, name = strings.actionBack) {
                         if (pages.isNotEmpty()) pages.removeAt(pages.lastIndex) else open = null
                     }
                 }

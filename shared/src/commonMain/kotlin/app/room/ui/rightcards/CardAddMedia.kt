@@ -16,6 +16,8 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.platform.LocalClipboard
+import app.i18n.AppStrings
+import app.i18n.strings
 import app.player.resolver.ResolvedMedia
 import app.player.resolver.extractYoutubeId
 import app.player.resolver.mediaResolver
@@ -64,30 +66,8 @@ import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.action_back
-import syncplaymobile.shared.generated.resources.action_close
 import syncplaymobile.shared.generated.resources.cancel
 import syncplaymobile.shared.generated.resources.done
-import syncplaymobile.shared.generated.resources.room_addmedia_online_url
-import syncplaymobile.shared.generated.resources.room_button_desc_add
-import syncplaymobile.shared.generated.resources.room_link_direct
-import syncplaymobile.shared.generated.resources.room_link_failed
-import syncplaymobile.shared.generated.resources.room_link_paste
-import syncplaymobile.shared.generated.resources.room_link_play_anyway
-import syncplaymobile.shared.generated.resources.room_link_resolver_off
-import syncplaymobile.shared.generated.resources.room_link_resolving
-import syncplaymobile.shared.generated.resources.room_link_sites_full
-import syncplaymobile.shared.generated.resources.room_link_sites_youtube
-import syncplaymobile.shared.generated.resources.room_link_unknown
-import syncplaymobile.shared.generated.resources.room_route_device
-import syncplaymobile.shared.generated.resources.room_route_device_note
-import syncplaymobile.shared.generated.resources.room_route_link
-import syncplaymobile.shared.generated.resources.room_route_playlist
-import syncplaymobile.shared.generated.resources.room_route_playlist_note
-import syncplaymobile.shared.generated.resources.room_route_share
-import syncplaymobile.shared.generated.resources.room_route_share_note
 
 /**
  * Adding media, as a side panel: the routes a file can come in by, each a 54dp row. The link
@@ -107,13 +87,13 @@ object CardAddMedia {
         }
 
         PanelFrame(
-            title = stringResource(if (linkMode) Res.string.room_route_link else Res.string.room_button_desc_add),
+            title = if (linkMode) strings.roomRouteLink else strings.roomButtonDescAdd,
             modifier = Modifier.fillMaxWidth(),
             shape = shape,
             centerTitle = true,
             actions = {
-                if (linkMode) GlyphButton(BackGlyph, name = stringResource(Res.string.action_back)) { linkMode = false }
-                GlyphButton(CloseGlyph, name = stringResource(Res.string.action_close), onClick = ::close)
+                if (linkMode) GlyphButton(BackGlyph, name = strings.actionBack) { linkMode = false }
+                GlyphButton(CloseGlyph, name = strings.actionClose, onClick = ::close)
             },
         ) {
             AddMediaBody(linkMode = linkMode, onLinkMode = { linkMode = it }, onClose = ::close)
@@ -145,14 +125,14 @@ object CardAddMedia {
             LinkForm(onCancel = { onLinkMode(false) }, onPlayed = ::close)
         } else {
             Column {
-                RouteRow(Icons.Filled.FolderOpen, stringResource(Res.string.room_route_device), stringResource(Res.string.room_route_device_note)) {
+                RouteRow(Icons.Filled.FolderOpen, strings.roomRouteDevice, strings.roomRouteDeviceNote) {
                     Feedback.tick(); videoPicker.launch()
                 }
-                RouteRow(Icons.Filled.Link, stringResource(Res.string.room_route_link), stringResource(supportedSites())) {
+                RouteRow(Icons.Filled.Link, strings.roomRouteLink, supportedSites(strings)) {
                     Feedback.tick(); onLinkMode(true)
                 }
                 if (platform == Platform.Android) {
-                    RouteRow(Icons.Filled.Cloud, stringResource(Res.string.room_route_share), stringResource(Res.string.room_route_share_note)) {
+                    RouteRow(Icons.Filled.Cloud, strings.roomRouteShare, strings.roomRouteShareNote) {
                         Feedback.tick(); close()
                         platformCallback.launchSystemFilePicker { uri ->
                             uri ?: return@launchSystemFilePicker
@@ -161,7 +141,7 @@ object CardAddMedia {
                     }
                 }
                 if (!viewmodel.isSoloMode) {
-                    RouteRow(Icons.AutoMirrored.Filled.PlaylistAdd, stringResource(Res.string.room_route_playlist), stringResource(Res.string.room_route_playlist_note)) {
+                    RouteRow(Icons.AutoMirrored.Filled.PlaylistAdd, strings.roomRoutePlaylist, strings.roomRoutePlaylistNote) {
                         Feedback.tick(); playlistPicker.launch()
                     }
                 }
@@ -225,28 +205,28 @@ object CardAddMedia {
                     value = url,
                     onValueChange = { url = it },
                     modifier = Modifier.weight(1f),
-                    placeholder = stringResource(Res.string.room_addmedia_online_url),
+                    placeholder = strings.roomAddmediaOnlineUrl,
                     leading = Icons.Filled.Link,
                     keyboardType = KeyboardType.Uri,
                     onImeAction = { if (trimmed.isNotBlank() && !resolving) play() },
-                    name = stringResource(Res.string.room_addmedia_online_url),
+                    name = strings.roomAddmediaOnlineUrl,
                 )
-                GlyphButton(Icons.Filled.ContentPaste, name = stringResource(Res.string.room_link_paste)) {
+                GlyphButton(Icons.Filled.ContentPaste, name = strings.roomLinkPaste) {
                     scope.launch { clipboard.getClipEntry()?.getText()?.let { url = it } }
                 }
             }
             val note = when {
-                resolving -> stringResource(Res.string.room_link_resolving)
+                resolving -> strings.roomLinkResolving
                 preview != null -> listOfNotNull(
                     preview?.title,
                     preview?.durationSec?.let { timestampFromMillis((it * 1000).toLong()) },
                 ).joinToString("  ")
-                failed -> stringResource(Res.string.room_link_failed)
-                kind == LinkKind.Empty -> stringResource(supportedSites())
-                kind == LinkKind.Direct -> stringResource(Res.string.room_link_direct)
-                kind == LinkKind.ResolverOff -> stringResource(Res.string.room_link_resolver_off)
-                kind == LinkKind.Resolvable -> stringResource(supportedSites())
-                else -> stringResource(Res.string.room_link_unknown)
+                failed -> strings.roomLinkFailed
+                kind == LinkKind.Empty -> supportedSites(strings)
+                kind == LinkKind.Direct -> strings.roomLinkDirect
+                kind == LinkKind.ResolverOff -> strings.roomLinkResolverOff
+                kind == LinkKind.Resolvable -> supportedSites(strings)
+                else -> strings.roomLinkUnknown
             }
             Text(
                 text = note,
@@ -257,10 +237,10 @@ object CardAddMedia {
             if (resolving) ProgressBar(null, Modifier.fillMaxWidth().padding(top = Space.gapTight))
             Spacer(Modifier.height(Space.gutter))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                SecondaryAction(stringResource(Res.string.cancel), modifier = Modifier.weight(1f), onClick = onCancel)
+                SecondaryAction(strings.cancel, modifier = Modifier.weight(1f), onClick = onCancel)
                 Spacer(Modifier.padding(horizontal = Space.gapTight))
                 AccentAction(
-                    text = stringResource(if (failed) Res.string.room_link_play_anyway else Res.string.done),
+                    text = if (failed) strings.roomLinkPlayAnyway else strings.done,
                     modifier = Modifier.weight(1f),
                     enabled = trimmed.isNotBlank() && !resolving,
                     onClick = { play() },
@@ -269,7 +249,7 @@ object CardAddMedia {
         }
     }
 
-    private fun supportedSites() = if (platform == Platform.IOS) Res.string.room_link_sites_youtube else Res.string.room_link_sites_full
+    private fun supportedSites(s: AppStrings) = if (platform == Platform.IOS) s.roomLinkSitesYoutube else s.roomLinkSitesFull
 
     /** What the app can make of a pasted link before it is confirmed. */
     private enum class LinkKind { Empty, Direct, Resolvable, ResolverOff, Unknown }

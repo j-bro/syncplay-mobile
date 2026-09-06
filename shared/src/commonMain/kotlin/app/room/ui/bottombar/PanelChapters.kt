@@ -3,6 +3,8 @@ package app.room.ui.bottombar
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardTab
+import app.i18n.Localization
+import app.i18n.strings
 import app.uicomponents.controls.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,12 +24,6 @@ import app.uicomponents.frames.Modal
 import app.uicomponents.frames.ModalSize
 import app.utils.timestampFromMillis
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_chapters
-import syncplaymobile.shared.generated.resources.room_chapters_jump
-import syncplaymobile.shared.generated.resources.room_chapters_skip
 
 /**
  * The chapter list, opened by a long press on the track. It reads the chapters the seekbar
@@ -42,18 +38,18 @@ fun ChaptersModal(open: Boolean, onDismiss: () -> Unit) {
     val chapters = media?.chapters ?: emptyList()
     val p = palette
 
-    Modal(open = true, onDismiss = onDismiss, title = stringResource(Res.string.room_chapters), size = ModalSize.Panel, inset = false) {
+    Modal(open = true, onDismiss = onDismiss, title = strings.roomChapters, size = ModalSize.Panel, inset = false) {
         ListRow(onClick = {
             Feedback.tick()
             onDismiss()
             viewmodel.viewModelScope.launch {
                 viewmodel.player.skipChapter()
-                viewmodel.dispatchOSD { getString(Res.string.room_chapters_skip) }
+                viewmodel.dispatchOSD { Localization.strings.roomChaptersSkip }
             }
         }) {
             Icon(Icons.AutoMirrored.Filled.KeyboardTab, contentDescription = null, tint = p.inkDim, modifier = Modifier.size(Space.glyph))
             RowGap()
-            RowLabel(stringResource(Res.string.room_chapters_skip))
+            RowLabel(strings.roomChaptersSkip)
         }
         Rule()
         chapters.forEach { chapter ->
@@ -62,7 +58,7 @@ fun ChaptersModal(open: Boolean, onDismiss: () -> Unit) {
                 onDismiss()
                 viewmodel.viewModelScope.launch {
                     viewmodel.player.jumpToChapter(chapter)
-                    viewmodel.dispatchOSD { getString(Res.string.room_chapters_jump, chapter.name) }
+                    viewmodel.dispatchOSD { Localization.strings.roomChaptersJump(chapter.name) }
                 }
             }) {
                 RowLabel(chapter.name)

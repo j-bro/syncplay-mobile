@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import app.LocalGlobalViewmodel
 import app.Screen
 import app.home.HomeViewmodel
+import app.i18n.strings
 import app.theme.Space
 import app.theme.ThemeMenu
 import app.uicomponents.SynkplayLogo
@@ -40,10 +41,6 @@ import app.uicomponents.controls.GlyphButton
 import app.uicomponents.controls.Rule
 import app.uicomponents.controls.SettingsGlyph
 import app.utils.appName
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.settings_title
-import syncplaymobile.shared.generated.resources.theme_popup_select_a_theme
 
 /** Logo and wordmark on the left, theme and settings glyphs on the right, one hairline under. */
 @Composable
@@ -73,8 +70,8 @@ fun HomeTopBar(viewmodel: HomeViewmodel) {
                 }
             }
             Spacer(Modifier.weight(1f))
-            GlyphButton(Icons.Outlined.Palette, name = stringResource(Res.string.theme_popup_select_a_theme)) { themeOpen = true }
-            GlyphButton(SettingsGlyph, name = stringResource(Res.string.settings_title)) { globalViewmodel.backstack.add(Screen.Settings()) }
+            GlyphButton(Icons.Outlined.Palette, name = strings.themePopupSelectATheme) { themeOpen = true }
+            GlyphButton(SettingsGlyph, name = strings.settingsTitle) { globalViewmodel.backstack.add(Screen.Settings()) }
         }
         Rule()
     }

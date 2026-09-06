@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.HeartBroken
+import app.i18n.strings
 import app.uicomponents.controls.Icon
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
@@ -90,22 +91,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import syncplaymobile.shared.generated.resources.Res
 import syncplaymobile.shared.generated.resources.powered_by_klipy
-import syncplaymobile.shared.generated.resources.room_gif_action_favorite
-import syncplaymobile.shared.generated.resources.room_gif_action_send
-import syncplaymobile.shared.generated.resources.room_gif_action_unfavorite
-import syncplaymobile.shared.generated.resources.room_gif_failed
-import syncplaymobile.shared.generated.resources.room_gif_powered_by
-import syncplaymobile.shared.generated.resources.room_gif_no_results
-import syncplaymobile.shared.generated.resources.room_gif_retry
-import syncplaymobile.shared.generated.resources.room_gif_tab_favorites
-import syncplaymobile.shared.generated.resources.room_gif_tab_gifs
-import syncplaymobile.shared.generated.resources.room_gif_tab_recents
-import syncplaymobile.shared.generated.resources.room_gif_tab_stickers
-import syncplaymobile.shared.generated.resources.room_gif_tab_trending
 import app.uicomponents.controls.touchTarget
 
 /** Source shown while the composer is empty; typed text becomes a search over the chosen type. */
@@ -123,8 +111,8 @@ private fun TypeSwitch(gifs: Boolean, onChange: (gifs: Boolean) -> Unit) {
     val trackHeight = 30.dp * LocalDensity.current.fontScale.coerceIn(1f, 2f)
     val knob = 10.dp
     val knobY by animateDpAsState(if (gifs) 2.dp else trackHeight - knob - 2.dp, Motion.move(), label = "knob")
-    val gifLabel = stringResource(Res.string.room_gif_tab_gifs)
-    val stickerLabel = stringResource(Res.string.room_gif_tab_stickers)
+    val gifLabel = strings.roomGifTabGifs
+    val stickerLabel = strings.roomGifTabStickers
 
     Row(
         modifier = Modifier
@@ -172,9 +160,9 @@ internal fun GifDrawerHeader(
     val segmented: @Composable (Modifier) -> Unit = { m ->
         Segmented(
             options = listOf(
-                stringResource(Res.string.room_gif_tab_trending),
-                stringResource(Res.string.room_gif_tab_recents),
-                stringResource(Res.string.room_gif_tab_favorites),
+                strings.roomGifTabTrending,
+                strings.roomGifTabRecents,
+                strings.roomGifTabFavorites,
             ),
             selected = sources.indexOf(source),
             onSelect = { onSource(sources[it]) },
@@ -302,18 +290,18 @@ fun GifPanel(
             // The attribution stays, small and out of the way, in the grid's bottom end corner.
             Image(
                 imageVector = vectorResource(Res.drawable.powered_by_klipy),
-                contentDescription = stringResource(Res.string.room_gif_powered_by),
+                contentDescription = strings.roomGifPoweredBy,
                 modifier = Modifier.align(Alignment.BottomEnd).zIndex(1f).padding(Space.gapTight).height(10.dp).aspectRatio(640 / 107f).alpha(0.7f),
             )
             when {
                 isLoading -> ProgressBar(null, Modifier.fillMaxWidth().align(Alignment.TopCenter))
                 failed -> Column(Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(Res.string.room_gif_failed), style = Type.note, color = p.inkDim)
+                    Text(strings.roomGifFailed, style = Type.note, color = p.inkDim)
                     Spacer(Modifier.height(Space.gapTight))
-                    SecondaryAction(stringResource(Res.string.room_gif_retry), onClick = { retry++ })
+                    SecondaryAction(strings.roomGifRetry, onClick = { retry++ })
                 }
                 results.isEmpty() -> Text(
-                    text = stringResource(Res.string.room_gif_no_results),
+                    text = strings.roomGifNoResults,
                     style = Type.note,
                     color = p.inkDim,
                     modifier = Modifier.align(Alignment.Center),
@@ -368,7 +356,7 @@ fun GifPanel(
             ListRow(onClick = { longPressed = null; send(target) }) {
                 Icon(SendGlyph, contentDescription = null, tint = p.inkDim, modifier = Modifier.size(Space.glyph))
                 RowGap()
-                RowLabel(stringResource(Res.string.room_gif_action_send))
+                RowLabel(strings.roomGifActionSend)
             }
             ListRow(onClick = {
                 longPressed = null
@@ -384,7 +372,7 @@ fun GifPanel(
             }) {
                 Icon(if (isFav) Icons.Filled.HeartBroken else Icons.Filled.Favorite, contentDescription = null, tint = p.inkDim, modifier = Modifier.size(Space.glyph))
                 RowGap()
-                RowLabel(stringResource(if (isFav) Res.string.room_gif_action_unfavorite else Res.string.room_gif_action_favorite))
+                RowLabel(if (isFav) strings.roomGifActionUnfavorite else strings.roomGifActionFavorite)
             }
         }
     }

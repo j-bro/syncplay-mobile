@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import app.LocalRoomUiState
 import app.LocalRoomViewmodel
+import app.i18n.Localization
+import app.i18n.strings
 import app.player.PlayerImpl
 import app.player.models.Track
 import app.player.models.TrackTrait
@@ -55,21 +57,6 @@ import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.action_close
-import syncplaymobile.shared.generated.resources.room_audio_track_selected
-import syncplaymobile.shared.generated.resources.room_button_desc_audio_tracks
-import syncplaymobile.shared.generated.resources.room_button_desc_subtitle_tracks
-import syncplaymobile.shared.generated.resources.room_button_desc_subtitle_tracks_import_from_file
-import syncplaymobile.shared.generated.resources.room_sub_search_download_from_web
-import syncplaymobile.shared.generated.resources.room_sub_track_disable
-import syncplaymobile.shared.generated.resources.room_subtitle_track_selected
-import syncplaymobile.shared.generated.resources.room_track_trait_accessibility
-import syncplaymobile.shared.generated.resources.room_track_trait_forced
-import syncplaymobile.shared.generated.resources.room_tracks_none
-import syncplaymobile.shared.generated.resources.room_tracks_title
 
 /**
  * Audio and subtitles side by side in the side dock: audio on the left, subtitles on the right
@@ -109,40 +96,40 @@ object CardTracks {
         }
 
         PanelFrame(
-            title = stringResource(Res.string.room_tracks_title),
+            title = strings.roomTracksTitle,
             modifier = Modifier.fillMaxSize(),
             shape = shape,
             scrollable = false,
             centerTitle = true,
-            actions = { GlyphButton(CloseGlyph, name = stringResource(Res.string.action_close)) { ui.toggleTracks(false) } },
+            actions = { GlyphButton(CloseGlyph, name = strings.actionClose) { ui.toggleTracks(false) } },
         ) {
             Row(Modifier.fillMaxWidth().fillMaxHeight()) {
                 Column(Modifier.weight(1f).fillMaxHeight().verticalScroll(rememberScrollState())) {
-                    GroupHeading(stringResource(Res.string.room_button_desc_audio_tracks))
+                    GroupHeading(strings.roomButtonDescAudioTracks)
                     if (audio.isEmpty()) NoneLine()
                     audio.forEachIndexed { i, track ->
                         TrackRow(index = i + 1, track = track) {
-                            choose(track, PlayerImpl.TrackType.AUDIO) { getString(Res.string.room_audio_track_selected, track.name) }
+                            choose(track, PlayerImpl.TrackType.AUDIO) { Localization.strings.roomAudioTrackSelected(track.name) }
                         }
                     }
                 }
                 VerticalRule(Modifier.fillMaxHeight())
                 Column(Modifier.weight(1f).fillMaxHeight().verticalScroll(rememberScrollState())) {
-                    GroupHeading(stringResource(Res.string.room_button_desc_subtitle_tracks))
+                    GroupHeading(strings.roomButtonDescSubtitleTracks)
                     // Ways to get a subtitle first, then what is loaded.
-                    ActionRow(Icons.AutoMirrored.Filled.NoteAdd, stringResource(Res.string.room_button_desc_subtitle_tracks_import_from_file)) {
+                    ActionRow(Icons.AutoMirrored.Filled.NoteAdd, strings.roomButtonDescSubtitleTracksImportFromFile) {
                         Feedback.tick(); subtitlePicker.launch()
                     }
-                    ActionRow(Icons.Filled.Search, stringResource(Res.string.room_sub_search_download_from_web)) {
+                    ActionRow(Icons.Filled.Search, strings.roomSubSearchDownloadFromWeb) {
                         Feedback.tick(); showSearch = true
                     }
                     Rule()
-                    ActionRow(Icons.Filled.ClosedCaptionDisabled, stringResource(Res.string.room_sub_track_disable), selected = subtitles.none { it.selected }) {
-                        choose(null, PlayerImpl.TrackType.SUBTITLE) { getString(Res.string.room_sub_track_disable) }
+                    ActionRow(Icons.Filled.ClosedCaptionDisabled, strings.roomSubTrackDisable, selected = subtitles.none { it.selected }) {
+                        choose(null, PlayerImpl.TrackType.SUBTITLE) { Localization.strings.roomSubTrackDisable }
                     }
                     subtitles.forEachIndexed { i, track ->
                         TrackRow(index = i + 1, track = track) {
-                            choose(track, PlayerImpl.TrackType.SUBTITLE) { getString(Res.string.room_subtitle_track_selected, track.name) }
+                            choose(track, PlayerImpl.TrackType.SUBTITLE) { Localization.strings.roomSubtitleTrackSelected(track.name) }
                         }
                     }
                 }
@@ -155,7 +142,7 @@ object CardTracks {
     @Composable
     private fun NoneLine() {
         Text(
-            text = stringResource(Res.string.room_tracks_none),
+            text = strings.roomTracksNone,
             style = Type.note,
             color = palette.inkDim,
             modifier = Modifier.padding(horizontal = Space.gap, vertical = Space.gapTight),
@@ -167,8 +154,8 @@ object CardTracks {
     private fun TrackRow(index: Int, track: Track, onClick: () -> Unit) {
         val p = palette
         val traitLabel = when (track.trait) {
-            TrackTrait.ACCESSIBILITY -> stringResource(Res.string.room_track_trait_accessibility)
-            TrackTrait.FORCED -> stringResource(Res.string.room_track_trait_forced)
+            TrackTrait.ACCESSIBILITY -> strings.roomTrackTraitAccessibility
+            TrackTrait.FORCED -> strings.roomTrackTraitForced
             null -> null
         }
         ListRow(onClick = onClick, selected = track.selected, minHeight = 30.dp, horizontalPadding = Space.gap) {

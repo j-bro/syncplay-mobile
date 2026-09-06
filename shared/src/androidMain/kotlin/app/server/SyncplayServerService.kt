@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import app.R
+import app.i18n.Localization
 import app.utils.appName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,10 +14,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getPluralString
-import org.jetbrains.compose.resources.getString
 import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.server_notification_channel_description
-import syncplaymobile.shared.generated.resources.server_notification_title
 import syncplaymobile.shared.generated.resources.server_notification_text
 
 /**
@@ -66,8 +64,8 @@ class SyncplayServerService : Service() {
         )
         getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
         scope.launch {
-            val described = runCatching { getString(Res.string.server_notification_channel_description) }.getOrNull()
-            title = runCatching { getString(Res.string.server_notification_title, appName) }.getOrNull() ?: title
+            val described = runCatching { Localization.strings.serverNotificationChannelDescription }.getOrNull()
+            title = runCatching { Localization.strings.serverNotificationTitle(appName) }.getOrNull() ?: title
             if (described != null) {
                 channel.description = described
                 runCatching { getSystemService(NotificationManager::class.java).createNotificationChannel(channel) }

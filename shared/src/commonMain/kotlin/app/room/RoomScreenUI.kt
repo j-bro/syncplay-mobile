@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import app.LocalGlobalViewmodel
 import app.LocalRoomUiState
+import app.i18n.strings
 import app.preferences.Preferences.VIDEO_BACKGROUND_COLOR
 import app.preferences.Preferences.HUD_AUTO_HIDE_SECONDS
 import app.preferences.Preferences.ROOM_ALLOW_PORTRAIT
@@ -71,17 +72,9 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import app.preferences.settings.AskModal
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_leave_question
-import syncplaymobile.shared.generated.resources.room_overflow_leave_room
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import kotlin.math.roundToInt
-import syncplaymobile.shared.generated.resources.room_untrusted_ask_always
-import syncplaymobile.shared.generated.resources.room_untrusted_ask_once
-import syncplaymobile.shared.generated.resources.room_untrusted_ask_body
-import syncplaymobile.shared.generated.resources.room_untrusted_ask_title
 import app.theme.palette
 import app.theme.Type
 import app.uicomponents.controls.Text
@@ -91,10 +84,6 @@ import app.uicomponents.controls.PrimaryAction
 import app.uicomponents.frames.ModalSize
 import app.uicomponents.frames.Modal
 import app.utils.timestampFromMillis
-import syncplaymobile.shared.generated.resources.room_resume_restart
-import syncplaymobile.shared.generated.resources.room_resume_continue
-import syncplaymobile.shared.generated.resources.room_resume_body
-import syncplaymobile.shared.generated.resources.room_resume_title
 
 /**
  * Primary focus target for D-pad and TV use: the play key, or the add button before a file
@@ -221,21 +210,21 @@ private fun UntrustedUrlAsk(viewmodel: RoomViewmodel) {
     Modal(
         open = true,
         onDismiss = { viewmodel.playlistManager.dismissPendingUrl() },
-        title = stringResource(Res.string.room_untrusted_ask_title, asked.domain),
+        title = strings.roomUntrustedAskTitle(asked.domain),
         size = ModalSize.Ask,
         actions = {
             SecondaryAction(
-                text = stringResource(Res.string.room_untrusted_ask_once),
+                text = strings.roomUntrustedAskOnce,
                 onClick = { viewmodel.playlistManager.allowPendingUrl(always = false) },
             )
             PrimaryAction(
-                text = stringResource(Res.string.room_untrusted_ask_always, asked.domain),
+                text = strings.roomUntrustedAskAlways(asked.domain),
                 onClick = { viewmodel.playlistManager.allowPendingUrl(always = true) },
             )
         },
     ) {
         Text(
-            text = stringResource(Res.string.room_untrusted_ask_body, asked.domain),
+            text = strings.roomUntrustedAskBody(asked.domain),
             style = Type.note,
             color = palette.inkDim,
         )
@@ -250,25 +239,21 @@ private fun ResumeAsk(viewmodel: RoomViewmodel) {
     Modal(
         open = true,
         onDismiss = { viewmodel.resume.startOver() },
-        title = stringResource(Res.string.room_resume_title),
+        title = strings.roomResumeTitle,
         size = ModalSize.Ask,
         actions = {
             SecondaryAction(
-                text = stringResource(Res.string.room_resume_restart),
+                text = strings.roomResumeRestart,
                 onClick = { viewmodel.resume.startOver() },
             )
             PrimaryAction(
-                text = stringResource(Res.string.room_resume_continue),
+                text = strings.roomResumeContinue,
                 onClick = { viewmodel.resume.continueFromOffer() },
             )
         },
     ) {
         Text(
-            text = stringResource(
-                Res.string.room_resume_body,
-                offered.fileName,
-                timestampFromMillis(offered.positionMs),
-            ),
+            text = strings.roomResumeBody(offered.fileName, timestampFromMillis(offered.positionMs)),
             style = Type.note,
             color = palette.inkDim,
         )
@@ -284,8 +269,8 @@ private fun LeaveRoomAsk(viewmodel: RoomViewmodel) {
     val open = remember { mutableStateOf(true) }
     AskModal(
         open = open,
-        title = stringResource(Res.string.room_overflow_leave_room),
-        text = stringResource(Res.string.room_leave_question),
+        title = strings.roomOverflowLeaveRoom,
+        text = strings.roomLeaveQuestion,
         destructive = true,
         onYes = {
             ui.askLeave.value = false

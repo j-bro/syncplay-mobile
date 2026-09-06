@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import app.LocalRoomUiState
 import app.LocalRoomViewmodel
+import app.i18n.strings
 import app.preferences.Preferences.DOUBLETAP_SEEK
 import app.preferences.Preferences.SWIPE_GESTURES
 import app.preferences.settings.SettingRow
@@ -25,12 +26,6 @@ import app.uicomponents.controls.Text
 import app.uicomponents.frames.PanelFrame
 import app.utils.platformCallback
 import kotlin.math.roundToInt
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.action_close
-import syncplaymobile.shared.generated.resources.room_brightness_label
-import syncplaymobile.shared.generated.resources.room_gestures_panel_title
-import syncplaymobile.shared.generated.resources.room_volume_label
 
 /**
  * The gesture switches, plus the two things the gestures change.
@@ -45,11 +40,11 @@ object CardGestures {
         val ui = LocalRoomUiState.current
         val viewmodel = LocalRoomViewmodel.current
         PanelFrame(
-            title = stringResource(Res.string.room_gestures_panel_title),
+            title = strings.roomGesturesPanelTitle,
             modifier = Modifier.fillMaxWidth(),
             shape = shape,
             centerTitle = true,
-            actions = { GlyphButton(CloseGlyph, name = stringResource(Res.string.action_close)) { ui.toggleGestures(false) } },
+            actions = { GlyphButton(CloseGlyph, name = strings.actionClose) { ui.toggleGestures(false) } },
         ) {
             DOUBLETAP_SEEK.SettingRow()
             SWIPE_GESTURES.SettingRow()
@@ -58,7 +53,7 @@ object CardGestures {
             val ladder = volumeControl.ladder
             var volume by remember { mutableFloatStateOf(volumeControl.current().toFloat() / ladder.max) }
             TrackRow(
-                label = stringResource(Res.string.room_volume_label),
+                label = strings.roomVolumeLabel,
                 value = volume,
                 describe = { "${(it * ladder.max).roundToInt()}" },
             ) { next ->
@@ -69,7 +64,7 @@ object CardGestures {
             if (platformCallback.supportsBrightness) {
                 var brightness by remember { mutableFloatStateOf(platformCallback.getCurrentBrightness() / platformCallback.getMaxBrightness()) }
                 TrackRow(
-                    label = stringResource(Res.string.room_brightness_label),
+                    label = strings.roomBrightnessLabel,
                     value = brightness,
                     describe = { "${(it * 100).roundToInt()}" },
                 ) { next ->

@@ -2,6 +2,7 @@ package app.room
 
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.viewModelScope
+import app.i18n.Localization
 import app.player.models.MediaFile
 import app.preferences.Preferences
 import app.preferences.value
@@ -31,8 +32,6 @@ import org.jetbrains.compose.resources.getString
 import syncplaymobile.shared.generated.resources.Res
 import syncplaymobile.shared.generated.resources.room_not_ready_set_by
 import syncplaymobile.shared.generated.resources.room_ready_set_by
-import syncplaymobile.shared.generated.resources.room_slowdown_notification
-import syncplaymobile.shared.generated.resources.room_slowdown_reverted
 
 /**
  * Client-side implementation of [WireMessageHandler].
@@ -208,11 +207,11 @@ class RoomServerMessageHandler(private val viewmodel: RoomViewmodel) : WireMessa
         is SyncAction.SlowDown -> {
             viewmodel.viewModelScope.launch(Dispatchers.Main) { viewmodel.player.setSpeed(SLOWDOWN_RATE) }
             // PC's slowdown notification: the room hears it, the user must too.
-            viewmodel.dispatchOSD(OSDCategory.SLOWDOWN) { getString(Res.string.room_slowdown_notification, action.by) }
+            viewmodel.dispatchOSD(OSDCategory.SLOWDOWN) { Localization.strings.roomSlowdownNotification(action.by) }
         }
         SyncAction.RestoreSpeed -> {
             viewmodel.viewModelScope.launch(Dispatchers.Main) { viewmodel.player.setSpeed(1.0) }
-            viewmodel.dispatchOSD(OSDCategory.SLOWDOWN) { getString(Res.string.room_slowdown_reverted) }
+            viewmodel.dispatchOSD(OSDCategory.SLOWDOWN) { Localization.strings.roomSlowdownReverted }
         }
     }
 
@@ -436,9 +435,11 @@ class RoomServerMessageHandler(private val viewmodel: RoomViewmodel) : WireMessa
         // it like PC does, otherwise the change is invisible beyond the icon flip.
         val setBy = ready.setBy
         if (setBy != null && setBy != userName) {
-            val resource = if (isReady) Res.string.room_ready_set_by else Res.string.room_not_ready_set_by
             dispatcher.broadcastMessage(
-                message = { getString(resource, userName, setBy) },
+                message = {
+                    val line = if (isReady) Localization.strings.roomReadySetBy else Localization.strings.roomNotReadySetBy
+                    line(userName, setBy)
+                },
                 isChat = false
             )
         }

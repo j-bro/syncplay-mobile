@@ -2,6 +2,7 @@ package app.room.sharedplaylist
 
 import androidx.lifecycle.viewModelScope
 import app.AbstractManager
+import app.i18n.Localization
 import app.preferences.Preferences
 import app.preferences.value
 import app.protocol.WireMessage
@@ -24,14 +25,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.compose.resources.getString
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_shared_playlist_limit
-import syncplaymobile.shared.generated.resources.room_shared_playlist_no_directories
-import syncplaymobile.shared.generated.resources.room_shared_playlist_export_failed
-import syncplaymobile.shared.generated.resources.room_shared_playlist_exported
-import syncplaymobile.shared.generated.resources.room_shared_playlist_not_found
-import syncplaymobile.shared.generated.resources.room_untrusted_domain_warning
 
 class SharedPlaylistManager(val viewmodel: RoomViewmodel) : AbstractManager(viewmodel) {
 
@@ -195,7 +188,7 @@ class SharedPlaylistManager(val viewmodel: RoomViewmodel) : AbstractManager(view
     private fun rejectsOversizedPlaylist(files: List<String>): Boolean {
         if (playlistIsValid(files)) return false
         val warning: suspend () -> String =
-            { getString(Res.string.room_shared_playlist_limit, PLAYLIST_MAX_ITEMS, PLAYLIST_MAX_CHARACTERS) }
+            { Localization.strings.roomSharedPlaylistLimit(PLAYLIST_MAX_ITEMS, PLAYLIST_MAX_CHARACTERS) }
         viewmodel.dispatchOSD(getter = warning)
         viewmodel.dispatcher.broadcastMessage(message = warning, isChat = false, isError = true)
         return true
@@ -277,7 +270,7 @@ class SharedPlaylistManager(val viewmodel: RoomViewmodel) : AbstractManager(view
         val index = dir.indexMediaTree()
         if (index.isEmpty()) {
             viewmodel.dispatcher.broadcastMessage(
-                message = { getString(Res.string.room_shared_playlist_not_found, appName) },
+                message = { Localization.strings.roomSharedPlaylistNotFound(appName) },
                 isChat = false
             )
             return
@@ -381,7 +374,7 @@ class SharedPlaylistManager(val viewmodel: RoomViewmodel) : AbstractManager(view
                 // Ask instead of refusing. The answer is the user's, and the safe default
                 // (nothing plays until they say so) is unchanged.
                 pendingUntrusted.value = UntrustedUrl(fileName, domain)
-                val warning = getString(Res.string.room_untrusted_domain_warning, domain)
+                val warning = Localization.strings.roomUntrustedDomainWarning(domain)
                 viewmodel.dispatcher.broadcastMessage(message = { warning }, isChat = false, isError = true)
                 return
             }
@@ -403,9 +396,9 @@ class SharedPlaylistManager(val viewmodel: RoomViewmodel) : AbstractManager(view
         if (viewmodel.media?.fileName == fileName) return
 
         val message: suspend () -> String = if (Preferences.MEDIA_DIRECTORIES.value().isEmpty()) {
-            { getString(Res.string.room_shared_playlist_no_directories) }
+            { Localization.strings.roomSharedPlaylistNoDirectories }
         } else {
-            { getString(Res.string.room_shared_playlist_not_found, appName) }
+            { Localization.strings.roomSharedPlaylistNotFound(appName) }
         }
         viewmodel.dispatchOSD(getter = message)
         viewmodel.dispatcher.broadcastMessage(message = message, isChat = false)
@@ -418,7 +411,7 @@ class SharedPlaylistManager(val viewmodel: RoomViewmodel) : AbstractManager(view
         viewmodel.viewModelScope.launch(Dispatchers.IO) {
             val saved = runCatching { destination.writeString(snapshot.joinToString("\n")) }.isSuccess
             viewmodel.dispatchOSD {
-                getString(if (saved) Res.string.room_shared_playlist_exported else Res.string.room_shared_playlist_export_failed)
+                if (saved) Localization.strings.roomSharedPlaylistExported else Localization.strings.roomSharedPlaylistExportFailed
             }
         }
     }

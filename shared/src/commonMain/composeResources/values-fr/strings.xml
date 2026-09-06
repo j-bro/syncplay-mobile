@@ -56,7 +56,7 @@
     <string name="room_custom_skip_button">Passer %1$s</string>
     <string name="media_directories_setting_summary">Dossiers où chercher les fichiers de la playlist.</string>
 
-    <string name="room_on_newcontrolledroom">Salle gérée '%1$s' créée avec le mot de passe '%2$s'. Veuillez sauvegarder ces informations ! Elles ont été copiées dans votre presse-papiers.\n\nDans les salles gérées, tout le monde est synchronisé avec les opérateurs, qui sont les seuls à pouvoir mettre en pause, reprendre, avancer ou modifier la playlist.\n\nLes spectateurs normaux doivent rejoindre la salle '%1$s', mais les opérateurs peuvent se connecter à '%1$s:%2$s' pour être authentifiés automatiquement.</string>
+    <string name="room_on_newcontrolledroom">Salle gérée '%1$s' créée avec le mot de passe '%2$s'. Le tout est dans le presse-papiers, gardez-le en lieu sûr.\n\nDans une salle gérée, tout le monde suit les opérateurs. Eux seuls peuvent mettre en pause, reprendre, se déplacer et changer la playlist.\n\nLes spectateurs rejoignent avec le nom de la salle seul. Les opérateurs rejoignent avec '%3$s' pour être reconnus à l'entrée.</string>
     <string name="room_on_controller_auth_success">%1$s a été authentifié en tant qu'opérateur</string>
     <string name="room_on_controller_auth_failed">%1$s n'a pas pu être authentifié en tant qu'opérateur</string>
 

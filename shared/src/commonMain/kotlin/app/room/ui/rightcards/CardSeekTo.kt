@@ -22,6 +22,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import app.LocalRoomUiState
 import app.LocalRoomViewmodel
+import app.i18n.Localization
+import app.i18n.strings
 import app.preferences.Preferences.CUSTOM_SEEK_AMOUNT
 import app.preferences.value
 import app.preferences.watchPref
@@ -40,15 +42,7 @@ import app.uicomponents.frames.PanelFrame
 import app.utils.timestampFromMillis
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.action_close
 import syncplaymobile.shared.generated.resources.done
-import syncplaymobile.shared.generated.resources.room_custom_skip_button
-import syncplaymobile.shared.generated.resources.room_seek_toposition_hint
-import syncplaymobile.shared.generated.resources.room_seek_toposition_success
-import syncplaymobile.shared.generated.resources.room_seek_toposition_title
 
 /**
  * Seek to a position, as a side panel over the video instead of a dialog. One timecode field:
@@ -66,7 +60,7 @@ object CardSeekTo {
         var digits by remember { mutableStateOf("") }
         val focus = remember { FocusRequester() }
         val customSkipAmount by CUSTOM_SEEK_AMOUNT.watchPref()
-        val customSkipLabel = stringResource(Res.string.room_custom_skip_button, timestampFromMillis(customSkipAmount * 1000L))
+        val customSkipLabel = strings.roomCustomSkipButton(timestampFromMillis(customSkipAmount * 1000L))
 
         fun close() {
             focusManager.clearFocus(true)
@@ -81,7 +75,7 @@ object CardSeekTo {
             close()
             // The one seek path: announce first so a rewind does not yank us back.
             viewmodel.dispatcher.seek(result)
-            viewmodel.dispatchOSD { getString(Res.string.room_seek_toposition_success, timestampFromMillis(result)) }
+            viewmodel.dispatchOSD { Localization.strings.roomSeekTopositionSuccess(timestampFromMillis(result)) }
         }
 
         // Focus lands after the panel has slid in, so the keyboard does not fight the animation.
@@ -91,11 +85,11 @@ object CardSeekTo {
         }
 
         PanelFrame(
-            title = stringResource(Res.string.room_seek_toposition_title),
+            title = strings.roomSeekTopositionTitle,
             modifier = Modifier.fillMaxWidth(),
             shape = shape,
             centerTitle = true,
-            actions = { GlyphButton(CloseGlyph, name = stringResource(Res.string.action_close), onClick = ::close) },
+            actions = { GlyphButton(CloseGlyph, name = strings.actionClose, onClick = ::close) },
         ) {
             Column(Modifier.padding(Space.gutter)) {
                 Field(
@@ -109,15 +103,15 @@ object CardSeekTo {
                     focusRequester = focus,
                     showClear = false,
                     textStyle = Type.display.copy(textAlign = TextAlign.Center),
-                    name = stringResource(Res.string.room_seek_toposition_title),
+                    name = strings.roomSeekTopositionTitle,
                 )
                 Spacer(Modifier.height(Space.gapTight))
-                Text(stringResource(Res.string.room_seek_toposition_hint), style = Type.note, color = p.inkDim)
+                Text(strings.roomSeekTopositionHint, style = Type.note, color = p.inkDim)
                 Spacer(Modifier.height(Space.gutter))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     SecondaryAction(customSkipLabel, modifier = Modifier.weight(1f), onClick = { close(); viewmodel.customSkip() })
                     Spacer(Modifier.padding(horizontal = Space.gapTight))
-                    AccentAction(stringResource(Res.string.done), modifier = Modifier.weight(1f), enabled = digits.isNotEmpty(), onClick = ::commit)
+                    AccentAction(strings.done, modifier = Modifier.weight(1f), enabled = digits.isNotEmpty(), onClick = ::commit)
                 }
             }
         }
@@ -137,6 +131,6 @@ fun RoomViewmodel.customSkip() {
         val newPos = currentMs + CUSTOM_SEEK_AMOUNT.value() * 1000L
         dispatcher.seek(newPos, fromMs = currentMs)
         // The same notice as seek-to, so it gets the same timecode shape, not a bare count.
-        dispatchOSD { getString(Res.string.room_seek_toposition_success, timestampFromMillis(newPos)) }
+        dispatchOSD { Localization.strings.roomSeekTopositionSuccess(timestampFromMillis(newPos)) }
     }
 }

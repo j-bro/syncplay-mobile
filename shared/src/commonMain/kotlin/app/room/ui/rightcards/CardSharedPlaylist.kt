@@ -41,6 +41,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewModelScope
 import app.LocalRoomViewmodel
+import app.i18n.Localization
+import app.i18n.strings
 import app.preferences.settings.AskModal
 import app.theme.Motion
 import app.theme.Radius
@@ -79,34 +81,10 @@ import kotlin.time.Clock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
 import syncplaymobile.shared.generated.resources.cancel
 import syncplaymobile.shared.generated.resources.delete
 import syncplaymobile.shared.generated.resources.done
 import syncplaymobile.shared.generated.resources.play
-import syncplaymobile.shared.generated.resources.room_link_paste
-import syncplaymobile.shared.generated.resources.room_shared_playlist
-import syncplaymobile.shared.generated.resources.room_shared_playlist_add
-import syncplaymobile.shared.generated.resources.room_shared_playlist_add_url
-import syncplaymobile.shared.generated.resources.room_shared_playlist_add_url_subtext
-import syncplaymobile.shared.generated.resources.room_shared_playlist_button_add_file
-import syncplaymobile.shared.generated.resources.room_shared_playlist_button_add_folder
-import syncplaymobile.shared.generated.resources.room_shared_playlist_button_add_url
-import syncplaymobile.shared.generated.resources.room_shared_playlist_button_playlist_export
-import syncplaymobile.shared.generated.resources.room_shared_playlist_button_playlist_import
-import syncplaymobile.shared.generated.resources.room_shared_playlist_button_playlist_import_n_shuffle
-import syncplaymobile.shared.generated.resources.room_shared_playlist_button_set_media_directories
-import syncplaymobile.shared.generated.resources.room_shared_playlist_button_shuffle
-import syncplaymobile.shared.generated.resources.room_shared_playlist_button_shuffle_rest
-import syncplaymobile.shared.generated.resources.room_shared_playlist_clear_playlist
-import syncplaymobile.shared.generated.resources.room_shared_playlist_clear_question
-import syncplaymobile.shared.generated.resources.room_shared_playlist_empty
-import syncplaymobile.shared.generated.resources.room_shared_playlist_more
-import syncplaymobile.shared.generated.resources.room_shared_playlist_playlist_is_empty
-import syncplaymobile.shared.generated.resources.room_shared_playlist_urls
-import syncplaymobile.shared.generated.resources.room_shared_playlist_undo
 import androidx.compose.material.icons.filled.Undo
 import androidx.compose.runtime.collectAsState
 
@@ -159,24 +137,24 @@ object CardSharedPlaylist {
         fun toggle(g: PlaylistGroup) { Feedback.tick(); group = if (group == g) null else g }
 
         PanelFrame(
-            title = stringResource(Res.string.room_shared_playlist),
+            title = strings.roomSharedPlaylist,
             modifier = Modifier.fillMaxSize(),
             shape = shape,
             scrollable = false,
             actions = {
-                HeaderKey(AddGlyph, stringResource(Res.string.room_shared_playlist_add), group == PlaylistGroup.Add) { toggle(PlaylistGroup.Add) }
-                HeaderKey(Icons.Filled.Shuffle, stringResource(Res.string.room_shared_playlist_button_shuffle), group == PlaylistGroup.Shuffle) { toggle(PlaylistGroup.Shuffle) }
+                HeaderKey(AddGlyph, strings.roomSharedPlaylistAdd, group == PlaylistGroup.Add) { toggle(PlaylistGroup.Add) }
+                HeaderKey(Icons.Filled.Shuffle, strings.roomSharedPlaylistButtonShuffle, group == PlaylistGroup.Shuffle) { toggle(PlaylistGroup.Shuffle) }
                 // Only there when there is something to take back: a shuffle, a clear or a
                 // wrong delete is one tap and reaches everyone.
                 val canUndo by playlist.canUndo.collectAsState()
                 if (canUndo) {
                     HeaderKey(
                         icon = Icons.Filled.Undo,
-                        name = stringResource(Res.string.room_shared_playlist_undo),
+                        name = strings.roomSharedPlaylistUndo,
                         open = false,
                     ) { playlist.undoLastPlaylistChange() }
                 }
-                HeaderKey(MoreGlyph, stringResource(Res.string.room_shared_playlist_more), group == PlaylistGroup.More) { toggle(PlaylistGroup.More) }
+                HeaderKey(MoreGlyph, strings.roomSharedPlaylistMore, group == PlaylistGroup.More) { toggle(PlaylistGroup.More) }
             },
         ) {
             // The strip: the header grown by one row, on the accent's faint ground.
@@ -185,32 +163,32 @@ object CardSharedPlaylist {
                     Column(Modifier.fillMaxWidth().padding(vertical = Space.gapTight)) {
                         when (group) {
                             PlaylistGroup.Add -> {
-                                Chip(Icons.AutoMirrored.Filled.NoteAdd, stringResource(Res.string.room_shared_playlist_button_add_file)) { group = null; mediaFilePicker.launch() }
-                                Chip(Icons.Filled.CreateNewFolder, stringResource(Res.string.room_shared_playlist_button_add_folder)) { group = null; mediaDirectoryPicker.launch() }
-                                Chip(Icons.Filled.AddLink, stringResource(Res.string.room_shared_playlist_button_add_url)) { group = null; urlsOpen = true }
+                                Chip(Icons.AutoMirrored.Filled.NoteAdd, strings.roomSharedPlaylistButtonAddFile) { group = null; mediaFilePicker.launch() }
+                                Chip(Icons.Filled.CreateNewFolder, strings.roomSharedPlaylistButtonAddFolder) { group = null; mediaDirectoryPicker.launch() }
+                                Chip(Icons.Filled.AddLink, strings.roomSharedPlaylistButtonAddUrl) { group = null; urlsOpen = true }
                             }
                             PlaylistGroup.Shuffle -> {
-                                Chip(Icons.Filled.Shuffle, stringResource(Res.string.room_shared_playlist_button_shuffle)) { group = null; scope.launch { playlist.shuffle(false) } }
-                                Chip(Icons.Filled.Shuffle, stringResource(Res.string.room_shared_playlist_button_shuffle_rest)) { group = null; scope.launch { playlist.shuffle(true) } }
+                                Chip(Icons.Filled.Shuffle, strings.roomSharedPlaylistButtonShuffle) { group = null; scope.launch { playlist.shuffle(false) } }
+                                Chip(Icons.Filled.Shuffle, strings.roomSharedPlaylistButtonShuffleRest) { group = null; scope.launch { playlist.shuffle(true) } }
                             }
                             PlaylistGroup.More -> {
-                                Chip(Icons.Filled.Download, stringResource(Res.string.room_shared_playlist_button_playlist_import)) { group = null; playlistLoadPicker.launch() }
-                                Chip(Icons.Filled.Download, stringResource(Res.string.room_shared_playlist_button_playlist_import_n_shuffle)) {
+                                Chip(Icons.Filled.Download, strings.roomSharedPlaylistButtonPlaylistImport) { group = null; playlistLoadPicker.launch() }
+                                Chip(Icons.Filled.Download, strings.roomSharedPlaylistButtonPlaylistImportNShuffle) {
                                     // The flag is read by the picker's callback, so it is set before the launch.
                                     group = null
                                     shouldShuffle = true
                                     playlistLoadPicker.launch()
                                 }
-                                Chip(Icons.Filled.Save, stringResource(Res.string.room_shared_playlist_button_playlist_export)) {
+                                Chip(Icons.Filled.Save, strings.roomSharedPlaylistButtonPlaylistExport) {
                                     group = null
                                     if (items.isEmpty()) {
-                                        viewmodel.dispatchOSD { getString(Res.string.room_shared_playlist_playlist_is_empty) }
+                                        viewmodel.dispatchOSD { Localization.strings.roomSharedPlaylistPlaylistIsEmpty }
                                     } else {
                                         playlistSaver.launch(suggestedName = "SharedPlaylist_${Clock.System.now()}", extension = "txt")
                                     }
                                 }
-                                Chip(Icons.Filled.Folder, stringResource(Res.string.room_shared_playlist_button_set_media_directories)) { group = null; mediaDirsOpen.value = true }
-                                Chip(Icons.Filled.ClearAll, stringResource(Res.string.room_shared_playlist_clear_playlist)) { group = null; askClear.value = true }
+                                Chip(Icons.Filled.Folder, strings.roomSharedPlaylistButtonSetMediaDirectories) { group = null; mediaDirsOpen.value = true }
+                                Chip(Icons.Filled.ClearAll, strings.roomSharedPlaylistClearPlaylist) { group = null; askClear.value = true }
                             }
                             null -> Unit
                         }
@@ -220,7 +198,7 @@ object CardSharedPlaylist {
             }
             if (items.isEmpty()) {
                 Text(
-                    text = stringResource(Res.string.room_shared_playlist_empty),
+                    text = strings.roomSharedPlaylistEmpty,
                     style = Type.note,
                     color = p.inkDim,
                     modifier = Modifier.padding(horizontal = Space.gutter, vertical = Space.gap),
@@ -245,16 +223,16 @@ object CardSharedPlaylist {
         val target = itemActions
         Modal(open = target != null, onDismiss = { itemActions = null }, title = target?.let { items.getOrNull(it) }, size = ModalSize.Ask, inset = false) {
             if (target != null) {
-                ActionRow(PlayGlyph, stringResource(Res.string.play)) { itemActions = null; playlist.sendPlaylistSelection(target) }
-                ActionRow(Icons.Filled.Delete, stringResource(Res.string.delete)) { itemActions = null; playlist.deleteItemFromPlaylist(target) }
+                ActionRow(PlayGlyph, strings.play) { itemActions = null; playlist.sendPlaylistSelection(target) }
+                ActionRow(Icons.Filled.Delete, strings.delete) { itemActions = null; playlist.deleteItemFromPlaylist(target) }
             }
         }
 
         MediaDirsPopup(mediaDirsOpen)
         AskModal(
             open = askClear,
-            title = stringResource(Res.string.room_shared_playlist_clear_playlist),
-            text = stringResource(Res.string.room_shared_playlist_clear_question),
+            title = strings.roomSharedPlaylistClearPlaylist,
+            text = strings.roomSharedPlaylistClearQuestion,
             destructive = true,
             onYes = { askClear.value = false; playlist.clearPlaylist() },
             onNo = { askClear.value = false },
@@ -300,28 +278,28 @@ object CardSharedPlaylist {
         Modal(
             open = true,
             onDismiss = onDismiss,
-            title = stringResource(Res.string.room_shared_playlist_add_url),
+            title = strings.roomSharedPlaylistAddUrl,
             size = ModalSize.Ask,
             actions = {
-                SecondaryAction(stringResource(Res.string.cancel), onClick = onDismiss)
-                AccentAction(stringResource(Res.string.done), onClick = {
+                SecondaryAction(strings.cancel, onClick = onDismiss)
+                AccentAction(strings.done, onClick = {
                     onDismiss()
                     playlist.addURLs(urls.split("\n"))
                 }, enabled = urls.isNotBlank())
             },
         ) {
-            Text(stringResource(Res.string.room_shared_playlist_add_url_subtext, appName), style = Type.note, color = palette.inkDim)
+            Text(strings.roomSharedPlaylistAddUrlSubtext(appName), style = Type.note, color = palette.inkDim)
             Row(Modifier.fillMaxWidth().padding(top = Space.gap), verticalAlignment = Alignment.CenterVertically) {
                 Field(
                     value = urls,
                     onValueChange = { urls = it },
                     modifier = Modifier.weight(1f),
-                    placeholder = stringResource(Res.string.room_shared_playlist_urls),
+                    placeholder = strings.roomSharedPlaylistUrls,
                     keyboardType = KeyboardType.Uri,
                     singleLine = false,
-                    name = stringResource(Res.string.room_shared_playlist_urls),
+                    name = strings.roomSharedPlaylistUrls,
                 )
-                GlyphButton(Icons.Filled.ContentPaste, name = stringResource(Res.string.room_link_paste)) {
+                GlyphButton(Icons.Filled.ContentPaste, name = strings.roomLinkPaste) {
                     scope.launch { clipboard.getClipEntry()?.getText()?.let { urls = it } }
                 }
             }

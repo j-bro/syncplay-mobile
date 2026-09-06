@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.i18n.strings
 import app.preferences.Preferences.SERVER_DISABLE_CHAT
 import app.preferences.Preferences.SERVER_DISABLE_READY
 import app.preferences.Preferences.SERVER_ISOLATE_ROOMS
@@ -61,37 +62,10 @@ import app.utils.platformCallback
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.pluralStringResource
-import org.jetbrains.compose.resources.stringResource
 import syncplaymobile.shared.generated.resources.Res
 import syncplaymobile.shared.generated.resources.server_host_clients
-import syncplaymobile.shared.generated.resources.server_host_config
-import syncplaymobile.shared.generated.resources.server_host_copy
-import syncplaymobile.shared.generated.resources.server_host_ios_paused
-import syncplaymobile.shared.generated.resources.server_host_log_errors_only
-import syncplaymobile.shared.generated.resources.server_host_on_network
-import syncplaymobile.shared.generated.resources.server_host_over_internet
-import syncplaymobile.shared.generated.resources.server_host_port_forward_hint
-import syncplaymobile.shared.generated.resources.server_host_server_log
-import syncplaymobile.shared.generated.resources.server_host_share
-import syncplaymobile.shared.generated.resources.server_host_start
-import syncplaymobile.shared.generated.resources.server_host_status_error
-import syncplaymobile.shared.generated.resources.server_host_status_running
-import syncplaymobile.shared.generated.resources.server_host_status_starting
-import syncplaymobile.shared.generated.resources.server_host_status_stopped
-import syncplaymobile.shared.generated.resources.server_host_stop
 import kotlin.time.Instant
 import app.server.ServerLogEvent
-import syncplaymobile.shared.generated.resources.server_log_joined
-import syncplaymobile.shared.generated.resources.server_log_disconnected
-import syncplaymobile.shared.generated.resources.server_log_timed_out
-import syncplaymobile.shared.generated.resources.server_log_bad_passwords
-import syncplaymobile.shared.generated.resources.server_log_shutting_down
-import syncplaymobile.shared.generated.resources.server_log_started
-import syncplaymobile.shared.generated.resources.server_log_stopped
-import syncplaymobile.shared.generated.resources.server_log_invalid_port
-import syncplaymobile.shared.generated.resources.server_log_start_failed
-import syncplaymobile.shared.generated.resources.server_log_stop_failed
-import syncplaymobile.shared.generated.resources.server_host_port_taken
 
 private const val LOG_LINES_SHOWN = 60
 
@@ -126,7 +100,7 @@ fun ServerHostPanel(modifier: Modifier = Modifier) {
         StatusRow(status, clients, detail)
         if (platform == Platform.IOS && running) {
             Text(
-                text = stringResource(Res.string.server_host_ios_paused),
+                text = strings.serverHostIosPaused,
                 style = Type.note,
                 color = p.warn,
                 modifier = Modifier.padding(horizontal = Space.gutter, vertical = Space.gapTight),
@@ -134,13 +108,13 @@ fun ServerHostPanel(modifier: Modifier = Modifier) {
         }
         Box(Modifier.fillMaxWidth().padding(horizontal = Space.gutter, vertical = Space.gap)) {
             if (running) {
-                DestructiveAction(stringResource(Res.string.server_host_stop), onClick = { ServerHostSession.stopServer() }, modifier = Modifier.fillMaxWidth())
+                DestructiveAction(strings.serverHostStop, onClick = { ServerHostSession.stopServer() }, modifier = Modifier.fillMaxWidth())
             } else {
-                PrimaryAction(stringResource(Res.string.server_host_start), onClick = { ServerHostSession.startServer() }, modifier = Modifier.fillMaxWidth(), enabled = !starting)
+                PrimaryAction(strings.serverHostStart, onClick = { ServerHostSession.startServer() }, modifier = Modifier.fillMaxWidth(), enabled = !starting)
             }
         }
         val editable = !running && !starting
-        GroupHeading(stringResource(Res.string.server_host_config))
+        GroupHeading(strings.serverHostConfig)
         SERVER_PORT.enabledWhen { editable }.Render()
         SERVER_PASSWORD.enabledWhen { editable }.Render()
         SERVER_MOTD.enabledWhen { editable }.Render()
@@ -149,8 +123,8 @@ fun ServerHostPanel(modifier: Modifier = Modifier) {
         SERVER_DISABLE_READY.enabledWhen { editable }.Render()
         if (logs.isNotEmpty()) {
             Row(Modifier.fillMaxWidth().padding(end = Space.gutter), verticalAlignment = Alignment.Bottom) {
-                GroupHeading(stringResource(Res.string.server_host_server_log), Modifier.weight(1f))
-                Tag(stringResource(Res.string.server_host_log_errors_only), tone = Tone.Bad, filled = errorsOnly, onToggle = { errorsOnly = it })
+                GroupHeading(strings.serverHostServerLog, Modifier.weight(1f))
+                Tag(strings.serverHostLogErrorsOnly, tone = Tone.Bad, filled = errorsOnly, onToggle = { errorsOnly = it })
             }
             shown.forEach { entry -> LogRow(entry) }
             Spacer(Modifier.height(Space.gapTight))
@@ -162,17 +136,17 @@ fun ServerHostPanel(modifier: Modifier = Modifier) {
 private fun AddressBlock(localIp: String?, publicIp: String?, publicLoading: Boolean, port: String) {
     val p = palette
     Column(Modifier.fillMaxWidth().padding(horizontal = Space.gutter, vertical = Space.gap)) {
-        if (localIp != null) AddressRow("$localIp:$port", stringResource(Res.string.server_host_on_network))
+        if (localIp != null) AddressRow("$localIp:$port", strings.serverHostOnNetwork)
         when {
             publicLoading -> {
-                Text(stringResource(Res.string.server_host_over_internet), style = Type.note, color = p.inkDim, modifier = Modifier.padding(top = Space.gap))
+                Text(strings.serverHostOverInternet, style = Type.note, color = p.inkDim, modifier = Modifier.padding(top = Space.gap))
                 ProgressBar(null, Modifier.fillMaxWidth().padding(top = Space.gapTight))
             }
             publicIp != null -> {
                 Spacer(Modifier.height(Space.gap))
-                AddressRow("$publicIp:$port", stringResource(Res.string.server_host_over_internet))
+                AddressRow("$publicIp:$port", strings.serverHostOverInternet)
                 Text(
-                    text = stringResource(Res.string.server_host_port_forward_hint, port),
+                    text = strings.serverHostPortForwardHint(port),
                     style = Type.note,
                     color = p.inkFaint,
                     modifier = Modifier.padding(top = Space.gapTight),
@@ -190,11 +164,11 @@ private fun AddressRow(address: String, label: String) {
             Text(address, style = Type.display, color = p.ink, maxLines = 1, softWrap = false, overflow = TextOverflow.Ellipsis)
             Text(label, style = Type.note, color = p.inkDim)
         }
-        GlyphButton(Icons.Filled.ContentCopy, name = stringResource(Res.string.server_host_copy)) {
+        GlyphButton(Icons.Filled.ContentCopy, name = strings.serverHostCopy) {
             platformCallback.copyText(address)
             Feedback.tick()
         }
-        GlyphButton(Icons.Filled.Share, name = stringResource(Res.string.server_host_share)) {
+        GlyphButton(Icons.Filled.Share, name = strings.serverHostShare) {
             platformCallback.shareText(address)
         }
     }
@@ -209,14 +183,12 @@ private fun StatusRow(status: ServerStatus, clients: Int, detail: ServerLogEvent
         ServerStatus.Running -> p.ok
         ServerStatus.Error -> p.bad
     }
-    val label = stringResource(
-        when (status) {
-            ServerStatus.Stopped -> Res.string.server_host_status_stopped
-            ServerStatus.Starting -> Res.string.server_host_status_starting
-            ServerStatus.Running -> Res.string.server_host_status_running
-            ServerStatus.Error -> Res.string.server_host_status_error
+    val label = when (status) {
+            ServerStatus.Stopped -> strings.serverHostStatusStopped
+            ServerStatus.Starting -> strings.serverHostStatusStarting
+            ServerStatus.Running -> strings.serverHostStatusRunning
+            ServerStatus.Error -> strings.serverHostStatusError
         }
-    )
     Column(Modifier.fillMaxWidth().padding(horizontal = Space.gutter)) {
         Row(Modifier.fillMaxWidth().heightIn(min = Space.row), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(6.dp).background(square, Radius.tightShape))
@@ -238,17 +210,17 @@ private fun StatusRow(status: ServerStatus, clients: Int, detail: ServerLogEvent
  */
 @Composable
 fun serverLogText(event: ServerLogEvent): String = when (event) {
-    is ServerLogEvent.Joined -> stringResource(Res.string.server_log_joined, event.user, event.room)
-    is ServerLogEvent.Disconnected -> stringResource(Res.string.server_log_disconnected, event.user)
-    is ServerLogEvent.TimedOut -> stringResource(Res.string.server_log_timed_out, event.user, event.seconds)
-    is ServerLogEvent.DroppedForBadPasswords -> stringResource(Res.string.server_log_bad_passwords, event.user, event.attempts)
-    ServerLogEvent.ShuttingDown -> stringResource(Res.string.server_log_shutting_down)
-    is ServerLogEvent.Started -> stringResource(Res.string.server_log_started, event.port)
-    ServerLogEvent.Stopped -> stringResource(Res.string.server_log_stopped)
-    is ServerLogEvent.InvalidPort -> stringResource(Res.string.server_log_invalid_port, event.port)
-    is ServerLogEvent.PortTaken -> stringResource(Res.string.server_host_port_taken, event.port)
-    is ServerLogEvent.StartFailed -> stringResource(Res.string.server_log_start_failed, event.reason)
-    is ServerLogEvent.StopFailed -> stringResource(Res.string.server_log_stop_failed, event.reason)
+    is ServerLogEvent.Joined -> strings.serverLogJoined(event.user, event.room)
+    is ServerLogEvent.Disconnected -> strings.serverLogDisconnected(event.user)
+    is ServerLogEvent.TimedOut -> strings.serverLogTimedOut(event.user, event.seconds)
+    is ServerLogEvent.DroppedForBadPasswords -> strings.serverLogBadPasswords(event.user, event.attempts)
+    ServerLogEvent.ShuttingDown -> strings.serverLogShuttingDown
+    is ServerLogEvent.Started -> strings.serverLogStarted(event.port)
+    ServerLogEvent.Stopped -> strings.serverLogStopped
+    is ServerLogEvent.InvalidPort -> strings.serverLogInvalidPort(event.port)
+    is ServerLogEvent.PortTaken -> strings.serverHostPortTaken(event.port)
+    is ServerLogEvent.StartFailed -> strings.serverLogStartFailed(event.reason)
+    is ServerLogEvent.StopFailed -> strings.serverLogStopFailed(event.reason)
 }
 
 @Composable

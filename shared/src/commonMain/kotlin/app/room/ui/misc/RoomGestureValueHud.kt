@@ -23,6 +23,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.dp
+import app.i18n.strings
 import app.room.roomTopInsets
 import app.theme.Motion
 import app.theme.Space
@@ -32,10 +33,6 @@ import app.uicomponents.controls.formatTimecode
 import app.uicomponents.frames.Notice
 import app.uicomponents.frames.NoticeSeverity
 import kotlinx.coroutines.delay
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_brightness
-import syncplaymobile.shared.generated.resources.room_volume
 
 /** Which knob a swipe is moving. */
 enum class GestureValueKind { VOLUME, BRIGHTNESS }
@@ -89,7 +86,7 @@ fun RoomGestureReadout(active: GestureReadout?, modifier: Modifier = Modifier) {
 private fun ReadoutNotice(readout: GestureReadout) {
     when (readout) {
         is GestureReadout.Level -> {
-            val label = stringResource(if (readout.kind == GestureValueKind.VOLUME) Res.string.room_volume else Res.string.room_brightness)
+            val label = if (readout.kind == GestureValueKind.VOLUME) strings.roomVolume else strings.roomBrightness
             Notice(
                 text = "$label ${readout.display}%",
                 severity = NoticeSeverity.Quiet,

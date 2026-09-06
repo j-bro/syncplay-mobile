@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.interop.UIKitView
+import app.i18n.Localization
 import app.player.PlayerEngine
 import app.player.PlayerImpl
 import app.player.models.MediaFile
@@ -63,12 +64,7 @@ import platform.UIKit.UIColor
 import platform.UIKit.UIView
 import platform.darwin.NSObject
 import platform.foundation.NSKeyValueObservingProtocol
-import org.jetbrains.compose.resources.getString
 import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_aspect_fill
-import syncplaymobile.shared.generated.resources.room_aspect_fit
-import syncplaymobile.shared.generated.resources.room_aspect_stretch
-import syncplaymobile.shared.generated.resources.room_playback_error
 import syncplaymobile.shared.generated.resources.swift
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
@@ -190,9 +186,9 @@ object AVPlayerEngine: PlayerEngine {
                             if (failure !== reportedFailure) {
                                 reportedFailure = failure
                                 val reason = failure.localizedDescription
-                                viewmodel.dispatchOSD(OSDCategory.WARNING) { getString(Res.string.room_playback_error, reason) }
+                                viewmodel.dispatchOSD(OSDCategory.WARNING) { Localization.strings.roomPlaybackError(reason) }
                                 viewmodel.dispatcher.broadcastMessage(isChat = false, isError = true) {
-                                    getString(Res.string.room_playback_error, reason)
+                                    Localization.strings.roomPlaybackError(reason)
                                 }
                             }
                         }
@@ -464,9 +460,9 @@ object AVPlayerEngine: PlayerEngine {
             val nextIndex = (currentIndex + 1) % scales.size
             avPlayerLayer?.videoGravity = scales[nextIndex]
             return when (nextIndex) {
-                0 -> getString(Res.string.room_aspect_stretch)
-                1 -> getString(Res.string.room_aspect_fit)
-                else -> getString(Res.string.room_aspect_fill)
+                0 -> Localization.strings.roomAspectStretch
+                1 -> Localization.strings.roomAspectFit
+                else -> Localization.strings.roomAspectFill
             }
         }
 

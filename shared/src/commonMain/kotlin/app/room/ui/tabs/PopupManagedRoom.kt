@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import app.LocalRoomViewmodel
+import app.i18n.strings
 import app.protocol.WireMessage
 import app.theme.Space
 import app.theme.Type
@@ -24,15 +25,8 @@ import app.uicomponents.controls.Text
 import app.uicomponents.frames.Modal
 import app.uicomponents.frames.ModalSize
 import app.utils.generateRoomPassword
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
 import syncplaymobile.shared.generated.resources.cancel
 import syncplaymobile.shared.generated.resources.okay
-import syncplaymobile.shared.generated.resources.room_managed_room
-import syncplaymobile.shared.generated.resources.room_managed_room_popup_create
-import syncplaymobile.shared.generated.resources.room_managed_room_popup_pw_identify_as_operator
-import syncplaymobile.shared.generated.resources.room_overflow_create_managed_room
-import syncplaymobile.shared.generated.resources.room_overflow_identify_as_operator
 
 /**
  * Managed rooms in one modal: a segmented choice between creating a room and identifying as
@@ -70,30 +64,30 @@ fun ManagedRoomModal() {
     Modal(
         open = true,
         onDismiss = ::close,
-        title = stringResource(Res.string.room_managed_room),
+        title = strings.roomManagedRoom,
         size = ModalSize.Ask,
         actions = {
-            SecondaryAction(stringResource(Res.string.cancel), onClick = ::close)
-            AccentAction(stringResource(Res.string.okay), onClick = ::send, enabled = input.isNotBlank())
+            SecondaryAction(strings.cancel, onClick = ::close)
+            AccentAction(strings.okay, onClick = ::send, enabled = input.isNotBlank())
         },
     ) {
         Segmented(
-            options = listOf(stringResource(Res.string.room_overflow_create_managed_room), stringResource(Res.string.room_overflow_identify_as_operator)),
+            options = listOf(strings.roomOverflowCreateManagedRoom, strings.roomOverflowIdentifyAsOperator),
             selected = if (create) 0 else 1,
             onSelect = { create = it == 0 },
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(Modifier.height(Space.gap))
         Text(
-            text = stringResource(if (create) Res.string.room_managed_room_popup_create else Res.string.room_managed_room_popup_pw_identify_as_operator),
+            text = if (create) strings.roomManagedRoomPopupCreate else strings.roomManagedRoomPopupPwIdentifyAsOperator,
             style = Type.note,
             color = palette.inkDim,
         )
         Spacer(Modifier.height(Space.gap))
         if (create) {
-            Field(value = roomName, onValueChange = { roomName = it }, imeAction = ImeAction.Done, onImeAction = { if (roomName.isNotBlank()) send() }, name = stringResource(Res.string.room_overflow_create_managed_room))
+            Field(value = roomName, onValueChange = { roomName = it }, imeAction = ImeAction.Done, onImeAction = { if (roomName.isNotBlank()) send() }, name = strings.roomOverflowCreateManagedRoom)
         } else {
-            Field(value = password, onValueChange = { password = it }, imeAction = ImeAction.Done, onImeAction = { if (password.isNotBlank()) send() }, name = stringResource(Res.string.room_overflow_identify_as_operator))
+            Field(value = password, onValueChange = { password = it }, imeAction = ImeAction.Done, onImeAction = { if (password.isNotBlank()) send() }, name = strings.roomOverflowIdentifyAsOperator)
         }
     }
 }

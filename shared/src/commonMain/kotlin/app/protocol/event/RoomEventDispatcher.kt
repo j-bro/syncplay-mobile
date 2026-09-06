@@ -2,6 +2,7 @@ package app.protocol.event
 
 import androidx.lifecycle.viewModelScope
 import app.AbstractManager
+import app.i18n.Localization
 import app.player.Playback
 import app.preferences.Preferences
 import app.preferences.Preferences.UNPAUSE_ACTION
@@ -24,9 +25,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.getString
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_set_as_ready
 import kotlin.math.abs
 
 /**
@@ -121,8 +119,8 @@ class RoomEventDispatcher(val viewmodel: RoomViewmodel) : AbstractManager(viewmo
                 viewmodel.session.ready.value = true
                 viewmodel.readiness.evaluate()
                 network.sendAsync(WireMessage.readiness(isReady = true, manuallyInitiated = true))
-                broadcastMessage(isChat = false) { getString(Res.string.room_set_as_ready) }
-                viewmodel.dispatchOSD(OSDCategory.WARNING) { getString(Res.string.room_set_as_ready) }
+                broadcastMessage(isChat = false) { Localization.strings.roomSetAsReady }
+                viewmodel.dispatchOSD(OSDCategory.WARNING) { Localization.strings.roomSetAsReady }
                 return
             }
         }

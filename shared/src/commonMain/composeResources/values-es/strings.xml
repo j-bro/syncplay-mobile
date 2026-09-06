@@ -47,7 +47,7 @@
     <string name="room_shared_playlist_changed">%1$s cambió la selección actual de la lista de reproducción</string>
     <string name="room_custom_skip_button">Saltar %1$s</string>
     <string name="media_directories_setting_summary">Carpetas donde se buscan los archivos de la lista.</string>
-    <string name="room_on_newcontrolledroom">Sala administrada '%1$s' creada con contraseña '%2$s'. ¡Por favor guarda esta información para referencia futura! Se ha copiado a tu portapapeles para que puedas pegarla en otro lugar.\n\nEn las salas administradas, todos se mantienen sincronizados con los operadores de la sala, quienes son los únicos que pueden pausar, reanudar, saltar y cambiar la lista de reproducción.\n\nDebes pedir a los espectadores regulares que se unan a la sala '%1$s', pero los operadores de la sala pueden unirse a la sala '%1$s:%2$s' para autenticarse automáticamente.</string>
+    <string name="room_on_newcontrolledroom">Sala gestionada '%1$s' creada con la contraseña '%2$s'. Está en el portapapeles, así que guárdala en un sitio seguro.\n\nEn una sala gestionada todos siguen a los operadores. Solo ellos pueden pausar, reanudar, saltar y cambiar la lista.\n\nLos espectadores entran solo con el nombre de la sala. Los operadores entran con '%3$s' para ser reconocidos al entrar.</string>
     <string name="room_on_controller_auth_success">%1$s autenticado como operador de sala</string>
     <string name="room_on_controller_auth_failed">%1$s no pudo identificarse como operador de sala</string>
 

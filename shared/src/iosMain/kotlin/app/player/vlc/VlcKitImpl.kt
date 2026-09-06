@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitView
+import app.i18n.Localization
 import app.player.PlayerImpl
 import app.player.models.Chapter
 import app.player.models.MediaFile
@@ -55,11 +56,7 @@ import platform.UIKit.UIColor
 import platform.UIKit.UIView
 import platform.darwin.NSObject
 import platform.darwin.NSObjectProtocol
-import org.jetbrains.compose.resources.getString
 import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_aspect_original
-import syncplaymobile.shared.generated.resources.room_aspect_ratio_label
-import syncplaymobile.shared.generated.resources.room_playback_error
 import syncplaymobile.shared.generated.resources.uisetting_audio_delay_summary
 import syncplaymobile.shared.generated.resources.uisetting_audio_delay_title
 import syncplaymobile.shared.generated.resources.uisetting_categ_vlc
@@ -749,8 +746,8 @@ class VlcKitImpl(viewmodel: RoomViewmodel): PlayerImpl(viewmodel, VlcKitEngine) 
             // no more cstr.ptr round trip.
             vlcPlayer?.videoAspectRatio = newAspectRatio
 
-            return@withContext if (nextIndex == 0) getString(Res.string.room_aspect_original)
-            else getString(Res.string.room_aspect_ratio_label, newAspectRatio)
+            return@withContext if (nextIndex == 0) Localization.strings.roomAspectOriginal
+            else Localization.strings.roomAspectRatioLabel(newAspectRatio)
         }
     }
 
@@ -898,9 +895,9 @@ class VlcKitImpl(viewmodel: RoomViewmodel): PlayerImpl(viewmodel, VlcKitEngine) 
                     viewmodel.protocol.noteExpectedPlaybackState(paused = true)
                     playerManager.isNowPlaying.value = false
                     val reason = vlcPlayer?.media?.url?.lastPathComponent ?: ""
-                    viewmodel.dispatchOSD(OSDCategory.WARNING) { getString(Res.string.room_playback_error, reason) }
+                    viewmodel.dispatchOSD(OSDCategory.WARNING) { Localization.strings.roomPlaybackError(reason) }
                     viewmodel.dispatcher.broadcastMessage(isChat = false, isError = true) {
-                        getString(Res.string.room_playback_error, reason)
+                        Localization.strings.roomPlaybackError(reason)
                     }
                 }
                 else -> { /* Opening, Buffering, Stopping — leave isNowPlaying alone */ }

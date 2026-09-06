@@ -6,6 +6,7 @@ import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
+import app.i18n.strings
 import app.uicomponents.controls.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -30,10 +31,6 @@ import app.uicomponents.controls.PauseGlyph
 import app.uicomponents.controls.PlayGlyph
 import app.uicomponents.controls.controlStates
 import app.uicomponents.controls.pressFeedback
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_pause
-import syncplaymobile.shared.generated.resources.room_play
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -54,7 +51,7 @@ fun RoomPlayButton(modifier: Modifier) {
 
     val p = palette
     val source = remember { MutableInteractionSource() }
-    val name = stringResource(if (playing) Res.string.room_pause else Res.string.room_play)
+    val name = if (playing) strings.roomPause else strings.roomPlay
     val initialFocus = LocalRoomInitialFocus.current
 
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {

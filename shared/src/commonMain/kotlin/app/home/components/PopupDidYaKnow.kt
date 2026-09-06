@@ -1,5 +1,6 @@
 package app.home.components
 
+import app.i18n.strings
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,13 +25,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getStringArray
-import org.jetbrains.compose.resources.stringResource
 import syncplaymobile.shared.generated.resources.Res
 import syncplaymobile.shared.generated.resources.okay
 import syncplaymobile.shared.generated.resources.tips
-import syncplaymobile.shared.generated.resources.tips_did_ya_know
-import syncplaymobile.shared.generated.resources.tips_dontshowmetips
-import syncplaymobile.shared.generated.resources.tips_next
 
 object PopupDidYaKnow {
 
@@ -49,15 +46,15 @@ object PopupDidYaKnow {
         Modal(
             open = true,
             onDismiss = { state.value = false },
-            title = stringResource(Res.string.tips_did_ya_know),
+            title = strings.tipsDidYaKnow,
             size = ModalSize.Ask,
             actions = {
-                SecondaryAction(stringResource(Res.string.tips_dontshowmetips), onClick = {
+                SecondaryAction(strings.tipsDontshowmetips, onClick = {
                     viewmodel.viewModelScope.launch(Dispatchers.IO) { Preferences.NEVER_SHOW_TIPS.set(true) }
                     state.value = false
                 })
-                SecondaryAction(stringResource(Res.string.tips_next), onClick = { if (tips.isNotEmpty()) tipIndex = (tipIndex + 1) % tips.size })
-                AccentAction(stringResource(Res.string.okay), onClick = { state.value = false })
+                SecondaryAction(strings.tipsNext, onClick = { if (tips.isNotEmpty()) tipIndex = (tipIndex + 1) % tips.size })
+                AccentAction(strings.okay, onClick = { state.value = false })
             },
         ) {
             Text(tips.getOrNull(tipIndex) ?: "", style = Type.note, color = palette.ink)

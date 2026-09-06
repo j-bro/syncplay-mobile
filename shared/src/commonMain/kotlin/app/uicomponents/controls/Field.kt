@@ -22,9 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.action_clear
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
@@ -40,6 +37,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.i18n.strings
 import app.theme.Motion
 import app.theme.Space
 import app.theme.Type
@@ -123,7 +121,7 @@ fun Field(
                 if (showClear && value.isNotEmpty() && enabled && !readOnly) {
                     GlyphButton(
                         icon = CloseGlyph,
-                        name = stringResource(Res.string.action_clear),
+                        name = strings.actionClear,
                         onClick = { onValueChange("") },
                         tint = p.inkDim,
                         // Never a focus stop: keyboard traversal jumps field to field, not to the clear glyph.

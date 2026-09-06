@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import app.i18n.strings
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -45,9 +46,6 @@ import app.uicomponents.controls.Timecode
 import app.uicomponents.controls.formatTimecode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_seekbar_name
 import kotlin.math.abs
 import kotlin.math.roundToLong
 
@@ -144,7 +142,7 @@ fun RoomSeekbar(modifier: Modifier) {
                 buffered = if (known && bufferedMs > 0L) (bufferedMs.toFloat() / durationMs).coerceIn(0f, 1f) else null,
                 keyStep = 0f,
                 describe = { f -> formatTimecode((f * durationMs).roundToLong()) },
-                name = stringResource(Res.string.room_seekbar_name),
+                name = strings.roomSeekbarName,
                 onLongPress = if (hasChapterList) ({ showChapters = true }) else null,
                 onValueChange = { f ->
                     if (!dragging) {

@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.HearingDisabled
+import app.i18n.Localization
+import app.i18n.strings
 import app.uicomponents.controls.Icon
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
@@ -57,18 +59,6 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_selected_sub_error
-import syncplaymobile.shared.generated.resources.room_sub_search_downloads
-import syncplaymobile.shared.generated.resources.room_sub_search_hint
-import syncplaymobile.shared.generated.resources.room_sub_search_language
-import syncplaymobile.shared.generated.resources.room_sub_search_no_results
-import syncplaymobile.shared.generated.resources.room_sub_search_title
-import syncplaymobile.shared.generated.resources.room_subs_download_failed
-import syncplaymobile.shared.generated.resources.room_subs_downloaded_remaining
-import syncplaymobile.shared.generated.resources.room_subs_quota_reached
 
 /**
  * The OpenSubtitles search: a hairline field, a language row, the progress bar on the rim while
@@ -123,23 +113,23 @@ fun SubtitleSearchModal(open: Boolean, onDismiss: () -> Unit) {
         if (query.isNotBlank()) runSearch()
     }
 
-    Modal(open = true, onDismiss = onDismiss, title = stringResource(Res.string.room_sub_search_title), size = ModalSize.Panel, inset = false) {
+    Modal(open = true, onDismiss = onDismiss, title = strings.roomSubSearchTitle, size = ModalSize.Panel, inset = false) {
         if (searching) ProgressBar(progress = null)
 
         Column(Modifier.padding(horizontal = Space.gutter, vertical = Space.gapTight)) {
             Field(
                 value = query,
                 onValueChange = { query = it },
-                placeholder = stringResource(Res.string.room_sub_search_hint),
+                placeholder = strings.roomSubSearchHint,
                 leading = SearchGlyph,
                 imeAction = ImeAction.Search,
                 onImeAction = { search() },
-                name = stringResource(Res.string.room_sub_search_hint),
+                name = strings.roomSubSearchHint,
             )
         }
 
         ListRow(onClick = { showLanguages = true }) {
-            RowLabel(stringResource(Res.string.room_sub_search_language))
+            RowLabel(strings.roomSubSearchLanguage)
             RowGap()
             RowValue(languageName)
             RowGap(Space.gapTight)
@@ -156,7 +146,7 @@ fun SubtitleSearchModal(open: Boolean, onDismiss: () -> Unit) {
 
         if (!searching && results.isEmpty()) {
             Text(
-                text = stringResource(Res.string.room_sub_search_no_results),
+                text = strings.roomSubSearchNoResults,
                 style = Type.note,
                 color = p.inkDim,
                 modifier = Modifier.padding(horizontal = Space.gutter, vertical = Space.gap),
@@ -180,21 +170,21 @@ fun SubtitleSearchModal(open: Boolean, onDismiss: () -> Unit) {
                                     // The tracks panel stays open behind this, so its list must follow.
                                     viewmodel.media?.let { viewmodel.player.analyzeTracks(it) }
                                     // Free plan keys allow a handful of downloads a day; searches are unlimited.
-                                    viewmodel.dispatchOSD { getString(Res.string.room_subs_downloaded_remaining, outcome.remaining) }
+                                    viewmodel.dispatchOSD { Localization.strings.roomSubsDownloadedRemaining(outcome.remaining) }
                                     downloadedOk = result.fileId
                                     delay(1000) // let the check land before the modal leaves
                                     onDismiss()
                                 } else {
-                                    error = getString(Res.string.room_selected_sub_error)
+                                    error = Localization.strings.roomSelectedSubError
                                 }
                             }
                             is SubtitleDownloadResult.QuotaExceeded -> {
                                 downloading = null
-                                error = getString(Res.string.room_subs_quota_reached, outcome.resetTime)
+                                error = Localization.strings.roomSubsQuotaReached(outcome.resetTime)
                             }
                             SubtitleDownloadResult.Failed -> {
                                 downloading = null
-                                error = getString(Res.string.room_subs_download_failed)
+                                error = Localization.strings.roomSubsDownloadFailed
                             }
                         }
                     }
@@ -210,7 +200,7 @@ fun SubtitleSearchModal(open: Boolean, onDismiss: () -> Unit) {
                     Text(result.releaseInfo.ifBlank { result.filename }, style = Type.label, color = p.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "${result.language.uppercase()} · ${result.downloadCount} ${stringResource(Res.string.room_sub_search_downloads)}",
+                            text = "${result.language.uppercase()} · ${result.downloadCount} ${strings.roomSubSearchDownloads}",
                             style = Type.value,
                             color = p.inkDim,
                             maxLines = 1,
@@ -229,7 +219,7 @@ fun SubtitleSearchModal(open: Boolean, onDismiss: () -> Unit) {
     Modal(
         open = showLanguages,
         onDismiss = { showLanguages = false },
-        title = stringResource(Res.string.room_sub_search_language),
+        title = strings.roomSubSearchLanguage,
         size = ModalSize.Panel,
         inset = false,
     ) {

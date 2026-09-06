@@ -9,6 +9,8 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Subtitles
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.VideoSettings
+import app.i18n.Localization
+import app.i18n.strings
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.widthIn
@@ -58,22 +60,6 @@ import app.utils.timestampFromMillis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_aspect_ratio
-import syncplaymobile.shared.generated.resources.room_control_panel
-import syncplaymobile.shared.generated.resources.room_gestures_panel_title
-import syncplaymobile.shared.generated.resources.room_no_recent_seek
-import syncplaymobile.shared.generated.resources.room_seek_to
-import syncplaymobile.shared.generated.resources.room_seek_undone
-import syncplaymobile.shared.generated.resources.room_tracks
-import syncplaymobile.shared.generated.resources.room_undo_seek
-import syncplaymobile.shared.generated.resources.room_undo_seek_always
-import syncplaymobile.shared.generated.resources.room_undo_seek_cancel
-import syncplaymobile.shared.generated.resources.room_undo_seek_confirm
-import syncplaymobile.shared.generated.resources.room_undo_seek_message
-import syncplaymobile.shared.generated.resources.room_undo_seek_title
 
 /*
  * The control panel: a row of glyph buttons. The audio and subtitle panel lives in the side dock
@@ -90,7 +76,7 @@ fun RoomControlPanelButton(modifier: Modifier) {
     if (hasVideo) {
         GlyphButton(
             icon = Icons.Filled.VideoSettings,
-            name = stringResource(Res.string.room_control_panel),
+            name = strings.roomControlPanel,
             size = Space.glyphLarge,
             modifier = modifier,
             onClick = { cardController.toggleControlPanel() },
@@ -111,7 +97,7 @@ fun RoomControlPanelCard(modifier: Modifier) {
     fun undo(seek: Pair<Long, Long>) {
         cardController.controlPanel.value = false
         viewmodel.dispatcher.undoSeek(seek)
-        viewmodel.dispatchOSD { getString(Res.string.room_seek_undone) }
+        viewmodel.dispatchOSD { Localization.strings.roomSeekUndone }
     }
 
     Row(
@@ -120,7 +106,7 @@ fun RoomControlPanelCard(modifier: Modifier) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (viewmodel.player.canChangeAspectRatio) {
-            GlyphButton(Icons.Filled.AspectRatio, name = stringResource(Res.string.room_aspect_ratio), size = Space.glyphLarge) {
+            GlyphButton(Icons.Filled.AspectRatio, name = strings.roomAspectRatio, size = Space.glyphLarge) {
                 scope.launch(Dispatchers.IO) {
                     val label = viewmodel.player.switchAspectRatio()
                     if (label.isNotBlank()) viewmodel.dispatchOSD { label }
@@ -128,7 +114,7 @@ fun RoomControlPanelCard(modifier: Modifier) {
             }
         }
 
-        GlyphButton(Icons.Filled.BrowseGallery, name = stringResource(Res.string.room_seek_to), size = Space.glyphLarge) {
+        GlyphButton(Icons.Filled.BrowseGallery, name = strings.roomSeekTo, size = Space.glyphLarge) {
             cardController.toggleSeekTo()
         }
 
@@ -137,19 +123,19 @@ fun RoomControlPanelCard(modifier: Modifier) {
         val last = viewmodel.seeks.lastOrNull()
         UndoSeekKey(target = last?.first) {
             when {
-                last == null -> viewmodel.dispatchOSD { getString(Res.string.room_no_recent_seek) }
+                last == null -> viewmodel.dispatchOSD { Localization.strings.roomNoRecentSeek }
                 undoNoConfirm -> undo(last)
                 else -> pendingUndoSeek = last
             }
         }
 
         /* Gesture switches live here, not in settings, so they can be flipped mid-playback. */
-        GlyphButton(Icons.Filled.TouchApp, name = stringResource(Res.string.room_gestures_panel_title), size = Space.glyphLarge) {
+        GlyphButton(Icons.Filled.TouchApp, name = strings.roomGesturesPanelTitle, size = Space.glyphLarge) {
             Feedback.tick()
             cardController.toggleGestures()
         }
 
-        GlyphButton(Icons.Filled.Subtitles, name = stringResource(Res.string.room_tracks), size = Space.glyphLarge) {
+        GlyphButton(Icons.Filled.Subtitles, name = strings.roomTracks, size = Space.glyphLarge) {
             Feedback.tick()
             if (cardController.tabCardTracks.value) {
                 cardController.toggleTracks(false)
@@ -179,7 +165,7 @@ fun RoomControlPanelCard(modifier: Modifier) {
 @Composable
 private fun UndoSeekKey(target: Long?, onClick: () -> Unit) {
     val p = palette
-    val name = stringResource(Res.string.room_undo_seek)
+    val name = strings.roomUndoSeek
     val source = remember { MutableInteractionSource() }
     Box(
         modifier = Modifier
@@ -217,18 +203,18 @@ private fun UndoSeekModal(seek: Pair<Long, Long>?, onDismiss: () -> Unit, onUndo
     Modal(
         open = seek != null,
         onDismiss = onDismiss,
-        title = stringResource(Res.string.room_undo_seek_title),
+        title = strings.roomUndoSeekTitle,
         size = ModalSize.Ask,
         actions = {
-            SecondaryAction(stringResource(Res.string.room_undo_seek_always), onClick = { onUndo(true) })
-            SecondaryAction(stringResource(Res.string.room_undo_seek_cancel), onClick = onDismiss)
-            AccentAction(stringResource(Res.string.room_undo_seek_confirm), onClick = { onUndo(false) })
+            SecondaryAction(strings.roomUndoSeekAlways, onClick = { onUndo(true) })
+            SecondaryAction(strings.roomUndoSeekCancel, onClick = onDismiss)
+            AccentAction(strings.roomUndoSeekConfirm, onClick = { onUndo(false) })
         },
     ) {
         if (seek != null) {
             Text(
                 // second is where we are now, first is where the seek started.
-                text = stringResource(Res.string.room_undo_seek_message, timestampFromMillis(seek.second), timestampFromMillis(seek.first)),
+                text = strings.roomUndoSeekMessage(timestampFromMillis(seek.second), timestampFromMillis(seek.first)),
                 style = Type.note,
                 color = palette.inkDim,
             )

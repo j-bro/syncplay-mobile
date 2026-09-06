@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import app.R
+import app.i18n.Localization
 import app.player.PlayerImpl
 import app.player.models.Chapter
 import app.player.models.MediaFile
@@ -40,11 +41,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.compose.resources.getString
 import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_aspect_original
-import syncplaymobile.shared.generated.resources.room_aspect_panscan
-import syncplaymobile.shared.generated.resources.room_aspect_ratio_label
 import syncplaymobile.shared.generated.resources.uisetting_categ_mpv
 import kotlin.math.roundToLong
 import kotlin.time.Duration
@@ -344,12 +341,12 @@ class MpvImpl(vm: RoomViewmodel) : PlayerImpl(vm, MpvEngine) {
 
             // mpv value to the spoken label; the last entry is pan-and-scan rather than a ratio.
             val aspectRatios = listOf(
-                "-1.000000" to getString(Res.string.room_aspect_original),
-                "1.777778" to getString(Res.string.room_aspect_ratio_label, "16:9"),
-                "1.600000" to getString(Res.string.room_aspect_ratio_label, "16:10"),
-                "1.333333" to getString(Res.string.room_aspect_ratio_label, "4:3"),
-                "2.350000" to getString(Res.string.room_aspect_ratio_label, "2.35:1"),
-                "panscan" to getString(Res.string.room_aspect_panscan),
+                "-1.000000" to Localization.strings.roomAspectOriginal,
+                "1.777778" to Localization.strings.roomAspectRatioLabel("16:9"),
+                "1.600000" to Localization.strings.roomAspectRatioLabel("16:10"),
+                "1.333333" to Localization.strings.roomAspectRatioLabel("4:3"),
+                "2.350000" to Localization.strings.roomAspectRatioLabel("2.35:1"),
+                "panscan" to Localization.strings.roomAspectPanscan,
             )
 
             var enablePanscan = false

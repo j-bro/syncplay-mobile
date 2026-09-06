@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import app.i18n.strings
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -41,24 +42,9 @@ import app.utils.appName
 import app.utils.platform
 import app.utils.platformDescription
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.about_blurb
-import syncplaymobile.shared.generated.resources.about_independent
-import syncplaymobile.shared.generated.resources.about_author
-import syncplaymobile.shared.generated.resources.about_website
-import syncplaymobile.shared.generated.resources.about_privacy_button
-import syncplaymobile.shared.generated.resources.about_report_button
-import syncplaymobile.shared.generated.resources.about_source_button
-import syncplaymobile.shared.generated.resources.about_tagline
-import syncplaymobile.shared.generated.resources.about_version_value
-import syncplaymobile.shared.generated.resources.connect_watch_alone
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import app.uicomponents.controls.ListRow
-import syncplaymobile.shared.generated.resources.about_licences_button
-import syncplaymobile.shared.generated.resources.about_licences_note
-import syncplaymobile.shared.generated.resources.about_licences_title
 
 object PopupAPropos {
 
@@ -130,7 +116,7 @@ object PopupAPropos {
         Spacer(Modifier.height(Space.gap))
         SyncplayishText(string = appName, textAlign = TextAlign.Center, size = 26f)
         Text(
-            text = stringResource(Res.string.about_tagline, platform.label),
+            text = strings.aboutTagline(platform.label),
             style = Type.value,
             color = platform.color,
             textAlign = TextAlign.Center,
@@ -138,7 +124,7 @@ object PopupAPropos {
         )
         Spacer(Modifier.height(Space.gap))
         Text(
-            text = stringResource(Res.string.about_blurb),
+            text = strings.aboutBlurb,
             style = Type.note,
             color = p.ink,
             textAlign = TextAlign.Center,
@@ -146,7 +132,7 @@ object PopupAPropos {
         )
         Spacer(Modifier.height(Space.gapTight))
         Text(
-            text = stringResource(Res.string.about_independent),
+            text = strings.aboutIndependent,
             style = Type.note,
             color = p.inkDim,
             textAlign = TextAlign.Center,
@@ -158,9 +144,9 @@ object PopupAPropos {
             modifier = Modifier.fillMaxWidth().padding(bottom = Space.gapTight),
             horizontalArrangement = Arrangement.spacedBy(Space.gutter, Alignment.CenterHorizontally),
         ) {
-            Text(stringResource(Res.string.about_version_value, KiteBuildConfig.APP_VERSION), style = Type.value, color = p.inkDim, maxLines = 1)
-            Text(stringResource(Res.string.about_author), style = Type.value, color = p.inkDim, maxLines = 1)
-            Text(stringResource(Res.string.about_website), style = Type.value, color = p.inkDim, maxLines = 1)
+            Text(strings.aboutVersionValue(KiteBuildConfig.APP_VERSION), style = Type.value, color = p.inkDim, maxLines = 1)
+            Text(strings.aboutAuthor, style = Type.value, color = p.inkDim, maxLines = 1)
+            Text(strings.aboutWebsite, style = Type.value, color = p.inkDim, maxLines = 1)
         }
     }
 
@@ -176,15 +162,15 @@ object PopupAPropos {
     ) {
         Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Space.gapTight)) {
             SecondaryActionPair(
-                firstText = stringResource(Res.string.about_source_button),
+                firstText = strings.aboutSourceButton,
                 onFirstClick = { onOpenUri("https://www.github.com/yuroyami/syncplay-mobile") },
-                secondText = stringResource(Res.string.about_report_button),
+                secondText = strings.aboutReportButton,
                 onSecondClick = { onOpenUri(bugReportUrl()) },
             )
             SecondaryActionPair(
-                firstText = stringResource(Res.string.about_privacy_button),
+                firstText = strings.aboutPrivacyButton,
                 onFirstClick = { onOpenUri("https://github.com/yuroyami/syncplay-mobile/blob/master/PRIVACY_POLICY.md") },
-                secondText = stringResource(Res.string.about_licences_button),
+                secondText = strings.aboutLicencesButton,
                 onSecondClick = onLicences,
             )
             // Asked for, never automatic: a direct download has nothing else that would say a
@@ -196,7 +182,7 @@ object PopupAPropos {
                 onOpenRelease = onOpenUri,
             )
             Spacer(Modifier.height(Space.gapTight))
-            AccentAction(text = stringResource(Res.string.connect_watch_alone), onClick = onWatchAlone, modifier = Modifier.fillMaxWidth())
+            AccentAction(text = strings.connectWatchAlone, onClick = onWatchAlone, modifier = Modifier.fillMaxWidth())
         }
     }
 
@@ -211,11 +197,11 @@ object PopupAPropos {
         Modal(
             open = open.value,
             onDismiss = { open.value = false },
-            title = stringResource(Res.string.about_licences_title),
+            title = strings.aboutLicencesTitle,
             size = ModalSize.Panel,
         ) {
             Text(
-                text = stringResource(Res.string.about_licences_note),
+                text = strings.aboutLicencesNote,
                 style = Type.note,
                 color = p.inkDim,
                 modifier = Modifier.fillMaxWidth().padding(bottom = Space.gap),

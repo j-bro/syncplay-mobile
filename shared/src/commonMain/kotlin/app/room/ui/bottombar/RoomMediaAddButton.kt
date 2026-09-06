@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.AddToQueue
 import androidx.compose.runtime.Composable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.FastOutSlowInEasing
+import app.i18n.strings
 import kotlin.math.roundToInt
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.layout.Layout
@@ -18,9 +19,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.background
-import syncplaymobile.shared.generated.resources.room_route_link
-import syncplaymobile.shared.generated.resources.action_close
-import syncplaymobile.shared.generated.resources.action_back
 import app.uicomponents.controls.Text
 import app.uicomponents.controls.Rule
 import app.uicomponents.controls.CloseGlyph
@@ -53,9 +51,6 @@ import app.room.LocalRoomInitialFocus
 import app.theme.Space
 import app.uicomponents.controls.GlyphButton
 import app.uicomponents.controls.PrimaryAction
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_button_desc_add
 
 /**
  * The add key in the transport. With a file playing it opens the add-media side panel. Before
@@ -115,17 +110,17 @@ fun RoomMediaAddButton() {
                                 modifier = Modifier.fillMaxWidth().height(Space.row).padding(start = Space.gapTight, end = Space.gapTight),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                if (linkMode) GlyphButton(BackGlyph, name = stringResource(Res.string.action_back)) { linkMode = false }
+                                if (linkMode) GlyphButton(BackGlyph, name = strings.actionBack) { linkMode = false }
                                 else Spacer(Modifier.width(Space.touchMin))
                                 Text(
-                                    text = stringResource(if (linkMode) Res.string.room_route_link else Res.string.room_button_desc_add),
+                                    text = if (linkMode) strings.roomRouteLink else strings.roomButtonDescAdd,
                                     style = Type.label,
                                     color = onBrand.ink,
                                     maxLines = 1,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.weight(1f),
                                 )
-                                GlyphButton(CloseGlyph, name = stringResource(Res.string.action_close)) { open = false; linkMode = false }
+                                GlyphButton(CloseGlyph, name = strings.actionClose) { open = false; linkMode = false }
                             }
                             Rule()
                             CardAddMedia.AddMediaBody(linkMode = linkMode, onLinkMode = { linkMode = it }, onClose = { open = false; linkMode = false })
@@ -171,8 +166,8 @@ private val MorphWidth = 340.dp
 @Composable
 fun AddVideoButton(modifier: Modifier, expanded: Boolean, onClick: () -> Unit) {
     if (!expanded) {
-        GlyphButton(Icons.Filled.AddToQueue, name = stringResource(Res.string.room_button_desc_add), modifier = modifier, size = Space.glyphLarge, onClick = onClick)
+        GlyphButton(Icons.Filled.AddToQueue, name = strings.roomButtonDescAdd, modifier = modifier, size = Space.glyphLarge, onClick = onClick)
     } else {
-        PrimaryAction(stringResource(Res.string.room_button_desc_add), onClick = onClick, modifier = modifier.width(180.dp))
+        PrimaryAction(strings.roomButtonDescAdd, onClick = onClick, modifier = modifier.width(180.dp))
     }
 }

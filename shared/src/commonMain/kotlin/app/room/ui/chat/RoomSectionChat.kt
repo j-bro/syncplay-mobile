@@ -37,6 +37,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import app.LocalChatPalette
 import app.LocalRoomViewmodel
+import app.i18n.Localization
+import app.i18n.strings
 import app.room.OSDCategory
 import app.preferences.Preferences.MSG_BG_OPACITY
 import app.preferences.Preferences.MSG_BOX_ACTION
@@ -60,13 +62,6 @@ import app.uicomponents.controls.SendGlyph
 import app.utils.Platform
 import app.utils.platform
 import androidx.compose.foundation.text.selection.SelectionContainer
-import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_chat_input
-import syncplaymobile.shared.generated.resources.room_chat_too_long
-import syncplaymobile.shared.generated.resources.room_gif_open
-import syncplaymobile.shared.generated.resources.room_send
 
 /** The chat dock: the composer on top, then either the message list or the GIF drawer. */
 @Composable
@@ -151,7 +146,7 @@ fun ChatComposer(
         if (text.length > maxLen) {
             // The draft stays in the field; a silent cut lost the end of the message.
             val length = text.length
-            viewmodel.dispatchOSD(OSDCategory.WARNING) { getString(Res.string.room_chat_too_long, length, maxLen) }
+            viewmodel.dispatchOSD(OSDCategory.WARNING) { Localization.strings.roomChatTooLong(length, maxLen) }
             return
         }
         /* A slash command is carried out here and never reaches the room, so a typo is
@@ -169,7 +164,7 @@ fun ChatComposer(
     Row(modifier.heightIn(min = Space.row), verticalAlignment = Alignment.CenterVertically) {
         GlyphButton(
             icon = Icons.Outlined.GifBox,
-            name = stringResource(Res.string.room_gif_open),
+            name = strings.roomGifOpen,
             tint = if (gifPanelVisible) p.accent else p.inkDim,
         ) { viewmodel.uiState.gifPanelVisible.value = !gifPanelVisible }
         Field(
@@ -177,7 +172,7 @@ fun ChatComposer(
             onValueChange = { viewmodel.uiState.msg.value = it },
             // Not the outer modifier: that would re-apply the shield and the insets to the field.
             modifier = Modifier.weight(1f),
-            placeholder = stringResource(Res.string.room_chat_input),
+            placeholder = strings.roomChatInput,
             imeAction = if (keyboardSends) ImeAction.Send else ImeAction.Done,
             onImeAction = {
                 focusManager.clearFocus()
@@ -185,11 +180,11 @@ fun ChatComposer(
             },
             textStyle = Type.note,
             focusRequester = viewmodel.uiState.chatFocus,
-            name = stringResource(Res.string.room_chat_input),
+            name = strings.roomChatInput,
         )
         GlyphButton(
             icon = SendGlyph,
-            name = stringResource(Res.string.room_send),
+            name = strings.roomSend,
             tint = if (hasText && !gifPanelVisible) p.accent else p.inkFaint,
         ) {
             if (gifPanelVisible) return@GlyphButton

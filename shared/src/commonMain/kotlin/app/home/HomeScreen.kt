@@ -80,6 +80,8 @@ import app.LocalGlobalViewmodel
 import app.home.components.HomeEnginePicker
 import app.home.components.HomeTopBar
 import app.home.components.PopupDidYaKnow.DidYaKnowPopup
+import app.i18n.AppStrings
+import app.i18n.strings
 import app.preferences.Preferences
 import app.preferences.Preferences.NEVER_SHOW_TIPS
 import app.preferences.Preferences.PLAYER_ENGINE
@@ -121,34 +123,6 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.connect_address_empty_error
-import syncplaymobile.shared.generated.resources.connect_button_join
-import syncplaymobile.shared.generated.resources.connect_button_saveshortcut
-import syncplaymobile.shared.generated.resources.connect_choose_video_engine
-import syncplaymobile.shared.generated.resources.connect_custom
-import syncplaymobile.shared.generated.resources.connect_custom_tip
-import syncplaymobile.shared.generated.resources.connect_host_join_note
-import syncplaymobile.shared.generated.resources.connect_host_mine
-import syncplaymobile.shared.generated.resources.connect_official
-import syncplaymobile.shared.generated.resources.connect_port_empty_error
-import syncplaymobile.shared.generated.resources.connect_roomname
-import syncplaymobile.shared.generated.resources.connect_roomname_empty_error
-import syncplaymobile.shared.generated.resources.connect_roomname_tooltip
-import syncplaymobile.shared.generated.resources.connect_server
-import syncplaymobile.shared.generated.resources.connect_server_pick_error
-import syncplaymobile.shared.generated.resources.connect_server_pick_note
-import syncplaymobile.shared.generated.resources.connect_username
-import syncplaymobile.shared.generated.resources.connect_username_empty_error
-import syncplaymobile.shared.generated.resources.connect_username_tooltip
-import syncplaymobile.shared.generated.resources.home_engine_unavailable_error
-import syncplaymobile.shared.generated.resources.home_ip_address
-import syncplaymobile.shared.generated.resources.home_password_if_any
-import syncplaymobile.shared.generated.resources.home_port
-import syncplaymobile.shared.generated.resources.home_shortcut_explain
-import syncplaymobile.shared.generated.resources.home_shortcut_saved
 
 val officialServers = listOf("syncplay.pl:8995", "syncplay.pl:8996", "syncplay.pl:8997", "syncplay.pl:8998", "syncplay.pl:8999")
 
@@ -273,7 +247,7 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                 var address by remember(savedConfig) { mutableStateOf(config.ip) }
                 var port by remember(savedConfig) { mutableStateOf(config.port.toString()) }
                 var password by remember(savedConfig) { mutableStateOf(config.pw) }
-                var error by remember { mutableStateOf<StringResource?>(null) }
+                var error by remember { mutableStateOf<JoinError?>(null) }
 
                 val usernameFocus = remember { FocusRequester() }
                 val roomFocus = remember { FocusRequester() }
@@ -291,13 +265,13 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
 
                 /* One validation for both paths, so the shortcut saver cannot crash on a
                  * blank port either. */
-                fun validate(): StringResource? = when {
-                    username.isBlank() -> Res.string.connect_username_empty_error
-                    room.isBlank() -> Res.string.connect_roomname_empty_error
-                    mode == null -> Res.string.connect_server_pick_error
+                fun validate(): JoinError? = when {
+                    username.isBlank() -> JoinError.Username
+                    room.isBlank() -> JoinError.Room
+                    mode == null -> JoinError.ServerChoice
                     mode == ServerMode.Host -> null
-                    address.isBlank() -> Res.string.connect_address_empty_error
-                    port.isBlank() || port.toIntOrNull() == null -> Res.string.connect_port_empty_error
+                    address.isBlank() -> JoinError.Address
+                    port.isBlank() || port.toIntOrNull() == null -> JoinError.Port
                     else -> null
                 }
                 fun currentConfig() = when (mode) {
@@ -309,9 +283,9 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                  * below place the same content and only decide where it goes. */
                 val usernameField: @Composable (paired: Boolean) -> Unit = { paired ->
                     FormField(
-                        label = stringResource(Res.string.connect_username),
-                        help = stringResource(Res.string.connect_username_tooltip),
-                        error = error?.takeIf { it == Res.string.connect_username_empty_error }?.let { stringResource(it) },
+                        label = strings.connectUsername,
+                        help = strings.connectUsernameTooltip,
+                        error = error?.takeIf { it == JoinError.Username }?.message(strings),
                         value = username,
                         onValueChange = { username = it; error = null },
                         icon = Icons.Outlined.PersonPin,
@@ -323,9 +297,9 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                 }
                 val roomField: @Composable (paired: Boolean) -> Unit = { paired ->
                     FormField(
-                        label = stringResource(Res.string.connect_roomname),
-                        help = stringResource(Res.string.connect_roomname_tooltip),
-                        error = error?.takeIf { it == Res.string.connect_roomname_empty_error }?.let { stringResource(it) },
+                        label = strings.connectRoomname,
+                        help = strings.connectRoomnameTooltip,
+                        error = error?.takeIf { it == JoinError.Room }?.message(strings),
                         value = room,
                         onValueChange = { typed ->
                             // An invite link pasted into the room field fills the whole
@@ -372,11 +346,11 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                 val serverBlock: @Composable () -> Unit = {
                     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Space.gapTight)) {
                         FormLabel(
-                            text = stringResource(Res.string.connect_server, appName),
-                            tip = if (mode == ServerMode.Custom) stringResource(Res.string.connect_custom_tip) else null,
+                            text = strings.connectServer,
+                            tip = if (mode == ServerMode.Custom) strings.connectCustomTip else null,
                         )
                         Segmented(
-                            options = listOf(stringResource(Res.string.connect_official), stringResource(Res.string.connect_custom), stringResource(Res.string.connect_host_mine)),
+                            options = listOf(strings.connectOfficial, strings.connectCustom, strings.connectHostMine),
                             selected = mode?.ordinal ?: -1,
                             onSelect = { index ->
                                 val next = ServerMode.entries[index]
@@ -420,9 +394,9 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Space.gapTight)) {
                                 when (m) {
                                     null -> {
-                                        val pickError = error?.takeIf { it == Res.string.connect_server_pick_error }
+                                        val pickError = error?.takeIf { it == JoinError.ServerChoice }
                                         Text(
-                                            text = stringResource(pickError ?: Res.string.connect_server_pick_note),
+                                            text = pickError?.message(strings) ?: strings.connectServerPickNote,
                                             style = Type.note,
                                             color = if (pickError != null) p.bad else p.inkDim,
                                         )
@@ -440,40 +414,40 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                                                 value = address,
                                                 onValueChange = { address = it.trim(); error = null },
                                                 modifier = Modifier.weight(2f),
-                                                placeholder = stringResource(Res.string.home_ip_address),
+                                                placeholder = strings.homeIpAddress,
                                                 leading = Icons.Outlined.Lan,
                                                 keyboardType = KeyboardType.Uri,
                                                 imeAction = ImeAction.Next,
                                                 onImeAction = { portFocus.requestFocus() },
-                                                name = stringResource(Res.string.home_ip_address),
+                                                name = strings.homeIpAddress,
                                             )
                                             Field(
                                                 value = port,
                                                 onValueChange = { port = it.trim(); error = null },
                                                 modifier = Modifier.weight(1f),
-                                                placeholder = stringResource(Res.string.home_port),
+                                                placeholder = strings.homePort,
                                                 keyboardType = KeyboardType.Number,
                                                 imeAction = ImeAction.Next,
                                                 onImeAction = { passwordFocus.requestFocus() },
                                                 focusRequester = portFocus,
-                                                name = stringResource(Res.string.home_port),
+                                                name = strings.homePort,
                                             )
                                         }
                                         Field(
                                             value = password,
                                             onValueChange = { password = it.trim() },
                                             modifier = Modifier.fillMaxWidth(),
-                                            placeholder = stringResource(Res.string.home_password_if_any),
+                                            placeholder = strings.homePasswordIfAny,
                                             imeAction = ImeAction.Done,
                                             onImeAction = { focusManager.clearFocus(true) },
                                             focusRequester = passwordFocus,
-                                            name = stringResource(Res.string.home_password_if_any),
+                                            name = strings.homePasswordIfAny,
                                         )
-                                        val serverError = error?.takeIf { it == Res.string.connect_address_empty_error || it == Res.string.connect_port_empty_error }
-                                        if (serverError != null) Text(stringResource(serverError), style = Type.note, color = p.bad)
+                                        val serverError = error?.takeIf { it == JoinError.Address || it == JoinError.Port }
+                                        if (serverError != null) Text(serverError.message(strings), style = Type.note, color = p.bad)
                                     }
                                     ServerMode.Host -> {
-                                        Text(stringResource(Res.string.connect_host_join_note, "$LOCAL_HOST:$hostPort"), style = Type.note, color = p.inkDim)
+                                        Text(strings.connectHostJoinNote("$LOCAL_HOST:$hostPort"), style = Type.note, color = p.inkDim)
                                         ServerHostPanel(Modifier.fillMaxWidth())
                                     }
                                 }
@@ -484,7 +458,7 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
 
                 val engineBlock: @Composable (compact: Boolean) -> Unit = { compact ->
                     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Space.gapTight)) {
-                        FormLabel(stringResource(Res.string.connect_choose_video_engine))
+                        FormLabel(strings.connectChooseVideoEngine)
                         val selectedEngine by PLAYER_ENGINE.watchPref()
                         // A saved engine this build no longer ships is replaced once with the platform default.
                         LaunchedEffect(selectedEngine, availablePlatformPlayerEngines) {
@@ -492,7 +466,7 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                                 availablePlatformPlayerEngines.firstOrNull { it.isDefault }?.let { PLAYER_ENGINE.set(it.name) }
                             }
                         }
-                        val unavailable = stringResource(Res.string.home_engine_unavailable_error)
+                        val unavailable = strings.homeEngineUnavailableError
                         HomeEnginePicker(
                             modifier = Modifier.fillMaxWidth(),
                             engines = availablePlatformPlayerEngines,
@@ -510,7 +484,7 @@ fun HomeScreenUI(viewmodel: HomeViewmodel) {
                 /* Join, with the shortcut saver as its own key beside it. Desktop has no home
                  * screen to pin to, so it gets the join key alone. */
                 val joinBlock: @Composable () -> Unit = {
-                    val shortcutSaved = stringResource(Res.string.home_shortcut_saved, room)
+                    val shortcutSaved = strings.homeShortcutSaved(room)
                     JoinRow(
                         onJoin = {
                             error = validate()
@@ -671,7 +645,7 @@ private fun JoinConfig.sanitised(): JoinConfig {
 internal fun JoinRow(onJoin: () -> Unit, onSaveShortcut: (() -> Unit)?) {
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
         PrimaryAction(
-            text = stringResource(Res.string.connect_button_join),
+            text = strings.connectButtonJoin,
             modifier = Modifier.fillMaxWidth().padding(end = if (onSaveShortcut != null) Space.touchMin + Space.gap else 0.dp),
             onClick = onJoin,
         )
@@ -688,7 +662,7 @@ private fun ShortcutKey(onSave: () -> Unit) {
     val p = palette
     var expanded by remember { mutableStateOf(false) }
     val source = remember { MutableInteractionSource() }
-    val name = stringResource(Res.string.connect_button_saveshortcut)
+    val name = strings.connectButtonSaveshortcut
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         val width by animateDpAsState(if (expanded) maxWidth else Space.touchMin, Motion.move(), label = "shortcutWidth")
         val textAlpha by animateFloatAsState(if (expanded) 1f else 0f, Motion.move(), label = "shortcutText")
@@ -723,7 +697,7 @@ private fun ShortcutKey(onSave: () -> Unit) {
             }
             if (textAlpha > 0f) {
                 Text(
-                    text = stringResource(Res.string.home_shortcut_explain),
+                    text = strings.homeShortcutExplain,
                     style = Type.label,
                     color = p.ink,
                     maxLines = 1,
@@ -861,3 +835,14 @@ private fun FormField(
 
 /** Cold starts that show the tips before they stop appearing by themselves. */
 private const val TIPS_MAX_SHOWINGS = 3
+
+/** Which field the join form is complaining about. The wording comes from the current language. */
+private enum class JoinError { Username, Room, ServerChoice, Address, Port }
+
+private fun JoinError.message(s: AppStrings): String = when (this) {
+    JoinError.Username -> s.connectUsernameEmptyError
+    JoinError.Room -> s.connectRoomnameEmptyError
+    JoinError.ServerChoice -> s.connectServerPickError
+    JoinError.Address -> s.connectAddressEmptyError
+    JoinError.Port -> s.connectPortEmptyError
+}

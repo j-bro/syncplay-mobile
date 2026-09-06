@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Folder
+import app.i18n.strings
 import app.uicomponents.controls.Icon
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
@@ -38,15 +39,6 @@ import io.github.vinceglb.filekit.dialogs.compose.rememberDirectoryPickerLaunche
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.media_directories_add_folder
-import syncplaymobile.shared.generated.resources.media_directories_clear_all
-import syncplaymobile.shared.generated.resources.media_directories_clear_all_confirm
-import syncplaymobile.shared.generated.resources.media_directories_delete
-import syncplaymobile.shared.generated.resources.media_folders
-import syncplaymobile.shared.generated.resources.media_folders_brief
-import syncplaymobile.shared.generated.resources.media_folders_empty
 
 object PopupMediaDirs {
 
@@ -70,23 +62,23 @@ object PopupMediaDirs {
         Modal(
             open = visibilityState.value,
             onDismiss = { visibilityState.value = false },
-            title = stringResource(Res.string.media_folders),
+            title = strings.mediaFolders,
             size = ModalSize.Panel,
             inset = false,
             actions = {
-                SecondaryAction(stringResource(Res.string.media_directories_clear_all), onClick = { askClear.value = true }, enabled = dirs.isNotEmpty())
-                AccentAction(stringResource(Res.string.media_directories_add_folder), onClick = { directoryPicker.launch() })
+                SecondaryAction(strings.mediaDirectoriesClearAll, onClick = { askClear.value = true }, enabled = dirs.isNotEmpty())
+                AccentAction(strings.mediaDirectoriesAddFolder, onClick = { directoryPicker.launch() })
             },
         ) {
             Text(
-                text = stringResource(Res.string.media_folders_brief, appName),
+                text = strings.mediaFoldersBrief(appName),
                 style = Type.note,
                 color = p.inkDim,
                 modifier = Modifier.padding(horizontal = Space.gutter, vertical = Space.gap),
             )
             if (dirs.isEmpty()) {
                 Text(
-                    text = stringResource(Res.string.media_folders_empty),
+                    text = strings.mediaFoldersEmpty,
                     style = Type.note,
                     color = p.inkFaint,
                     modifier = Modifier.padding(horizontal = Space.gutter, vertical = Space.gap),
@@ -103,7 +95,7 @@ object PopupMediaDirs {
                         Text(name, style = Type.label, color = p.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         Text(item, style = Type.note, color = p.inkDim, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
-                    GlyphButton(CloseGlyph, name = stringResource(Res.string.media_directories_delete), tint = p.inkDim) {
+                    GlyphButton(CloseGlyph, name = strings.mediaDirectoriesDelete, tint = p.inkDim) {
                         scope.launch {
                             val paths = Preferences.MEDIA_DIRECTORIES.value().toMutableSet()
                             if (paths.remove(item)) {
@@ -118,8 +110,8 @@ object PopupMediaDirs {
 
         AskModal(
             open = askClear,
-            title = stringResource(Res.string.media_directories_clear_all),
-            text = stringResource(Res.string.media_directories_clear_all_confirm),
+            title = strings.mediaDirectoriesClearAll,
+            text = strings.mediaDirectoriesClearAllConfirm,
             destructive = true,
             onYes = {
                 scope.launch {

@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
+import app.i18n.Localization
+import app.i18n.strings
 import app.room.OSDCategory
 import app.LocalRoomUiState
 import app.LocalRoomViewmodel
@@ -27,12 +29,6 @@ import app.theme.Space
 import app.uicomponents.chromeSurface
 import app.uicomponents.controls.GlyphButton
 import kotlinx.coroutines.delay
-import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_locked_hint
-import syncplaymobile.shared.generated.resources.room_locked_surface
-import syncplaymobile.shared.generated.resources.room_unlock
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -54,10 +50,10 @@ fun RoomUnlockableLayout() {
 
     // Said once, when the lock engages.
     LaunchedEffect(lockedMode) {
-        if (lockedMode) viewmodel.dispatchOSD(OSDCategory.SAME_ROOM) { getString(Res.string.room_locked_hint) }
+        if (lockedMode) viewmodel.dispatchOSD(OSDCategory.SAME_ROOM) { Localization.strings.roomLockedHint }
     }
 
-    val surfaceLabel = stringResource(Res.string.room_locked_surface)
+    val surfaceLabel = strings.roomLockedSurface
     Box(
         Modifier
             .fillMaxSize()
@@ -76,7 +72,7 @@ fun RoomUnlockableLayout() {
                 Modifier.align(Alignment.TopEnd).padding(top = Space.gap, end = Space.gutter).size(Space.hero).chromeSurface(Radius.panelShape),
                 contentAlignment = Alignment.Center,
             ) {
-                GlyphButton(Icons.Filled.NoEncryption, name = stringResource(Res.string.room_unlock), size = Space.glyphLarge) {
+                GlyphButton(Icons.Filled.NoEncryption, name = strings.roomUnlock, size = Space.glyphLarge) {
                     ui.tabLock.value = false
                     viewmodel.uiState.showHud()
                 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.Screen
 import app.home.JoinConfig
+import app.i18n.Localization
 import app.player.PlayerImpl
 import app.player.PlayerManager
 import app.player.models.MediaFile
@@ -32,11 +33,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_file_mismatch_warning_core
 import syncplaymobile.shared.generated.resources.room_file_mismatch_warning_duration
 import syncplaymobile.shared.generated.resources.room_file_mismatch_warning_name
 import syncplaymobile.shared.generated.resources.room_file_mismatch_warning_size
-import syncplaymobile.shared.generated.resources.room_no_player_engine
 
 /**
  * Classification used by the categorized [RoomViewmodel.dispatchOSD] overload to decide whether
@@ -123,8 +122,8 @@ class RoomViewmodel(val joinConfig: JoinConfig?, val backStack: SnapshotStateLis
                 if (engine == null) {
                     // Nothing can play here (desktop with KitePlayer unavailable, for one).
                     loggy("No available player engine on this platform")
-                    dispatchOSD(OSDCategory.WARNING) { getString(Res.string.room_no_player_engine) }
-                    dispatcher.broadcastMessage(isChat = false, isError = true) { getString(Res.string.room_no_player_engine) }
+                    dispatchOSD(OSDCategory.WARNING) { Localization.strings.roomNoPlayerEngine }
+                    dispatcher.broadcastMessage(isChat = false, isError = true) { Localization.strings.roomNoPlayerEngine }
                     return@launch
                 }
                 if (engine.name != preferred) {
@@ -196,9 +195,9 @@ class RoomViewmodel(val joinConfig: JoinConfig?, val backStack: SnapshotStateLis
                 // the **Hidden filename** / size-0 sentinels matching anything, and a 2.5s
                 // duration tolerance.
                 val mismatches = listOf(
-                    !FileComparison.sameFilename(localMedia.fileName, theirFile.fileName) to Res.string.room_file_mismatch_warning_name,
-                    !FileComparison.sameFileduration(localMedia.fileDuration ?: 0.0, theirFile.fileDuration ?: 0.0) to Res.string.room_file_mismatch_warning_duration,
-                    !FileComparison.sameFilesize(localMedia.fileSize, theirFile.fileSize) to Res.string.room_file_mismatch_warning_size
+                    !FileComparison.sameFilename(localMedia.fileName, theirFile.fileName) to Localization.strings.roomFileMismatchWarningName,
+                    !FileComparison.sameFileduration(localMedia.fileDuration ?: 0.0, theirFile.fileDuration ?: 0.0) to Localization.strings.roomFileMismatchWarningDuration,
+                    !FileComparison.sameFilesize(localMedia.fileSize, theirFile.fileSize) to Localization.strings.roomFileMismatchWarningSize
                 )
 
                 // If all three mismatch, skip showing a warning
@@ -207,9 +206,9 @@ class RoomViewmodel(val joinConfig: JoinConfig?, val backStack: SnapshotStateLis
 
                 // Build warning message dynamically
                 val warning = buildString {
-                    append(getString(Res.string.room_file_mismatch_warning_core, user.name))
+                    append(Localization.strings.roomFileMismatchWarningCore(user.name))
                     mismatches.filter { it.first }
-                        .forEach { append(getString(it.second)) }
+                        .forEach { append(it.second) }
                 }
 
                 dispatcher.broadcastMessage(message = { warning }, isChat = false, isError = true)

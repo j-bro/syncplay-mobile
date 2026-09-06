@@ -56,7 +56,7 @@
     <string name="room_custom_skip_button">Pomiń %1$s</string>
     <string name="media_directories_setting_summary">Foldery przeszukiwane w poszukiwaniu plików z listy.</string>
 
-    <string name="room_on_newcontrolledroom">Utworzono zarządzany pokój '%1$s' z hasłem '%2$s'. Proszę zapisać te informacje do przyszłego użytku! Zostały skopiowane do schowka, abyś mógł je wkleić gdzie indziej.\n\nW zarządzanych pokojach wszyscy są synchronizowani z operatorem/operatorami pokoju, którzy są jedynymi osobami mogącymi pauzować, wznawiać, przewijać i zmieniać listę odtwarzania.\n\nPowinieneś poprosić zwykłych widzów o dołączenie do pokoju '%1$s', ale operatorzy pokoju mogą dołączyć do pokoju '%1$s:%2$s', aby automatycznie się uwierzytelnić.</string>
+    <string name="room_on_newcontrolledroom">Utworzono zarządzany pokój '%1$s' z hasłem '%2$s'. Jest w schowku, więc zapisz to w bezpiecznym miejscu.\n\nW zarządzanym pokoju wszyscy podążają za operatorami. Tylko oni mogą pauzować, wznawiać, przewijać i zmieniać listę.\n\nZwykli widzowie dołączają samą nazwą pokoju. Operatorzy dołączają przez '%3$s', żeby zostać rozpoznani przy wejściu.</string>
     <string name="room_on_controller_auth_success">%1$s uwierzytelniony jako operator pokoju</string>
     <string name="room_on_controller_auth_failed">%1$s nie udało się potwierdzić jako operator pokoju</string>
 

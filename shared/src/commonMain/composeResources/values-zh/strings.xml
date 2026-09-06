@@ -47,7 +47,7 @@
     <string name="room_shared_playlist_changed">%1$s 更改了播放列表当前选择</string>
     <string name="room_custom_skip_button">跳过 %1$s</string>
     <string name="media_directories_setting_summary">搜索播放列表文件的文件夹。</string>
-    <string name="room_on_newcontrolledroom">已创建托管房间 '%1$s'，密码为 '%2$s'。请保存此信息以备将来参考！它已复制到剪贴板，您可以将其粘贴到其他地方。\n\n在托管房间中，所有人都与房间操作员保持同步，只有房间操作员可以暂停、取消暂停、跳转和更改播放列表。\n\n您应该要求普通观众加入房间 '%1$s'，但房间操作员可以加入房间 '%1$s:%2$s' 以自动验证身份。</string>
+    <string name="room_on_newcontrolledroom">已创建管理房间 '%1$s'，密码为 '%2$s'。两者都已复制到剪贴板，请妥善保存。\n\n在管理房间里，所有人都跟随操作员。只有操作员可以暂停、继续、跳转和修改播放列表。\n\n普通观众只用房间名加入。操作员用 '%3$s' 加入，进入时就会被识别。</string>
     <string name="room_on_controller_auth_success">%1$s 已验证为房间操作员</string>
     <string name="room_on_controller_auth_failed">%1$s 未能验证为房间操作员</string>
 

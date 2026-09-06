@@ -49,6 +49,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.i18n.AppStrings
+import app.i18n.strings
 import app.player.PlayerEngine
 import app.theme.Motion
 import app.theme.Radius
@@ -63,20 +65,7 @@ import app.uicomponents.controls.Tone
 import app.uicomponents.controls.VerticalRule
 import app.uicomponents.controls.controlStates
 import app.uicomponents.controls.pressFeedback
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.connect_engine_badge_default
-import syncplaymobile.shared.generated.resources.connect_engine_badge_experimental
-import syncplaymobile.shared.generated.resources.connect_engine_badge_system
-import syncplaymobile.shared.generated.resources.connect_engine_badge_unavailable
-import syncplaymobile.shared.generated.resources.engine_info_avplayer
-import syncplaymobile.shared.generated.resources.engine_info_exoplayer
-import syncplaymobile.shared.generated.resources.engine_info_kiteplayer
-import syncplaymobile.shared.generated.resources.engine_info_mpv
-import syncplaymobile.shared.generated.resources.engine_info_vlckit
-import syncplaymobile.shared.generated.resources.help_tip
 
 /**
  * Every engine at once: one hairline frame, one cell per engine with its mark, name and badge,
@@ -126,7 +115,7 @@ fun HomeEnginePicker(
         EngineInfoMorph(
             selectedIndex = selectedIndex.coerceAtLeast(0),
             count = engines.size,
-            info = engines.getOrNull(selectedIndex)?.let(::infoOf)?.let { stringResource(it) },
+            info = engines.getOrNull(selectedIndex)?.let { infoOf(it, strings) },
         )
     }
 }
@@ -146,7 +135,7 @@ private fun EngineInfoMorph(selectedIndex: Int, count: Int, info: String?) {
     val p = palette
     var open by remember { mutableStateOf(false) }
     val source = remember { MutableInteractionSource() }
-    val name = stringResource(Res.string.help_tip)
+    val name = strings.helpTip
 
     BoxWithConstraints(Modifier.fillMaxWidth().padding(top = Space.gapTight)) {
         val cellWidth = maxWidth / count.coerceAtLeast(1)
@@ -187,15 +176,15 @@ private fun EngineInfoMorph(selectedIndex: Int, count: Int, info: String?) {
 }
 
 /** What a badge says, and in what tone. */
-private class EngineBadge(val label: StringResource, val tone: Tone)
+private class EngineBadge(val label: String, val tone: Tone)
 
 /** The long story of an engine, by name, for the card. */
-private fun infoOf(engine: PlayerEngine): StringResource? = when (engine.name.lowercase()) {
-    "exoplayer" -> Res.string.engine_info_exoplayer
-    "mpv" -> Res.string.engine_info_mpv
-    "kiteplayer" -> Res.string.engine_info_kiteplayer
-    "avplayer" -> Res.string.engine_info_avplayer
-    "vlckit" -> Res.string.engine_info_vlckit
+private fun infoOf(engine: PlayerEngine, s: AppStrings): String? = when (engine.name.lowercase()) {
+    "exoplayer" -> s.engineInfoExoplayer
+    "mpv" -> s.engineInfoMpv
+    "kiteplayer" -> s.engineInfoKiteplayer
+    "avplayer" -> s.engineInfoAvplayer
+    "vlckit" -> s.engineInfoVlckit
     else -> null
 }
 
@@ -203,11 +192,11 @@ private fun infoOf(engine: PlayerEngine): StringResource? = when (engine.name.lo
  * One badge per engine, the most important thing to know first: missing beats experimental
  * beats default beats the platform's own player.
  */
-private fun badgeOf(engine: PlayerEngine): EngineBadge? = when {
-    !engine.isAvailable -> EngineBadge(Res.string.connect_engine_badge_unavailable, Tone.Bad)
-    engine.isExperimental -> EngineBadge(Res.string.connect_engine_badge_experimental, Tone.Warn)
-    engine.isDefault -> EngineBadge(Res.string.connect_engine_badge_default, Tone.Accent)
-    engine.isSystem -> EngineBadge(Res.string.connect_engine_badge_system, Tone.Neutral)
+private fun badgeOf(engine: PlayerEngine, s: AppStrings): EngineBadge? = when {
+    !engine.isAvailable -> EngineBadge(s.connectEngineBadgeUnavailable, Tone.Bad)
+    engine.isExperimental -> EngineBadge(s.connectEngineBadgeExperimental, Tone.Warn)
+    engine.isDefault -> EngineBadge(s.connectEngineBadgeDefault, Tone.Accent)
+    engine.isSystem -> EngineBadge(s.connectEngineBadgeSystem, Tone.Neutral)
     else -> null
 }
 
@@ -216,10 +205,10 @@ private fun EngineCell(engine: PlayerEngine, active: Boolean, compact: Boolean, 
     val p = palette
     val source = remember { MutableInteractionSource() }
     val available = engine.isAvailable
-    val badge = badgeOf(engine)
+    val badge = badgeOf(engine, strings)
     val fill by animateColorAsState(if (active) p.accent.copy(alpha = 0.16f) else p.accent.copy(alpha = 0f), Motion.quick(), label = "fill")
     val edge by animateColorAsState(if (active) p.accent else p.accent.copy(alpha = 0f), Motion.quick(), label = "edge")
-    val spoken = engine.name + (badge?.let { ", " + stringResource(it.label) } ?: "")
+    val spoken = engine.name + (badge?.let { ", " + it.label } ?: "")
 
     Column(
         modifier = modifier
@@ -264,7 +253,7 @@ private fun EngineCell(engine: PlayerEngine, active: Boolean, compact: Boolean, 
         )
         if (badge != null) {
             Spacer(Modifier.height(Space.gapTight))
-            Tag(stringResource(badge.label), tone = badge.tone, filled = active && badge.tone != Tone.Neutral, autoSize = true)
+            Tag(badge.label, tone = badge.tone, filled = active && badge.tone != Tone.Neutral, autoSize = true)
         }
     }
 }

@@ -8,7 +8,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import syncplaymobile.shared.generated.resources.modal_dismiss
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -30,6 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import app.i18n.strings
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -38,9 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.action_close
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -132,7 +129,7 @@ internal fun ModalFrame(
     val panelMaxWidth = if (windowHeight < SHORT_WINDOW) 720.dp else 440.dp
     val visible = remember { MutableTransitionState(false) }.apply { targetState = true }
     val focusRequester = remember { FocusRequester() }
-    val dismissLabel = stringResource(Res.string.modal_dismiss)
+    val dismissLabel = strings.modalDismiss
     LaunchedEffect(Unit) { runCatching { focusRequester.requestFocus() } }
 
     Box(
@@ -181,7 +178,7 @@ internal fun ModalFrame(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(title, style = Type.label, color = p.ink, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
-                        if (dismissable) GlyphButton(CloseGlyph, name = stringResource(Res.string.action_close), onClick = onDismiss, tint = p.inkDim)
+                        if (dismissable) GlyphButton(CloseGlyph, name = strings.actionClose, onClick = onDismiss, tint = p.inkDim)
                     }
                     Rule()
                 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import app.i18n.strings
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,13 +42,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import app.LocalRoomViewmodel
 import app.utils.platformCallback
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_chat_copied
-import syncplaymobile.shared.generated.resources.room_chat_image_hidden
-import syncplaymobile.shared.generated.resources.room_chat_show_image
 import app.uicomponents.AnimatedImage
-import syncplaymobile.shared.generated.resources.room_chat_image_from
 
 /** How chat text is drawn: the size preference (floored at 5), the outline and shadow switches. */
 class MessageStyle(fontSize: Int, val outline: Float?, val shadow: Boolean, val showTime: Boolean) {
@@ -78,7 +73,7 @@ fun MessageRow(
 ) {
     val p = palette
     val viewmodel = LocalRoomViewmodel.current
-    val copied = stringResource(Res.string.room_chat_copied)
+    val copied = strings.roomChatCopied
     val sinceMs = if (previous == null) Long.MAX_VALUE else message.epochMs - previous.epochMs
     val grouped = message.sender != null && previous?.sender == message.sender && sinceMs < GROUP_WINDOW_MS
     val showTime = style.showTime && sinceMs > GROUP_WINDOW_MS
@@ -138,7 +133,7 @@ fun MessageRow(
                             url = message.content,
                             // A chat image said nothing at all to a screen reader. Now it at
                             // least says who sent it, which is what the eye gets too.
-                            contentDescription = stringResource(Res.string.room_chat_image_from, message.sender ?: ""),
+                            contentDescription = strings.roomChatImageFrom(message.sender ?: ""),
                             contentScale = ContentScale.Crop,
                             alpha = imageAlpha,
                             modifier = Modifier.padding(top = 2.dp).size(CHAT_IMAGE_SIZE).clip(Radius.controlShape),
@@ -147,14 +142,14 @@ fun MessageRow(
                         /* A peer's link is not fetched on sight: that would hand their chosen host
                          * the address of every device in the room. One tap loads it. */
                         Text(
-                            text = stringResource(Res.string.room_chat_image_hidden, message.imageHost),
+                            text = strings.roomChatImageHidden(message.imageHost),
                             style = body,
                             color = chatPalette.systemmsgColor,
                             modifier = Modifier
                                 .padding(top = 2.dp)
                                 .clip(Radius.controlShape)
                                 .clickable(
-                                    onClickLabel = stringResource(Res.string.room_chat_show_image, message.imageHost),
+                                    onClickLabel = strings.roomChatShowImage(message.imageHost),
                                 ) { viewmodel.uiState.revealedImages.add(message.content) }
                                 .padding(vertical = 2.dp),
                         )

@@ -31,6 +31,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import app.LocalRoomViewmodel
+import app.i18n.strings
 import app.preferences.Preferences.CUSTOM_SEEK_AMOUNT
 import app.preferences.Preferences.CUSTOM_SEEK_FRONT
 import app.preferences.Preferences.SEEK_BACKWARD_JUMP
@@ -48,11 +49,6 @@ import app.uicomponents.controls.RowGap
 import app.uicomponents.controls.Text
 import app.uicomponents.controls.controlStates
 import app.uicomponents.controls.pressFeedback
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_custom_skip_button
-import syncplaymobile.shared.generated.resources.room_jump_back
-import syncplaymobile.shared.generated.resources.room_jump_forward
 import app.uicomponents.controls.touchTarget
 
 /**
@@ -74,15 +70,15 @@ fun RoomTransportKeys(modifier: Modifier = Modifier) {
         RoomPlayButton(modifier = Modifier)
         Spacer(Modifier.height(Space.gap))
         Row(horizontalArrangement = Arrangement.spacedBy(Space.gapTight), verticalAlignment = Alignment.CenterVertically) {
-            JumpKey(Icons.Filled.FastRewind, stringResource(Res.string.room_jump_back, back), "$back s") {
+            JumpKey(Icons.Filled.FastRewind, strings.roomJumpBack(back), "$back s") {
                 viewmodel.dispatcher.seekBckwd()
             }
-            JumpKey(Icons.Filled.FastForward, stringResource(Res.string.room_jump_forward, forward), "$forward s") {
+            JumpKey(Icons.Filled.FastForward, strings.roomJumpForward(forward), "$forward s") {
                 viewmodel.dispatcher.seekFrwrd()
             }
             // The longer skip from the settings, beside the two jumps when the setting asks for it.
             if (customSkip) {
-                JumpKey(Icons.Filled.Update, stringResource(Res.string.room_custom_skip_button, timestampFromMillis(customAmount * 1000L)), "$customAmount s") {
+                JumpKey(Icons.Filled.Update, strings.roomCustomSkipButton(timestampFromMillis(customAmount * 1000L)), "$customAmount s") {
                     viewmodel.customSkip()
                 }
             }
