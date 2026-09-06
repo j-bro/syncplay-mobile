@@ -303,6 +303,11 @@ tasks.matching { it.name.startsWith("compile") || it.name.startsWith("ksp") }.co
     if (name != "kspCommonMainKotlinMetadata") dependsOn("kspCommonMainKotlinMetadata")
 }
 
+/* Lint's host-test model reads KSP output. Gradle 9 refuses to infer the ordering and fails the
+ * build with an implicit-dependency error, so it is declared. */
+tasks.matching { it.name == "generateAndroidHostTestLintModel" || it.name == "lintAnalyzeAndroidHostTest" }
+    .configureEach { dependsOn("kspAndroidHostTest") }
+
 ktorfit {
     // The Ktorfit compiler plugin is built against a specific Kotlin compiler ABI, so this
     // must track the `kotlin` version in libs.versions.toml, NOT the ktorfit lib version.

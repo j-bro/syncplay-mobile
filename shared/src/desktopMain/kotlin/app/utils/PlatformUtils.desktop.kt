@@ -199,8 +199,9 @@ actual fun fileExists(path: String): Boolean = try {
     false
 }
 
-/** mpv's user config file — the desktop mpv engine runs with config=yes and this config-dir,
- *  so mpv.conf import/export and the libass subfont install work like on Android. */
+/** Where an mpv config would live on this platform. Nothing reads it: the only desktop engine
+ *  is KitePlayer, and the mpv rows are Android's. Kept so the expect declaration is satisfied
+ *  and a path exists if a desktop mpv ever arrives. */
 actual fun getMpvConfFilePath(): String? = try {
     val dir = java.io.File(desktopAppDataDir, "mpv").apply { mkdirs() }
     java.io.File(dir, "mpv.conf").absolutePath

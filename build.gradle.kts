@@ -152,6 +152,8 @@ detekt {
             "shared/src/commonMain/kotlin",
             "shared/src/androidMain/kotlin",
             "shared/src/desktopMain/kotlin",
+            // Android and desktop share these files, so nothing else was reading them.
+            "shared/src/jvmShared/kotlin",
             "shared/src/iosMain/kotlin",
             "shared/src/commonTest/kotlin",
             "shared/src/desktopTest/kotlin",

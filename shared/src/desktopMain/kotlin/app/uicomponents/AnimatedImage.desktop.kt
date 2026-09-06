@@ -57,8 +57,12 @@ actual fun AnimatedImage(
     var frameIndex by remember(anim) { mutableIntStateOf(0) }
 
     if (anim.frames.size > 1) {
-        LaunchedEffect(anim) {
-            var i = 0
+        // Keyed on visibility too. A GIF at alpha 0 is a GIF nobody is looking at, and the room
+        // keeps its panels composed while the HUD is hidden, so every one of them kept decoding.
+        val visible = alpha > 0f
+        LaunchedEffect(anim, visible) {
+            if (!visible) return@LaunchedEffect
+            var i = frameIndex
             while (isActive) {
                 delay(anim.frames[i].durationMs)
                 i = (i + 1) % anim.frames.size

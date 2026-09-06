@@ -7,7 +7,7 @@ package app.player.resolver
  * locally installed `yt-dlp` binary. Mobile has no such binary on PATH, so each platform
  * provides its own pure-native extractor:
  *  - Android: NewPipe Extractor (com.github.TeamNewPipe:NewPipeExtractor) — JVM/Java, no Python.
- *  - iOS: XCDYouTubeKit — Objective-C, YouTube only, no Python.
+ *  - iOS: YouTubeKit — Swift, YouTube only, no Python.
  *
  * Each client resolves independently at retrieve time. The shared playlist still stores the
  * *original* page URL (e.g. `youtube.com/watch?v=…`) — direct stream URLs are typically
@@ -24,8 +24,8 @@ interface MediaResolver {
 
 /**
  * The platform's native [MediaResolver]. Initialized lazily on first use.
- *  - Android: NewPipe Extractor — YouTube, SoundCloud, PeerTube, Bandcamp, MediaCCC.
- *  - iOS: XCDYouTubeKit — YouTube only.
+ *  - Android and desktop: NewPipe Extractor — YouTube, SoundCloud, PeerTube, Bandcamp, MediaCCC.
+ *  - iOS: YouTubeKit — YouTube only.
  */
 expect val mediaResolver: MediaResolver
 
@@ -72,7 +72,7 @@ private val DIRECT_MEDIA_EXTENSIONS = listOf(
  *  - m.youtube.com / music.youtube.com (subdomains)
  *
  * Returns null if the URL is not a recognizable YouTube link. Used by the iOS resolver,
- * since XCDYouTubeKit's API takes a raw video ID rather than a URL string.
+ * since YouTubeKit takes a raw video ID rather than a URL string.
  */
 fun extractYoutubeId(url: String): String? = YOUTUBE_ID_REGEX.find(url)?.groupValues?.getOrNull(1)
 

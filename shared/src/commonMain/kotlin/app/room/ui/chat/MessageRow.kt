@@ -167,7 +167,9 @@ fun MessageRow(
         }
         if (showTime) {
             Text(
-                text = message.timestamp.take(5),
+                // Whole, not the first five characters: a 12-hour clock reads "9:05 PM", and
+                // cutting at five turned that into "9:05" for every afternoon message.
+                text = message.timestamp,
                 style = Type.value,
                 color = chatPalette.timestampColor,
                 maxLines = 1,

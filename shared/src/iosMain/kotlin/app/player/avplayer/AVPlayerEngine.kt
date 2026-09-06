@@ -44,7 +44,9 @@ import platform.AVFoundation.pause
 import platform.AVFoundation.rate
 import platform.AVFoundation.seekToTime
 import platform.AVFoundation.seekableTimeRanges
+import platform.AVFoundation.currentMediaSelection
 import platform.AVFoundation.selectMediaOption
+import platform.AVFoundation.selectedMediaOptionInMediaSelectionGroup
 import platform.AVFoundation.setVolume
 import platform.AVFoundation.timeControlStatus
 import platform.AVFoundation.volume
@@ -300,7 +302,10 @@ object AVPlayerEngine: PlayerEngine {
                                 name = option.displayName + " [${option.extendedLanguageTag}]",
                                 index = i,
                                 type = if (option.mediaType == AVMediaTypeAudio) TrackType.AUDIO else TrackType.SUBTITLE,
-                                selected = group.defaultOption == option
+                                // What is playing, not what the file suggests: comparing against
+                                // the group's default meant the tick never moved off track one.
+                                selected = avPlayer?.currentItem?.currentMediaSelection
+                                    ?.selectedMediaOptionInMediaSelectionGroup(group) == option
                             )
                         )
                     }

@@ -1,6 +1,5 @@
 package app
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
@@ -53,6 +52,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 import java.lang.ref.WeakReference
 import android.graphics.Rect
+import androidx.core.content.ContextCompat
 import app.room.VideoBounds
 
 /**
@@ -388,16 +388,17 @@ class SyncplayActivity : ComponentActivity() {
      *
      * Registers the PiP broadcast receiver and reapplies player track choices.
      */
-    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onResume() {
         super.onResume()
-        val filter = IntentFilter(PIP_ACTION)
-        // Not exported: only our own PendingIntent (explicit, package-bound) may pause the room.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(pipBroadcastReceiver, filter, RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(pipBroadcastReceiver, filter)
-        }
+        /* Not exported on every API level, not only on 13 and up: below Tiramisu the
+         * two-argument call registers an exported receiver, so any app on the device could
+         * broadcast the action and pause the room. ContextCompat carries the flag back. */
+        ContextCompat.registerReceiver(
+            this,
+            pipBroadcastReceiver,
+            IntentFilter(PIP_ACTION),
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
 
         /** Applying track choices again so the player doesn't forget about track choices **/
         lifecycleScope.launch {
