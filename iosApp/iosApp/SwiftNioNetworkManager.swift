@@ -69,7 +69,7 @@ class SwiftNioNetworkManager: NetworkManager, ChannelInboundHandler, @unchecked 
     override func writeActualString(s: String) async throws {
         guard let channel = channel else {
             // asError() keeps the Kotlin type, so the shared retry logic can tell "no socket" apart.
-            throw NetworkManagerSocketGoneException().asError()
+            throw NetworkManager.SocketGoneException().asError()
         }
 
         let data = s.data(using: .utf8)!
