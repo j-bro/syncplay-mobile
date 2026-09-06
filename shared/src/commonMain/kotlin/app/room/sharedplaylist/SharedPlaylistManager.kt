@@ -14,6 +14,8 @@ import app.utils.PLAYLIST_MAX_ITEMS
 import app.utils.appName
 import app.utils.playlistIsValid
 import app.utils.generateTimestampMillis
+import app.utils.urlHost
+import app.utils.urlPath
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.name
 import io.github.vinceglb.filekit.readString
@@ -370,7 +372,8 @@ class SharedPlaylistManager(val viewmodel: RoomViewmodel) : AbstractManager(view
     suspend fun retrieveFile(fileName: String) {
         if (isRemoteUrl(fileName)) {
             if (!isUrlTrusted(fileName)) {
-                val domain = extractDomain(fileName)
+                // No host at all still needs a name for the prompt; the raw string is honest.
+                val domain = urlHost(fileName) ?: fileName
                 // Ask instead of refusing. The answer is the user's, and the safe default
                 // (nothing plays until they say so) is unchanged.
                 pendingUntrusted.value = UntrustedUrl(fileName, domain)
@@ -440,17 +443,6 @@ class SharedPlaylistManager(val viewmodel: RoomViewmodel) : AbstractManager(view
             s.startsWith("https://", true)
 
     /**
-     * Extracts the domain from a URL string (e.g. "https://cdn.example.com/file.mp4" → "cdn.example.com").
-     */
-    private fun extractDomain(url: String): String {
-        return url
-            .substringAfter("://")
-            .substringBefore("/")
-            .substringBefore(":")
-            .lowercase()
-    }
-
-    /**
      * Checks whether a remote URL is allowed to auto-load.
      *
      * Mirrors PC's `_isURITrustableAndTrusted` (client.py:565) with `onlySwitchToTrustedDomains`
@@ -469,17 +461,11 @@ class SharedPlaylistManager(val viewmodel: RoomViewmodel) : AbstractManager(view
         // Nothing configured: do not auto-trust arbitrary peer-pushed URLs (PC safe default).
         if (trustedEntries.isEmpty()) return false
 
-        val urlDomain = extractDomain(url)
-        val urlPath = extractPath(url)
+        // A URL whose host cannot be read is not a URL anyone approved.
+        val urlDomain = urlHost(url) ?: return false
+        val path = urlPath(url)
 
-        return trustedEntries.any { entry -> trustedEntryMatches(entry, urlDomain, urlPath) }
-    }
-
-    /** Extracts the path component, e.g. "https://h.com/videos/x.mp4" → "/videos/x.mp4". */
-    private fun extractPath(url: String): String {
-        val afterScheme = url.substringAfter("://")
-        val slash = afterScheme.indexOf('/')
-        return if (slash >= 0) afterScheme.substring(slash) else ""
+        return trustedEntries.any { entry -> trustedEntryMatches(entry, urlDomain, path) }
     }
 
     companion object {

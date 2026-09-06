@@ -1,6 +1,7 @@
 package app.room.models
 
 import app.utils.generateClockstamp
+import app.utils.urlHost
 import kotlinx.atomicfu.atomic
 import kotlin.time.Clock
 
@@ -64,7 +65,7 @@ data class Message(
 
     /** The host an image came from, for the "load this?" line and the trust check below. */
     val imageHost: String
-        get() = content.substringAfter("://", "").substringBefore('/').substringBefore(':').lowercase()
+        get() = urlHost(content) ?: ""
 
     /**
      * Whether this image may load without being asked for.
