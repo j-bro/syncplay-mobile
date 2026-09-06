@@ -49,12 +49,15 @@ import syncplaymobile.shared.generated.resources.room_chat_show_image
 import app.uicomponents.AnimatedImage
 import syncplaymobile.shared.generated.resources.room_chat_image_from
 
-/** How chat text is drawn: the size preference (floored at 11), the outline and shadow switches. */
+/** How chat text is drawn: the size preference (floored at 5), the outline and shadow switches. */
 class MessageStyle(fontSize: Int, val outline: Float?, val shadow: Boolean, val showTime: Boolean) {
-    val fontSize = fontSize.coerceAtLeast(11)
+    val fontSize = fontSize.coerceAtLeast(5)
 }
 
 private const val GROUP_WINDOW_MS = 60_000L
+
+/** A chat image reads at a glance without taking the column. Halfway between the old 64 and 96. */
+private val CHAT_IMAGE_SIZE = 80.dp
 
 /**
  * One chat line in one of two shapes. A person: the name in the tag colour, the message under it,
@@ -80,7 +83,7 @@ fun MessageRow(
     val grouped = message.sender != null && previous?.sender == message.sender && sinceMs < GROUP_WINDOW_MS
     val showTime = style.showTime && sinceMs > GROUP_WINDOW_MS
     val body = Type.note.copy(fontSize = style.fontSize.sp, lineHeight = (style.fontSize + 6).sp)
-    val name = Type.value.copy(fontSize = (style.fontSize - 1).coerceAtLeast(11).sp)
+    val name = Type.value.copy(fontSize = (style.fontSize - 1).coerceAtLeast(5).sp)
     val spoken = listOfNotNull(message.sender, message.timestamp, message.content).joinToString(", ")
 
     Row(
@@ -138,7 +141,7 @@ fun MessageRow(
                             contentDescription = stringResource(Res.string.room_chat_image_from, message.sender ?: ""),
                             contentScale = ContentScale.Crop,
                             alpha = imageAlpha,
-                            modifier = Modifier.padding(top = 2.dp).size(96.dp).clip(Radius.controlShape),
+                            modifier = Modifier.padding(top = 2.dp).size(CHAT_IMAGE_SIZE).clip(Radius.controlShape),
                         )
                     } else {
                         /* A peer's link is not fetched on sight: that would hand their chosen host
