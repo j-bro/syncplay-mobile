@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import app.i18n.roomUserCount
 import app.i18n.strings
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
@@ -34,10 +35,7 @@ import app.uicomponents.controls.UnlockGlyph
 import app.uicomponents.controls.GlyphButton
 import app.uicomponents.controls.RowGap
 import app.uicomponents.controls.Tag
-import org.jetbrains.compose.resources.pluralStringResource
-import syncplaymobile.shared.generated.resources.Res
 import app.protocol.sync.AutoplayState
-import syncplaymobile.shared.generated.resources.room_user_count
 
 private val EPISODE = Regex("(?:s|season)(\\d{1,2})(?:e|episode)(\\d{1,2})")
 
@@ -80,7 +78,7 @@ fun RoomStatusInfoSection(modifier: Modifier = Modifier) {
 
     val state = when (connectionState) {
         ConnectionState.CONNECTED -> readinessLine
-            ?: pluralStringResource(Res.plurals.room_user_count, totalUsers, totalUsers)
+            ?: strings.roomUserCount(totalUsers)
         ConnectionState.CONNECTING -> strings.roomConnecting
         ConnectionState.SCHEDULING_RECONNECT -> strings.roomReconnecting
         ConnectionState.DISCONNECTED -> strings.roomPingDisconnected

@@ -41,8 +41,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.uisetting_categ_mpv
 import kotlin.math.roundToLong
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -114,7 +112,8 @@ class MpvImpl(vm: RoomViewmodel) : PlayerImpl(vm, MpvEngine) {
     }
 
     override suspend fun configurableSettings() = SettingCategory(
-        title = Res.string.uisetting_categ_mpv,
+        key = "engine-mpv",
+        title = { it.uisettingCategMpv },
         icon = Icons.Filled.SettingsInputComponent
     ) {
         +MPV_HARDWARE_ACCELERATION.withControl(PrefExtraConfig.BooleanCallback { b ->

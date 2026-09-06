@@ -22,9 +22,7 @@ import app.preferences.settings.SettingEntry
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import org.jetbrains.compose.resources.StringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.okay
+import app.i18n.AppStrings
 
 class Pref<T>(
     val key: String,
@@ -72,10 +70,12 @@ inline fun <reified T> prefKeyMapper(name: String): Preferences.Key<T> {
 }
 
 
+/** One line of copy, picked out of whatever language the app is showing. */
+typealias Localized = (AppStrings) -> String
+
 data class SettingConfig(
-    var title: StringResource = Res.string.okay,
-    var summary: StringResource = Res.string.okay,
-    var summaryFormatArgs: Array<Any> = emptyArray(),
+    var title: Localized = { it.okay },
+    var summary: Localized? = null,
     var icon: ImageVector = Icons.Filled.Done,
 
     var dependencyEnable: () -> Boolean = { true },
@@ -86,7 +86,7 @@ data class SettingConfig(
     var stateSummary: (@Composable (Any?) -> String)? = null,
 
     /** Caveats and defaults, shown only in the editor, under the summary. */
-    var detail: StringResource? = null,
+    var detail: Localized? = null,
 )
 /**
  * Returns the cached [Preferences.Key] for this pref, creating it on first access.

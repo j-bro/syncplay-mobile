@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import app.i18n.strings
 import app.uicomponents.controls.Icon
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
@@ -27,9 +28,6 @@ import app.uicomponents.controls.ListRow
 import app.uicomponents.controls.RowGap
 import app.uicomponents.controls.RowLabel
 import app.uicomponents.controls.Rule
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.settings_search_no_results
 
 /*
  * The settings content, shared by the global screen and the in-room panel: the category list,
@@ -56,7 +54,7 @@ fun SettingsCategoryBody(category: SettingCategory, modifier: Modifier = Modifie
                     previousOpen = false
                     afterGroupRule = true
                 }
-                group.title?.let { GroupHeading(stringResource(it)) }
+                group.title?.let { GroupHeading(it(strings)) }
                 group.entries.forEach { entry ->
                     val open = showAll || inline || expanded[entry.pref.key] == true
                     if ((open || previousOpen) && !afterGroupRule) InsetRule()
@@ -98,7 +96,7 @@ fun SettingsCategoryList(
                     ) {
                         Icon(category.icon, contentDescription = null, tint = p.inkDim, modifier = Modifier.size(Space.glyph))
                         RowGap()
-                        RowLabel(stringResource(category.title))
+                        RowLabel(category.title(strings))
                         if (columns == 1) Chevron(ChevronDirection.Right)
                     }
                 }
@@ -121,7 +119,7 @@ class SettingsHit(
 @Composable
 fun settingsIndex(categories: List<SettingCategory>): List<SettingsHit> = buildList {
     for (category in categories) {
-        val categoryTitle = stringResource(category.title)
+        val categoryTitle = category.title(strings)
         for (entry in category.entries) {
             val cfg = entry.pref.config ?: continue
             add(
@@ -129,8 +127,8 @@ fun settingsIndex(categories: List<SettingCategory>): List<SettingsHit> = buildL
                     category = category,
                     entry = entry,
                     categoryTitle = categoryTitle,
-                    title = stringResource(cfg.title),
-                    summary = stringResource(cfg.summary, *cfg.summaryFormatArgs),
+                    title = cfg.title(strings),
+                    summary = cfg.summary?.invoke(strings).orEmpty(),
                 )
             )
         }
@@ -150,7 +148,7 @@ fun SettingsSearchResults(hits: List<SettingsHit>, modifier: Modifier = Modifier
     Column(modifier.fillMaxWidth()) {
         if (hits.isEmpty()) {
             Text(
-                text = stringResource(Res.string.settings_search_no_results),
+                text = strings.settingsSearchNoResults,
                 style = Type.note,
                 color = p.inkDim,
                 modifier = Modifier.padding(horizontal = Space.gutter, vertical = Space.gap),

@@ -83,30 +83,10 @@ import app.preferences.Preferences.TLS_ENABLE
 import app.preferences.Preferences.TLS_REQUIRED
 import app.preferences.Preferences.TRUSTED_DOMAINS
 import app.preferences.Preferences.UNPAUSE_ACTION
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.settings_categ_advanced
-import syncplaymobile.shared.generated.resources.settings_categ_general
-import syncplaymobile.shared.generated.resources.settings_categ_language
-import syncplaymobile.shared.generated.resources.settings_categ_network
-import syncplaymobile.shared.generated.resources.settings_categ_syncing
-import syncplaymobile.shared.generated.resources.settings_group_chapters
-import syncplaymobile.shared.generated.resources.settings_group_connection
-import syncplaymobile.shared.generated.resources.settings_group_links
-import syncplaymobile.shared.generated.resources.settings_group_logs
-import syncplaymobile.shared.generated.resources.settings_group_messages
-import syncplaymobile.shared.generated.resources.settings_group_picture
-import syncplaymobile.shared.generated.resources.settings_group_privacy
-import syncplaymobile.shared.generated.resources.settings_group_readiness
-import syncplaymobile.shared.generated.resources.settings_group_seeking
-import syncplaymobile.shared.generated.resources.settings_group_subtitles
-import syncplaymobile.shared.generated.resources.uisetting_categ_chat_properties
-import syncplaymobile.shared.generated.resources.uisetting_categ_haptics
-import syncplaymobile.shared.generated.resources.uisetting_categ_notices
-import syncplaymobile.shared.generated.resources.uisetting_categ_player_settings
-import syncplaymobile.shared.generated.resources.uisetting_categ_sync_mechanisms
 
 val GLOBAL_GENERAL = SettingCategory(
-    title = Res.string.settings_categ_general,
+    key = "general",
+    title = { it.settingsCategGeneral },
     icon = Icons.Filled.SettingsSuggest
 ) {
     +REMEMBER_INFO
@@ -120,7 +100,8 @@ val GLOBAL_GENERAL = SettingCategory(
 }
 
 val GLOBAL_LANGUAGE = SettingCategory(
-    title = Res.string.settings_categ_language,
+    key = "language",
+    title = { it.settingsCategLanguage },
     icon = Icons.Filled.Translate
 ) {
     +DISPLAY_LANG
@@ -129,15 +110,16 @@ val GLOBAL_LANGUAGE = SettingCategory(
 }
 
 val GLOBAL_SYNCING = SettingCategory(
-    title = Res.string.settings_categ_syncing,
+    key = "syncing",
+    title = { it.settingsCategSyncing },
     icon = Icons.Filled.ConnectWithoutContact
 ) {
-    group(Res.string.settings_group_readiness) {
+    group({ it.settingsGroupReadiness }) {
         +READY_FIRST_HAND
         +UNPAUSE_ACTION
         +PAUSE_ON_SOMEONE_LEAVE
     }
-    group(Res.string.settings_group_privacy) {
+    group({ it.settingsGroupPrivacy }) {
         +FILE_MISMATCH_WARNING
         +HASH_FILENAME
         +HASH_FILESIZE
@@ -145,26 +127,28 @@ val GLOBAL_SYNCING = SettingCategory(
 }
 
 val GLOBAL_NETWORK = SettingCategory(
-    title = Res.string.settings_categ_network,
+    key = "network",
+    title = { it.settingsCategNetwork },
     icon = Icons.Filled.Hub
 ) {
-    group(Res.string.settings_group_connection) {
+    group({ it.settingsGroupConnection }) {
         +TLS_ENABLE
         +TLS_REQUIRED
         +NETWORK_ENGINE
     }
-    group(Res.string.settings_group_links) {
+    group({ it.settingsGroupLinks }) {
         +MEDIA_RESOLVER_ENABLED
         +TRUSTED_DOMAINS
     }
 }
 
 val GLOBAL_ADVANCED = SettingCategory(
-    title = Res.string.settings_categ_advanced,
+    key = "advanced",
+    title = { it.settingsCategAdvanced },
     icon = Icons.Filled.Stream
 ) {
     +DISABLE_FROSTED_GLASS
-    group(Res.string.settings_group_logs) {
+    group({ it.settingsGroupLogs }) {
         +EXPORT_SETTINGS
         +IMPORT_SETTINGS
         +EXPORT_LOGS
@@ -174,7 +158,8 @@ val GLOBAL_ADVANCED = SettingCategory(
 }
 
 val INROOM_SYNC = SettingCategory(
-    title = Res.string.uisetting_categ_sync_mechanisms,
+    key = "room-sync",
+    title = { it.uisettingCategSyncMechanisms },
     icon = Icons.Filled.ConnectWithoutContact,
 ) {
     +SYNC_DONT_SLOW_WITH_ME
@@ -190,10 +175,11 @@ val INROOM_SYNC = SettingCategory(
 }
 
 val INROOM_CHAT_PROPERTIES = SettingCategory(
-    title = Res.string.uisetting_categ_chat_properties,
+    key = "room-chat",
+    title = { it.uisettingCategChatProperties },
     icon = Icons.AutoMirrored.Filled.Chat
 ) {
-    group(Res.string.settings_group_messages) {
+    group({ it.settingsGroupMessages }) {
         +CHAT_COLORS_ENTRY
         +CHAT_SUBTITLE_CLEARANCE
         +MSG_OUTLINE_THICKNESS
@@ -212,7 +198,8 @@ val INROOM_CHAT_PROPERTIES = SettingCategory(
  * these are interruptions, so they get their own category instead of a group under chat.
  */
 val INROOM_NOTICES = SettingCategory(
-    title = Res.string.uisetting_categ_notices,
+    key = "room-notices",
+    title = { it.uisettingCategNotices },
     icon = Icons.Filled.Campaign,
 ) {
     +OSD_DURATION
@@ -224,35 +211,37 @@ val INROOM_NOTICES = SettingCategory(
 }
 
 val INROOM_PLAYER_SETTINGS = SettingCategory(
-    title = Res.string.uisetting_categ_player_settings,
+    key = "room-player",
+    title = { it.uisettingCategPlayerSettings },
     icon = Icons.Filled.VideoLabel,
 ) {
     +SUBTITLE_SIZE
     +HUD_AUTO_HIDE_SECONDS
     +ROOM_ALLOW_PORTRAIT
-    group(Res.string.settings_group_seeking) {
+    group({ it.settingsGroupSeeking }) {
         +SEEK_FORWARD_JUMP
         +SEEK_BACKWARD_JUMP
         +CUSTOM_SEEK_FRONT
         +CUSTOM_SEEK_AMOUNT
     }
-    group(Res.string.settings_group_subtitles) {
+    group({ it.settingsGroupSubtitles }) {
         /* Preferred track languages, mirrored from the global Language category so they are
          * reachable mid-session too. */
         +CC_LANG
         +AUDIO_LANG
     }
-    group(Res.string.settings_group_chapters) {
+    group({ it.settingsGroupChapters }) {
         +SHOW_CHAPTER_DOTS
         +CHAPTER_DOTS_CLICKABLE
     }
-    group(Res.string.settings_group_picture) {
+    group({ it.settingsGroupPicture }) {
         +VIDEO_BACKGROUND_COLOR
     }
 }
 
 val INROOM_HAPTICS = SettingCategory(
-    title = Res.string.uisetting_categ_haptics,
+    key = "room-haptics",
+    title = { it.uisettingCategHaptics },
     icon = Icons.Filled.Vibration,
 ) {
     +HAPTIC_ON_JOINED
@@ -266,7 +255,8 @@ val INROOM_HAPTICS = SettingCategory(
 }
 
 val INROOM_ADVANCED = SettingCategory(
-    title = Res.string.settings_categ_advanced,
+    key = "room-advanced",
+    title = { it.settingsCategAdvanced },
     icon = Icons.Filled.Stream
 ) {
     +RECONNECTION_INTERVAL
@@ -295,7 +285,7 @@ val SETTINGS_ROOM: List<SettingCategory> = listOf(
 /** The room's categories, with the active engine's rows folded into the player category. */
 fun roomSettings(engine: SettingCategory?): List<SettingCategory> {
     if (engine == null) return SETTINGS_ROOM
-    val player = SettingCategory(INROOM_PLAYER_SETTINGS.title, INROOM_PLAYER_SETTINGS.icon) {
+    val player = SettingCategory(INROOM_PLAYER_SETTINGS.key, INROOM_PLAYER_SETTINGS.title, INROOM_PLAYER_SETTINGS.icon) {
         INROOM_PLAYER_SETTINGS.groups.forEach { include(it) }
         include(SettingGroup(engine.title, engine.entries))
     }

@@ -50,8 +50,6 @@ import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.uisetting_categ_exo
 import java.util.Collections
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -253,7 +251,8 @@ class ExoImpl(vm: RoomViewmodel) : PlayerImpl(vm, ExoEngine) {
     }
 
     override suspend fun configurableSettings() = SettingCategory(
-        title = Res.string.uisetting_categ_exo,
+        key = "engine-exo",
+        title = { it.uisettingCategExo },
         icon = Icons.Filled.SettingsInputComponent
     ) {
         +EXO_MAX_BUFFER; +EXO_MIN_BUFFER; +EXO_SEEK_BUFFER

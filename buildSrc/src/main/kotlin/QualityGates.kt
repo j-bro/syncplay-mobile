@@ -31,6 +31,7 @@ fun Project.registerQualityGates() {
         registerProtocolThrowsGate(),
         registerStringResourceGate(),
         registerLocaleParityGate(),
+        registerStringArgumentGate(),
         registerDeadResourceGate(),
         registerSettingsReachabilityGate(),
         registerDestroyContractGate(),
@@ -38,7 +39,7 @@ fun Project.registerQualityGates() {
     ) + registerDocVersionGates().take(1)
     tasks.register("qualityGates") {
         group = GATE_GROUP
-        description = "Runs all eight build-time gates: protocol throws, string resources, locale parity, dead resources, settings reachability, destroy contract, store metadata, doc versions."
+        description = "Runs all nine build-time gates: protocol throws, string resources, locale parity, string arguments, dead resources, settings reachability, destroy contract, store metadata, doc versions."
         dependsOn(gates)
     }
     gradle.projectsEvaluated {
@@ -191,6 +192,63 @@ private fun Project.registerLocaleParityGate(): TaskProvider<*> {
 }
 
 /**
+ * Placeholders must line up across languages.
+ *
+ * The string generator strips the `%1$` position markers and fills what is left from left to
+ * right, so a translation that reorders its placeholders would put the room name where the
+ * password goes, and nothing would say so at runtime. Repeats are refused for the same reason:
+ * `%1$s` twice becomes two separate arguments.
+ */
+private fun Project.registerStringArgumentGate(): TaskProvider<*> {
+    val resourceRoot = file("shared/src/commonMain/composeResources")
+    return tasks.register("checkStringArguments") {
+        group = GATE_GROUP
+        description = "Fails when a translation's placeholders differ in order or number from English."
+        alwaysRun()
+        doLast {
+            val entry = Regex("""<string name="([^"]+)">(.*?)</string>""", RegexOption.DOT_MATCHES_ALL)
+            val marker = Regex("""%(\d+)\$""")
+
+            fun argsIn(dir: String): Map<String, List<Int>> {
+                val xml = File(File(resourceRoot, dir), "strings.xml")
+                if (!xml.isFile) return emptyMap()
+                return entry.findAll(xml.readText()).associate { m ->
+                    m.groupValues[1] to marker.findAll(m.groupValues[2]).map { it.groupValues[1].toInt() }.toList()
+                }
+            }
+
+            val problems = mutableListOf<String>()
+            val source = argsIn("values-en")
+            source.forEach { (key, args) ->
+                if (args.size != args.distinct().size) {
+                    problems += "values-en: '$key' uses a placeholder more than once; give it its own number"
+                }
+            }
+
+            resourceRoot.listFiles().orEmpty()
+                .filter { it.isDirectory && it.name.startsWith("values-") && it.name != "values-en" }
+                .map { it.name }.sorted()
+                .forEach { locale ->
+                    argsIn(locale).forEach { (key, args) ->
+                        val expected = source[key] ?: return@forEach
+                        if (args != expected) {
+                            problems += "$locale: '$key' has $args, values-en has $expected"
+                        }
+                    }
+                }
+
+            if (problems.isNotEmpty()) {
+                throw GradleException(
+                    "Placeholders do not match the source. Filled left to right, these would\n" +
+                        "print the wrong value or none at all:\n" +
+                        problems.joinToString("\n") { "  $it" }
+                )
+            }
+        }
+    }
+}
+
+/**
  * Resources nobody references. The last dead-resource sweep was done by hand and found 117 dead
  * string keys, a shadowed launcher icon set and three unused drawables. This makes it mechanical.
  */
@@ -222,7 +280,12 @@ private fun Project.registerDeadResourceGate(): TaskProvider<*> {
                 }
             }
 
-            val unused = declared.filter { !Regex("""\b${Regex.escape(it)}\b""").containsMatchIn(code) }.sorted()
+            /* Strings are read through Lyricist, which renames every key: connect_username
+             * becomes connectUsername. A key counts as used under either spelling. */
+            val unused = declared.filter { key ->
+                listOf(key, camelCased(key))
+                    .none { Regex("""\b${Regex.escape(it)}\b""").containsMatchIn(code) }
+            }.sorted()
             /* KiteConfig reads these by path when it regenerates launcher assets; no Kotlin
              * ever names them, and deleting them would break kiteRewriteLogo. */
             val ownedByKiteConfig = setOf("synkplay_bg", "synkplay_fg")
@@ -243,6 +306,13 @@ private fun Project.registerDeadResourceGate(): TaskProvider<*> {
             }
         }
     }
+}
+
+/** The name Lyricist gives a string key: `connect_username` becomes `connectUsername`. */
+internal fun camelCased(key: String): String {
+    val parts = key.split("_")
+    return parts.first().lowercase() +
+        parts.drop(1).joinToString("") { part -> part.replaceFirstChar { it.uppercaseChar() } }
 }
 
 /**

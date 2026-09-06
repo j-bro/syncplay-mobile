@@ -7,15 +7,13 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import app.R
 import app.i18n.Localization
+import app.i18n.serverNotificationText
 import app.utils.appName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.getPluralString
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.server_notification_text
 
 /**
  * Android foreground service for keeping the Syncplay server alive when the app is backgrounded.
@@ -43,7 +41,7 @@ class SyncplayServerService : Service() {
         startForeground(NOTIFICATION_ID, buildNotification(text = null))
         scope.launch {
             val text = runCatching {
-                getPluralString(Res.plurals.server_notification_text, clients, port, clients)
+                Localization.strings.serverNotificationText(port, clients)
             }.getOrNull() ?: return@launch
             runCatching {
                 getSystemService(NotificationManager::class.java)

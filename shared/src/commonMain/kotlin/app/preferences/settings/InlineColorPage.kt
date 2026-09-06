@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import app.i18n.strings
 import app.theme.Space
 import app.theme.Type
 import app.theme.palette
@@ -42,9 +43,6 @@ import com.kborowy.colorpicker.config.PickerConfig
 import com.kborowy.colorpicker.config.TrackConfig
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.reset_default
 
 private data class ColorEdit(val color: Color, val save: Boolean = false)
 
@@ -134,7 +132,7 @@ internal fun InlineColorPage(
                         Text(edit.color.hex(), style = Type.value, color = palette.inkDim)
                     }
                 }
-                SecondaryAction(stringResource(Res.string.reset_default), onClick = {
+                SecondaryAction(strings.resetDefault, onClick = {
                     edit = ColorEdit(resetColor)
                     generation++
                     onReset()

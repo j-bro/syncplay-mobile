@@ -1,10 +1,8 @@
 package app.preferences
 
 import androidx.compose.runtime.Composable
+import app.i18n.strings
 import app.utils.localizedLanguageName
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.setting_language_no_preference
 
 /**
  * One offered media language. [iso6392] is what the track preferences store and what the player
@@ -69,7 +67,7 @@ internal val mediaLanguages = listOf(
  */
 @Composable
 internal fun mediaLanguageEntries(): Map<String, String> = buildMap {
-    put(stringResource(Res.string.setting_language_no_preference), "und")
+    put(strings.settingLanguageNoPreference, "und")
     for (language in mediaLanguages) {
         put(localizedLanguageName(language.iso6391) ?: language.englishName, language.iso6392)
     }

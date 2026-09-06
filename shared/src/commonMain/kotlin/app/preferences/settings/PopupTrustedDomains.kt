@@ -3,6 +3,7 @@ package app.preferences.settings
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import app.i18n.strings
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -35,17 +36,8 @@ import app.uicomponents.frames.ModalSize
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
 import syncplaymobile.shared.generated.resources.cancel
 import syncplaymobile.shared.generated.resources.save
-import syncplaymobile.shared.generated.resources.setting_trusted_domains_summary
-import syncplaymobile.shared.generated.resources.setting_trusted_domains_title
-import syncplaymobile.shared.generated.resources.trusted_domains_add
-import syncplaymobile.shared.generated.resources.trusted_domains_add_hint
-import syncplaymobile.shared.generated.resources.trusted_domains_clear
-import syncplaymobile.shared.generated.resources.trusted_domains_empty
-import syncplaymobile.shared.generated.resources.trusted_domains_remove
 
 /**
  * The trusted domains as a list: an inline add row, one hairline row per domain with remove.
@@ -79,17 +71,17 @@ fun TrustedDomainsPopup(visibilityState: MutableState<Boolean>) {
     Modal(
         open = true,
         onDismiss = ::close,
-        title = stringResource(Res.string.setting_trusted_domains_title),
+        title = strings.settingTrustedDomainsTitle,
         size = ModalSize.Panel,
         inset = false,
         actions = {
-            SecondaryAction(stringResource(Res.string.trusted_domains_clear), onClick = { domains.clear() }, enabled = domains.isNotEmpty())
-            SecondaryAction(stringResource(Res.string.cancel), onClick = ::close)
-            AccentAction(stringResource(Res.string.save), onClick = ::save)
+            SecondaryAction(strings.trustedDomainsClear, onClick = { domains.clear() }, enabled = domains.isNotEmpty())
+            SecondaryAction(strings.cancel, onClick = ::close)
+            AccentAction(strings.save, onClick = ::save)
         },
     ) {
         Text(
-            text = stringResource(Res.string.setting_trusted_domains_summary),
+            text = strings.settingTrustedDomainsSummary,
             style = Type.note,
             color = p.inkDim,
             modifier = Modifier.padding(horizontal = Space.gutter, vertical = Space.gap),
@@ -99,18 +91,18 @@ fun TrustedDomainsPopup(visibilityState: MutableState<Boolean>) {
                 value = draft,
                 onValueChange = { draft = it },
                 modifier = Modifier.weight(1f),
-                placeholder = stringResource(Res.string.trusted_domains_add_hint),
+                placeholder = strings.trustedDomainsAddHint,
                 keyboardType = KeyboardType.Uri,
                 imeAction = ImeAction.Done,
                 onImeAction = ::addDraft,
                 showClear = false,
-                name = stringResource(Res.string.trusted_domains_add),
+                name = strings.trustedDomainsAdd,
             )
-            GlyphButton(AddGlyph, name = stringResource(Res.string.trusted_domains_add), enabled = draft.isNotBlank()) { addDraft() }
+            GlyphButton(AddGlyph, name = strings.trustedDomainsAdd, enabled = draft.isNotBlank()) { addDraft() }
         }
         if (domains.isEmpty()) {
             Text(
-                text = stringResource(Res.string.trusted_domains_empty),
+                text = strings.trustedDomainsEmpty,
                 style = Type.note,
                 color = p.inkFaint,
                 modifier = Modifier.padding(horizontal = Space.gutter, vertical = Space.gap),
@@ -119,7 +111,7 @@ fun TrustedDomainsPopup(visibilityState: MutableState<Boolean>) {
         domains.forEach { domain ->
             ListRow(horizontalPadding = Space.gutter) {
                 RowLabel(domain)
-                GlyphButton(CloseGlyph, name = stringResource(Res.string.trusted_domains_remove), tint = p.inkDim) { domains.remove(domain) }
+                GlyphButton(CloseGlyph, name = strings.trustedDomainsRemove, tint = p.inkDim) { domains.remove(domain) }
             }
         }
     }

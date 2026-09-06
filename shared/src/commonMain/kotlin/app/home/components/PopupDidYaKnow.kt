@@ -24,10 +24,7 @@ import app.utils.appName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.getStringArray
-import syncplaymobile.shared.generated.resources.Res
 import syncplaymobile.shared.generated.resources.okay
-import syncplaymobile.shared.generated.resources.tips
 
 object PopupDidYaKnow {
 
@@ -39,8 +36,9 @@ object PopupDidYaKnow {
         var tipIndex by remember { mutableIntStateOf(0) }
         if (!state.value) return
 
-        LaunchedEffect(Unit) {
-            if (tips.isEmpty()) tips.addAll(getStringArray(Res.array.tips).map { it.replace("%1\$s", appName) }.shuffled())
+        val allTips = strings.tips
+        LaunchedEffect(allTips) {
+            if (tips.isEmpty()) tips.addAll(allTips.map { it.replace("%1\$s", appName) }.shuffled())
         }
 
         Modal(

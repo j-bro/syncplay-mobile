@@ -691,7 +691,6 @@
     <string name="server_log_stop_failed">Could not stop: %1$s</string>
     <string name="server_notification_title">%1$s server</string>
     <string name="server_notification_channel_description">Shows while you are hosting a server</string>
-    <string name="room_notification_text">Room open</string>
     <string name="room_volume_label">Volume</string>
     <string name="room_brightness_label">Brightness</string>
     <string name="about_licences_button">Open source licences</string>
@@ -704,8 +703,29 @@
     <string name="about_update_failed">Could not check for updates. Try again</string>
     <string name="room_chat_image_from">Image sent by %1$s</string>
 
-    <!-- Quantities and lists. The Lyricist generator reads elements in this order,
-         so these must stay after every <string>. -->
+    <!-- Counted lines. One key per plural form, because a language decides which form a
+         number takes: English needs two, Russian and Polish need four, Arabic six.
+         Fill the forms your language actually uses; the rest fall back to _other. -->
+    <string name="room_user_count_zero">%1$d users</string>
+    <string name="room_user_count_one">%1$d user</string>
+    <string name="room_user_count_two">%1$d users</string>
+    <string name="room_user_count_few">%1$d users</string>
+    <string name="room_user_count_many">%1$d users</string>
+    <string name="room_user_count_other">%1$d users</string>
+
+    <string name="server_host_clients_zero">%1$d people connected</string>
+    <string name="server_host_clients_one">%1$d person connected</string>
+    <string name="server_host_clients_two">%1$d people connected</string>
+    <string name="server_host_clients_few">%1$d people connected</string>
+    <string name="server_host_clients_many">%1$d people connected</string>
+    <string name="server_host_clients_other">%1$d people connected</string>
+
+    <string name="server_notification_text_zero">Running on port %1$d, %2$d people connected</string>
+    <string name="server_notification_text_one">Running on port %1$d, %2$d person connected</string>
+    <string name="server_notification_text_two">Running on port %1$d, %2$d people connected</string>
+    <string name="server_notification_text_few">Running on port %1$d, %2$d people connected</string>
+    <string name="server_notification_text_many">Running on port %1$d, %2$d people connected</string>
+    <string name="server_notification_text_other">Running on port %1$d, %2$d people connected</string>
     <string-array name="tips">
         <item>For shared playlists to work, %1$s needs to know where your media files are stored. Add your media folders in 'Settings > General > Media Directories for Shared Playlist'.</item>
         <item>Want to use the video player solo? Select a player, tap the %1$s logo above, then choose 'Offline Mode'.</item>
@@ -715,16 +735,4 @@
         <item>%1$s plays direct links and, on Android, YouTube and a few other sites. Paste the link under Add media.</item>
         <item>If you want to minimize the room temporarily without leaving, you can go into "Picture-in-Picture" mode where the screen is a small floating screen above other apps.</item>
     </string-array>
-    <plurals name="room_user_count">
-        <item quantity="one">%1$d user</item>
-        <item quantity="other">%1$d users</item>
-    </plurals>
-    <plurals name="server_notification_text">
-        <item quantity="one">Running on port %1$d, %2$d person connected</item>
-        <item quantity="other">Running on port %1$d, %2$d people connected</item>
-    </plurals>
-    <plurals name="server_host_clients">
-        <item quantity="one">%1$d person connected</item>
-        <item quantity="other">%1$d people connected</item>
-    </plurals>
 </resources>

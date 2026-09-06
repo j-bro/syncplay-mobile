@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.LocalGlobalViewmodel
+import app.i18n.strings
 import app.uicomponents.LocalWidthClass
 import app.uicomponents.WidthClass
 import app.theme.Space
@@ -28,10 +29,6 @@ import app.uicomponents.controls.Field
 import app.uicomponents.controls.SearchGlyph
 import app.uicomponents.controls.VerticalRule
 import app.uicomponents.frames.ScreenFrame
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.settings_search_hint
-import syncplaymobile.shared.generated.resources.settings_title
 
 /**
  * The settings destination. Compact and medium widths: the category list, then a category.
@@ -54,7 +51,7 @@ fun SettingsScreenUI(categoryKey: String?) {
     val scroll = rememberScrollState()
 
     val current = open ?: if (expanded) categories.first() else null
-    val title = if (!expanded && current != null) stringResource(current.title) else stringResource(Res.string.settings_title)
+    val title = if (!expanded && current != null) current.title(strings) else strings.settingsTitle
 
     CompositionLocalProvider(LocalSettingsDensity provides density) {
         ScreenFrame(
@@ -110,9 +107,9 @@ private fun SearchField(query: String, onQuery: (String) -> Unit) {
         Field(
             value = query,
             onValueChange = onQuery,
-            placeholder = stringResource(Res.string.settings_search_hint),
+            placeholder = strings.settingsSearchHint,
             leading = SearchGlyph,
-            name = stringResource(Res.string.settings_search_hint),
+            name = strings.settingsSearchHint,
         )
     }
 }

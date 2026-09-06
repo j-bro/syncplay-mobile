@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import app.i18n.strings
 import app.uicomponents.controls.Icon
 import app.uicomponents.controls.Text
 import androidx.compose.runtime.Composable
@@ -72,22 +73,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.delay
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.okay
 import syncplaymobile.shared.generated.resources.cancel
 import syncplaymobile.shared.generated.resources.done
 import syncplaymobile.shared.generated.resources.no
-import syncplaymobile.shared.generated.resources.reset_default
 import syncplaymobile.shared.generated.resources.save
-import syncplaymobile.shared.generated.resources.settings_value_none
-import syncplaymobile.shared.generated.resources.settings_value_off
-import syncplaymobile.shared.generated.resources.settings_value_on
 import syncplaymobile.shared.generated.resources.yes
 import kotlin.math.roundToInt
 import kotlin.time.TimeSource
 import app.uicomponents.CHAT_COLOR_FOLLOWS_THEME
-import syncplaymobile.shared.generated.resources.settings_color_follows_theme
 
 /** Semantic density choices a host can vary. Never font sizes. */
 @Immutable
@@ -134,9 +127,8 @@ fun SettingEntry.Render(highlighted: Boolean = false) {
     val scope = rememberCoroutineScope { Dispatchers.IO }
     val density = LocalSettingsDensity.current
     val showDescriptions by Preferences.SHOW_SETTING_DESCRIPTIONS.watchPref()
-    val title = stringResource(cfg.title)
-    // The config's default summary is a placeholder, not a sentence: treat it as none.
-    val summary = if (cfg.summary == Res.string.okay) "" else stringResource(cfg.summary, *cfg.summaryFormatArgs)
+    val title = cfg.title(strings)
+    val summary = cfg.summary?.invoke(strings).orEmpty()
     val expanded = LocalExpandedSettings.current
     val explain = expanded[pref.key] == true
     fun toggleExplain() { expanded[pref.key] = !explain }
@@ -160,7 +152,7 @@ fun SettingEntry.Render(highlighted: Boolean = false) {
                     icon?.invoke()
                     RowLabel(title)
                     RowGap()
-                    RowValue(stringResource(if (on) Res.string.settings_value_on else Res.string.settings_value_off), accent = on, width = 36.dp)
+                    RowValue(if (on) strings.settingsValueOn else strings.settingsValueOff, accent = on, width = 36.dp)
                     RowGap()
                     // The row is the one toggleable node; a second node on the rocker read as two switches.
                     Rocker(on = on, onChange = flip, enabled = enabled, modifier = Modifier.clearAndSetSemantics { })
@@ -241,7 +233,7 @@ fun SettingEntry.Render(highlighted: Boolean = false) {
                     icon?.invoke()
                     RowLabel(title)
                     RowGap()
-                    RowValue(if (followsTheme) stringResource(Res.string.settings_color_follows_theme) else color.hex())
+                    RowValue(if (followsTheme) strings.settingsColorFollowsTheme else color.hex())
                     RowGap()
                     Swatch(color, onClick = edit, enabled = enabled)
                 }
@@ -263,7 +255,7 @@ fun SettingEntry.Render(highlighted: Boolean = false) {
             extra is PrefExtraConfig.TextField || (value is String && extra == null) -> {
                 val text = value as? String ?: ""
                 val numeric = (extra as? PrefExtraConfig.TextField)?.keyboardType == 1
-                OpenRow(title, text.ifBlank { stringResource(Res.string.settings_value_none) }, enabled, highlighted, icon, onOpen = { editorOpen.value = true })
+                OpenRow(title, text.ifBlank { strings.settingsValueNone }, enabled, highlighted, icon, onOpen = { editorOpen.value = true })
                 TextModal(editorOpen, title, summary, text, numeric) { saved -> scope.launch { pref.setAny(saved) } }
             }
 
@@ -282,7 +274,7 @@ fun SettingEntry.Render(highlighted: Boolean = false) {
                 AskModal(
                     open = editorOpen,
                     title = title,
-                    text = stringResource(extra.rationale),
+                    text = extra.rationale(strings),
                     destructive = extra.destructive,
                     onYes = { scope.launch { extra.onYes(this) } },
                     onNo = { scope.launch { extra.onNo(this) } },
@@ -387,7 +379,7 @@ private fun ScrubRow(
     val settled = committed ?: value
     val shown = if (dragging) preview else (settled - min).toFloat() / span
     val shownValue = (min + (shown * span)).roundToInt()
-    val offLabel = stringResource(Res.string.settings_value_off)
+    val offLabel = strings.settingsValueOff
     fun describeValue(v: Int): String =
         if (zeroMeansOff && v == 0) offLabel else "${formatValue(v)} $unit".trim()
     var lastLive by remember { mutableStateOf(TimeSource.Monotonic.markNow()) }
@@ -471,8 +463,8 @@ private fun TextModal(
         title = title,
         size = ModalSize.Panel,
         actions = {
-            SecondaryAction(stringResource(Res.string.cancel), onClick = { open.value = false })
-            AccentAction(stringResource(Res.string.save), onClick = { onSave(draft); open.value = false })
+            SecondaryAction(strings.cancel, onClick = { open.value = false })
+            AccentAction(strings.save, onClick = { onSave(draft); open.value = false })
         },
     ) {
         if (summary.isNotBlank()) Text(summary, style = Type.note, color = palette.inkDim)
@@ -503,8 +495,8 @@ internal fun ColorModal(
         title = title,
         size = ModalSize.Panel,
         actions = {
-            SecondaryAction(stringResource(Res.string.reset_default), onClick = { onReset(); open.value = false })
-            AccentAction(stringResource(Res.string.done), onClick = { open.value = false })
+            SecondaryAction(strings.resetDefault, onClick = { onReset(); open.value = false })
+            AccentAction(strings.done, onClick = { open.value = false })
         },
     ) {
         ColorEditorBody(summary, initial, onColor)
@@ -553,9 +545,9 @@ fun AskModal(
         title = title,
         size = ModalSize.Ask,
         actions = {
-            SecondaryAction(stringResource(Res.string.no), onClick = { open.value = false; onNo() })
-            if (destructive) DestructiveAction(stringResource(Res.string.yes), onClick = { open.value = false; onYes() })
-            else AccentAction(stringResource(Res.string.yes), onClick = { open.value = false; onYes() })
+            SecondaryAction(strings.no, onClick = { open.value = false; onNo() })
+            if (destructive) DestructiveAction(strings.yes, onClick = { open.value = false; onYes() })
+            else AccentAction(strings.yes, onClick = { open.value = false; onYes() })
         },
     ) {
         Text(text, style = Type.note, color = palette.inkDim)

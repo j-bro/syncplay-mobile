@@ -56,12 +56,6 @@ import platform.UIKit.UIColor
 import platform.UIKit.UIView
 import platform.darwin.NSObject
 import platform.darwin.NSObjectProtocol
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.uisetting_audio_delay_summary
-import syncplaymobile.shared.generated.resources.uisetting_audio_delay_title
-import syncplaymobile.shared.generated.resources.uisetting_categ_vlc
-import syncplaymobile.shared.generated.resources.uisetting_subtitle_delay_summary
-import syncplaymobile.shared.generated.resources.uisetting_subtitle_delay_title
 import kotlin.math.abs
 import kotlin.time.Duration
 
@@ -220,20 +214,21 @@ class VlcKitImpl(viewmodel: RoomViewmodel): PlayerImpl(viewmodel, VlcKitEngine) 
     }
 
     override suspend fun configurableSettings() = SettingCategory(
-        title = Res.string.uisetting_categ_vlc,
+        key = "engine-vlc",
+        title = { it.uisettingCategVlc },
         icon = Icons.Filled.SettingsInputComponent
     ) {
         +Pref("vlc_subtitle_delay_ms", 0) {
-            title = Res.string.uisetting_subtitle_delay_title
-            summary = Res.string.uisetting_subtitle_delay_summary
+            title = { it.uisettingSubtitleDelayTitle }
+            summary = { it.uisettingSubtitleDelaySummary }
             icon = Icons.Filled.ClosedCaptionOff
             extraConfig = PrefExtraConfig.Slider(minValue = -5000, maxValue = 5000) {
                 vlcPlayer?.currentVideoSubTitleDelay = it * 1000L
             }
         }
         +Pref("vlc_audio_delay_ms", 0) {
-            title = Res.string.uisetting_audio_delay_title
-            summary = Res.string.uisetting_audio_delay_summary
+            title = { it.uisettingAudioDelayTitle }
+            summary = { it.uisettingAudioDelaySummary }
             icon = Icons.Filled.SpatialAudio
             extraConfig = PrefExtraConfig.Slider(minValue = -5000, maxValue = 5000) {
                 vlcPlayer?.currentAudioPlaybackDelay = it * 1000L

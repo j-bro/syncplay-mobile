@@ -2,8 +2,8 @@ package app.preferences.settings
 
 import androidx.compose.ui.graphics.vector.ImageVector
 import app.preferences.Pref
+import app.preferences.Localized
 import app.preferences.PrefExtraConfig
-import org.jetbrains.compose.resources.StringResource
 
 /**
  * One row in a category: a preference plus, optionally, a control and an enabled rule that
@@ -25,10 +25,12 @@ fun Pref<*>.enabledWhen(rule: () -> Boolean): SettingEntry = SettingEntry(this, 
 fun SettingEntry.enabledWhen(rule: () -> Boolean): SettingEntry = SettingEntry(pref, control, rule)
 
 /** A run of entries under one heading. A null title is the implicit first group. */
-class SettingGroup(val title: StringResource?, val entries: List<SettingEntry>)
+class SettingGroup(val title: Localized?, val entries: List<SettingEntry>)
 
 class SettingCategory(
-    val title: StringResource,
+    /** Stable name for a deep link. Never shown, so it does not move with the copy. */
+    val key: String,
+    val title: Localized,
     val icon: ImageVector,
     settingBuilder: SettingListBuilder.() -> Unit
 ) {
@@ -40,9 +42,6 @@ class SettingCategory(
     /** Every pref, in order. Kept for callers that only need the keys (reset, search). */
     val settings: List<Pref<*>> get() = entries.map { it.pref }
 
-    /** Stable identity for deep links, from the title resource. */
-    val key: String get() = title.key
-
     class SettingListBuilder {
         private val groups = mutableListOf<SettingGroup>()
         private val loose = mutableListOf<SettingEntry>()
@@ -51,7 +50,7 @@ class SettingCategory(
         operator fun SettingEntry.unaryPlus() { loose.add(this) }
 
         /** Starts a titled group. Entries added before the first group land in an implicit one. */
-        fun group(title: StringResource, body: SettingListBuilder.() -> Unit) {
+        fun group(title: Localized, body: SettingListBuilder.() -> Unit) {
             flushLoose()
             val inner = SettingListBuilder().apply(body).build()
             groups.add(SettingGroup(title, inner.flatMap { it.entries }))

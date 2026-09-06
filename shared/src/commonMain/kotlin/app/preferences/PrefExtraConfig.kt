@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import app.SyncplayViewmodel
 import kotlinx.coroutines.CoroutineScope
-import org.jetbrains.compose.resources.StringResource
 import androidx.compose.ui.graphics.Color
 import app.theme.Palette
 
@@ -54,7 +53,7 @@ sealed interface PrefExtraConfig {
 
     /** [destructive] draws the row and the confirming action in the destructive treatment. */
     data class YesNoDialog(
-        val rationale: StringResource,
+        val rationale: Localized,
         val onYes: suspend CoroutineScope.() -> Unit,
         val onNo: suspend CoroutineScope.() -> Unit = {},
         val destructive: Boolean = false,

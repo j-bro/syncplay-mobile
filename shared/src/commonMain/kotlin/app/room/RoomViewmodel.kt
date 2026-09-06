@@ -31,11 +31,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.getString
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.room_file_mismatch_warning_duration
-import syncplaymobile.shared.generated.resources.room_file_mismatch_warning_name
-import syncplaymobile.shared.generated.resources.room_file_mismatch_warning_size
 
 /**
  * Classification used by the categorized [RoomViewmodel.dispatchOSD] overload to decide whether

@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.ClosedCaptionOff
 import androidx.compose.material.icons.filled.DesignServices
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.FileDownload
+import app.i18n.strings
 import io.github.vinceglb.filekit.readString
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Face
@@ -91,254 +92,8 @@ import io.github.vinceglb.filekit.write
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.stringArrayResource
-import org.jetbrains.compose.resources.stringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.uisetting_doubletap_seek_detail
-import syncplaymobile.shared.generated.resources.uisetting_vlc_custom_flags_detail
-import syncplaymobile.shared.generated.resources.ui_setting_mpv_profile_detail
-import syncplaymobile.shared.generated.resources.ui_setting_mpv_vidsync_detail
-import syncplaymobile.shared.generated.resources.ui_setting_mpv_interpolation_detail
-import syncplaymobile.shared.generated.resources.setting_media_resolver_detail
-import syncplaymobile.shared.generated.resources.setting_disable_glass_detail
-import syncplaymobile.shared.generated.resources.setting_trusted_domains_detail
-import syncplaymobile.shared.generated.resources.setting_tls_detail
-import syncplaymobile.shared.generated.resources.setting_reduce_motion_summary
-import syncplaymobile.shared.generated.resources.setting_reduce_motion_title
-import syncplaymobile.shared.generated.resources.server_host_disable_ready
-import syncplaymobile.shared.generated.resources.server_host_disable_chat
-import syncplaymobile.shared.generated.resources.server_host_isolate_rooms
-import syncplaymobile.shared.generated.resources.server_host_motd
-import syncplaymobile.shared.generated.resources.server_host_password_detail
-import syncplaymobile.shared.generated.resources.server_host_password
-import syncplaymobile.shared.generated.resources.server_host_port
-import syncplaymobile.shared.generated.resources.room_hud_auto_hide_summary
-import syncplaymobile.shared.generated.resources.room_hud_auto_hide_title
-import syncplaymobile.shared.generated.resources.language_codes
-import syncplaymobile.shared.generated.resources.language_names
-import syncplaymobile.shared.generated.resources.media_directories
-import syncplaymobile.shared.generated.resources.media_directories_setting_summary
-import syncplaymobile.shared.generated.resources.setting_audio_default_language_summry
-import syncplaymobile.shared.generated.resources.setting_audio_default_language_title
-import syncplaymobile.shared.generated.resources.setting_cc_default_language_summry
-import syncplaymobile.shared.generated.resources.setting_cc_default_language_title
-import syncplaymobile.shared.generated.resources.setting_display_language_summry
-import syncplaymobile.shared.generated.resources.setting_display_language_system
-import syncplaymobile.shared.generated.resources.setting_display_language_title
-import syncplaymobile.shared.generated.resources.setting_erase_shortcuts_dialog
-import syncplaymobile.shared.generated.resources.setting_erase_shortcuts_summary
-import syncplaymobile.shared.generated.resources.setting_erase_shortcuts_title
-import syncplaymobile.shared.generated.resources.setting_clear_logs_dialog
-import syncplaymobile.shared.generated.resources.setting_clear_logs_summary
-import syncplaymobile.shared.generated.resources.setting_clear_logs_title
-import syncplaymobile.shared.generated.resources.setting_export_log_summary
-import syncplaymobile.shared.generated.resources.setting_export_settings_summary
-import syncplaymobile.shared.generated.resources.setting_export_settings_title
-import syncplaymobile.shared.generated.resources.setting_import_settings_summary
-import syncplaymobile.shared.generated.resources.setting_import_settings_title
-import syncplaymobile.shared.generated.resources.setting_export_log_title
-import syncplaymobile.shared.generated.resources.setting_fileinfo_behavior_a
-import syncplaymobile.shared.generated.resources.setting_fileinfo_behavior_b
-import syncplaymobile.shared.generated.resources.setting_fileinfo_behavior_c
-import syncplaymobile.shared.generated.resources.setting_fileinfo_behaviour_name_summary
-import syncplaymobile.shared.generated.resources.setting_fileinfo_behaviour_name_title
-import syncplaymobile.shared.generated.resources.setting_fileinfo_behaviour_size_summary
-import syncplaymobile.shared.generated.resources.setting_fileinfo_behaviour_size_title
-import syncplaymobile.shared.generated.resources.setting_max_buffer_summary
-import syncplaymobile.shared.generated.resources.setting_max_buffer_title
-import syncplaymobile.shared.generated.resources.setting_media_resolver_summary
-import syncplaymobile.shared.generated.resources.setting_disable_glass_title
-import syncplaymobile.shared.generated.resources.setting_disable_glass_summary
-import syncplaymobile.shared.generated.resources.setting_media_resolver_title
-import syncplaymobile.shared.generated.resources.setting_min_buffer_summary
-import syncplaymobile.shared.generated.resources.setting_min_buffer_title
-import syncplaymobile.shared.generated.resources.setting_network_engine_ktor
-import syncplaymobile.shared.generated.resources.setting_network_engine_netty
-import syncplaymobile.shared.generated.resources.setting_network_engine_summary
-import syncplaymobile.shared.generated.resources.setting_network_engine_swift_nio
-import syncplaymobile.shared.generated.resources.setting_network_engine_title
-import syncplaymobile.shared.generated.resources.setting_never_show_tips_summary
-import syncplaymobile.shared.generated.resources.setting_never_show_tips_title
-import syncplaymobile.shared.generated.resources.settings_show_descriptions_summary
-import syncplaymobile.shared.generated.resources.settings_show_descriptions_title
-import syncplaymobile.shared.generated.resources.settings_haptics_controls_summary
-import syncplaymobile.shared.generated.resources.settings_haptics_controls_title
 import app.preferences.settings.SETTINGS_GLOBAL
 import app.uicomponents.CHAT_COLOR_FOLLOWS_THEME
-import syncplaymobile.shared.generated.resources.setting_pause_if_someone_left_summary
-import syncplaymobile.shared.generated.resources.setting_pause_if_someone_left_title
-import syncplaymobile.shared.generated.resources.setting_playback_buffer_summary
-import syncplaymobile.shared.generated.resources.setting_playback_buffer_title
-import syncplaymobile.shared.generated.resources.setting_ready_firsthand_summary
-import syncplaymobile.shared.generated.resources.setting_ready_firsthand_title
-import syncplaymobile.shared.generated.resources.setting_remember_join_info_summary
-import syncplaymobile.shared.generated.resources.setting_remember_join_info_title
-import syncplaymobile.shared.generated.resources.setting_resetdefault_dialog
-import syncplaymobile.shared.generated.resources.setting_resetdefault_summary
-import syncplaymobile.shared.generated.resources.setting_resetdefault_title
-import syncplaymobile.shared.generated.resources.setting_tls_summary
-import syncplaymobile.shared.generated.resources.setting_room_portrait_summary
-import syncplaymobile.shared.generated.resources.setting_gif_recents_summary
-import syncplaymobile.shared.generated.resources.setting_gif_recents_title
-import syncplaymobile.shared.generated.resources.setting_room_portrait_title
-import syncplaymobile.shared.generated.resources.setting_tls_required_detail
-import syncplaymobile.shared.generated.resources.setting_tls_required_summary
-import syncplaymobile.shared.generated.resources.setting_tls_required_title
-import syncplaymobile.shared.generated.resources.setting_tls_title
-import syncplaymobile.shared.generated.resources.setting_trusted_domains_summary
-import syncplaymobile.shared.generated.resources.setting_trusted_domains_title
-import syncplaymobile.shared.generated.resources.setting_unpause_action_always
-import syncplaymobile.shared.generated.resources.setting_unpause_action_if_min_users_ready
-import syncplaymobile.shared.generated.resources.setting_unpause_action_if_others_ready
-import syncplaymobile.shared.generated.resources.setting_unpause_action_if_ready
-import syncplaymobile.shared.generated.resources.setting_unpause_action_summary
-import syncplaymobile.shared.generated.resources.setting_autoplay_summary
-import syncplaymobile.shared.generated.resources.setting_autoplay_title
-import syncplaymobile.shared.generated.resources.setting_resume_summary
-import syncplaymobile.shared.generated.resources.setting_resume_title
-import syncplaymobile.shared.generated.resources.setting_unpause_action_title
-import syncplaymobile.shared.generated.resources.setting_warn_file_mismatch_summary
-import syncplaymobile.shared.generated.resources.setting_warn_file_mismatch_title
-import syncplaymobile.shared.generated.resources.ui_setting_mpv_debug_summary
-import syncplaymobile.shared.generated.resources.ui_setting_mpv_debug_title
-import syncplaymobile.shared.generated.resources.ui_setting_mpv_interpolation_summary
-import syncplaymobile.shared.generated.resources.ui_setting_mpv_interpolation_title
-import syncplaymobile.shared.generated.resources.ui_setting_mpv_profile_summary
-import syncplaymobile.shared.generated.resources.ui_setting_mpv_profile_title
-import syncplaymobile.shared.generated.resources.ui_setting_mpv_vidsync_summary
-import syncplaymobile.shared.generated.resources.ui_setting_mpv_vidsync_title
-import syncplaymobile.shared.generated.resources.uisetting_custom_seek_amount_summary
-import syncplaymobile.shared.generated.resources.uisetting_custom_seek_amount_title
-import syncplaymobile.shared.generated.resources.uisetting_categ_chat_colors
-import syncplaymobile.shared.generated.resources.uisetting_chat_colors_entry_summary
-import syncplaymobile.shared.generated.resources.uisetting_custom_seek_front_summary
-import syncplaymobile.shared.generated.resources.uisetting_custom_seek_front_title
-import syncplaymobile.shared.generated.resources.uisetting_doubletap_seek_summary
-import syncplaymobile.shared.generated.resources.uisetting_doubletap_seek_title
-import syncplaymobile.shared.generated.resources.uisetting_error_color_summary
-import syncplaymobile.shared.generated.resources.uisetting_error_color_title
-import syncplaymobile.shared.generated.resources.uisetting_friend_color_summary
-import syncplaymobile.shared.generated.resources.uisetting_friend_color_title
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_chat_summary
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_chat_title
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_connection_summary
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_connection_title
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_joined_summary
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_joined_title
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_left_summary
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_left_title
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_paused_summary
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_paused_title
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_played_summary
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_played_title
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_playlist_summary
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_playlist_title
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_seeked_summary
-import syncplaymobile.shared.generated.resources.uisetting_haptic_on_seeked_title
-import syncplaymobile.shared.generated.resources.uisetting_human_color_summary
-import syncplaymobile.shared.generated.resources.uisetting_human_color_title
-import syncplaymobile.shared.generated.resources.uisetting_kite_audio_delay_summary
-import syncplaymobile.shared.generated.resources.uisetting_kite_audio_delay_title
-import syncplaymobile.shared.generated.resources.uisetting_kite_debug_stats_summary
-import syncplaymobile.shared.generated.resources.uisetting_kite_debug_stats_title
-import syncplaymobile.shared.generated.resources.uisetting_kite_eq_brightness_summary
-import syncplaymobile.shared.generated.resources.uisetting_kite_eq_brightness_title
-import syncplaymobile.shared.generated.resources.uisetting_kite_eq_contrast_summary
-import syncplaymobile.shared.generated.resources.uisetting_kite_eq_contrast_title
-import syncplaymobile.shared.generated.resources.uisetting_kite_eq_hue_summary
-import syncplaymobile.shared.generated.resources.uisetting_kite_eq_hue_title
-import syncplaymobile.shared.generated.resources.uisetting_kite_eq_saturation_summary
-import syncplaymobile.shared.generated.resources.uisetting_kite_eq_saturation_title
-import syncplaymobile.shared.generated.resources.uisetting_kite_hw_summary
-import syncplaymobile.shared.generated.resources.uisetting_kite_compose_renderer_summary
-import syncplaymobile.shared.generated.resources.uisetting_kite_compose_renderer_title
-import syncplaymobile.shared.generated.resources.uisetting_kite_hw_title
-import syncplaymobile.shared.generated.resources.uisetting_kite_preserve_pitch_summary
-import syncplaymobile.shared.generated.resources.uisetting_kite_preserve_pitch_title
-import syncplaymobile.shared.generated.resources.uisetting_video_bg_color_summary
-import syncplaymobile.shared.generated.resources.uisetting_video_bg_color_title
-import syncplaymobile.shared.generated.resources.uisetting_kite_sub_pos_summary
-import syncplaymobile.shared.generated.resources.uisetting_kite_sub_pos_title
-import syncplaymobile.shared.generated.resources.uisetting_kite_sub_autoselect_summary
-import syncplaymobile.shared.generated.resources.uisetting_kite_sub_autoselect_title
-import syncplaymobile.shared.generated.resources.uisetting_kite_sub_delay_summary
-import syncplaymobile.shared.generated.resources.uisetting_kite_sub_delay_title
-import syncplaymobile.shared.generated.resources.uisetting_messagery_alpha_summary
-import syncplaymobile.shared.generated.resources.uisetting_messagery_alpha_title
-import syncplaymobile.shared.generated.resources.uisetting_mpv_gpunext_summary
-import syncplaymobile.shared.generated.resources.uisetting_mpv_gpunext_title
-import syncplaymobile.shared.generated.resources.uisetting_mpv_hardware_acceleration_summary
-import syncplaymobile.shared.generated.resources.uisetting_mpv_hardware_acceleration_title
-import syncplaymobile.shared.generated.resources.uisetting_msgboxaction_summary
-import syncplaymobile.shared.generated.resources.uisetting_msgboxaction_title
-import syncplaymobile.shared.generated.resources.uisetting_msgcount_summary
-import syncplaymobile.shared.generated.resources.uisetting_msgcount_title
-import syncplaymobile.shared.generated.resources.uisetting_msglife_summary
-import syncplaymobile.shared.generated.resources.uisetting_msglife_title
-import syncplaymobile.shared.generated.resources.uisetting_msgoutline_summary
-import syncplaymobile.shared.generated.resources.uisetting_msgoutline_title
-import syncplaymobile.shared.generated.resources.uisetting_msgshadow_summary
-import syncplaymobile.shared.generated.resources.uisetting_msgshadow_title
-import syncplaymobile.shared.generated.resources.uisetting_msgsize_summary
-import syncplaymobile.shared.generated.resources.uisetting_msgsize_title
-import syncplaymobile.shared.generated.resources.uisetting_osd_duration_summary
-import syncplaymobile.shared.generated.resources.uisetting_osd_duration_title
-import syncplaymobile.shared.generated.resources.uisetting_osd_nonoperator_summary
-import syncplaymobile.shared.generated.resources.uisetting_osd_nonoperator_title
-import syncplaymobile.shared.generated.resources.uisetting_osd_otherroom_summary
-import syncplaymobile.shared.generated.resources.uisetting_osd_otherroom_title
-import syncplaymobile.shared.generated.resources.uisetting_osd_sameroom_summary
-import syncplaymobile.shared.generated.resources.uisetting_osd_sameroom_title
-import syncplaymobile.shared.generated.resources.uisetting_osd_slowdown_summary
-import syncplaymobile.shared.generated.resources.uisetting_osd_slowdown_title
-import syncplaymobile.shared.generated.resources.uisetting_mpv_export_conf_summary
-import syncplaymobile.shared.generated.resources.uisetting_mpv_export_conf_title
-import syncplaymobile.shared.generated.resources.uisetting_mpv_import_conf_summary
-import syncplaymobile.shared.generated.resources.uisetting_mpv_import_conf_title
-import syncplaymobile.shared.generated.resources.uisetting_osd_warnings_summary
-import syncplaymobile.shared.generated.resources.uisetting_osd_warnings_title
-import syncplaymobile.shared.generated.resources.uisetting_reconnect_interval_summary
-import syncplaymobile.shared.generated.resources.uisetting_vlc_custom_flags_summary
-import syncplaymobile.shared.generated.resources.uisetting_vlc_custom_flags_title
-import syncplaymobile.shared.generated.resources.uisetting_reconnect_interval_title
-import syncplaymobile.shared.generated.resources.uisetting_resetdefault_summary
-import syncplaymobile.shared.generated.resources.uisetting_resetdefault_title
-import syncplaymobile.shared.generated.resources.uisetting_seek_backward_jump_summary
-import syncplaymobile.shared.generated.resources.uisetting_seek_backward_jump_title
-import syncplaymobile.shared.generated.resources.uisetting_seek_forward_jump_summary
-import syncplaymobile.shared.generated.resources.uisetting_seek_forward_jump_title
-import syncplaymobile.shared.generated.resources.uisetting_self_color_summary
-import syncplaymobile.shared.generated.resources.uisetting_self_color_title
-import syncplaymobile.shared.generated.resources.uisetting_chapter_dots_clickable_summary
-import syncplaymobile.shared.generated.resources.uisetting_chapter_dots_clickable_title
-import syncplaymobile.shared.generated.resources.uisetting_show_chapter_dots_summary
-import syncplaymobile.shared.generated.resources.uisetting_show_chapter_dots_title
-import syncplaymobile.shared.generated.resources.uisetting_subtitle_size_summary
-import syncplaymobile.shared.generated.resources.uisetting_subtitle_size_title
-import syncplaymobile.shared.generated.resources.uisetting_swipe_gestures_summary
-import syncplaymobile.shared.generated.resources.uisetting_swipe_gestures_title
-import syncplaymobile.shared.generated.resources.uisetting_sync_dont_slow_with_me_summary
-import syncplaymobile.shared.generated.resources.uisetting_sync_dont_slow_with_me_title
-import syncplaymobile.shared.generated.resources.uisetting_sync_fastforward_summary
-import syncplaymobile.shared.generated.resources.uisetting_sync_fastforward_title
-import syncplaymobile.shared.generated.resources.uisetting_sync_rewind_summary
-import syncplaymobile.shared.generated.resources.uisetting_sync_rewind_threshold_summary
-import syncplaymobile.shared.generated.resources.uisetting_sync_rewind_threshold_title
-import syncplaymobile.shared.generated.resources.uisetting_sync_slowdown_threshold_summary
-import syncplaymobile.shared.generated.resources.uisetting_sync_slowdown_threshold_title
-import syncplaymobile.shared.generated.resources.uisetting_sync_fastforward_threshold_summary
-import syncplaymobile.shared.generated.resources.uisetting_sync_fastforward_threshold_title
-import syncplaymobile.shared.generated.resources.uisetting_user_offset_summary
-import syncplaymobile.shared.generated.resources.uisetting_user_offset_title
-import syncplaymobile.shared.generated.resources.uisetting_chat_clearance_summary
-import syncplaymobile.shared.generated.resources.uisetting_chat_clearance_title
-import syncplaymobile.shared.generated.resources.uisetting_sync_rewind_title
-import syncplaymobile.shared.generated.resources.uisetting_sync_slowdown_summary
-import syncplaymobile.shared.generated.resources.uisetting_sync_slowdown_title
-import syncplaymobile.shared.generated.resources.uisetting_system_color_summary
-import syncplaymobile.shared.generated.resources.uisetting_system_color_title
-import syncplaymobile.shared.generated.resources.uisetting_timestamp_color_title
-import syncplaymobile.shared.generated.resources.uisetting_timestamp_summary
 
 /**
  * Centralized preference definitions with type safety
@@ -360,8 +115,8 @@ object Preferences {
 
     /** Whether the room follows the device's rotation instead of being held in landscape. */
     val ROOM_ALLOW_PORTRAIT = Pref("pref_room_allow_portrait", false) {
-        title = Res.string.setting_room_portrait_title
-        summary = Res.string.setting_room_portrait_summary
+        title = { it.settingRoomPortraitTitle }
+        summary = { it.settingRoomPortraitSummary }
         icon = Icons.Filled.ScreenRotation
     }
     val CURRENT_THEME = Pref("misc_current_theme", defaultTheme.asString())
@@ -373,8 +128,8 @@ object Preferences {
 
     /** Offer to pick a file up where it was left. Only ever offered when watching alone. */
     val RESUME_PLAYBACK = Pref("pref_resume_playback", true) {
-        title = Res.string.setting_resume_title
-        summary = Res.string.setting_resume_summary
+        title = { it.settingResumeTitle }
+        summary = { it.settingResumeSummary }
         icon = Icons.Filled.History
     }
 
@@ -384,8 +139,8 @@ object Preferences {
      * nothing links two sessions, and Recents comes back empty.
      */
     val GIF_REMEMBER_RECENTS = Pref("pref_inroom_gif_remember_recents", true) {
-        title = Res.string.setting_gif_recents_title
-        summary = Res.string.setting_gif_recents_summary
+        title = { it.settingGifRecentsTitle }
+        summary = { it.settingGifRecentsSummary }
         icon = Icons.Filled.Gif
     }
     /** When true, the "Undo Seek" action skips its confirmation dialog. Set by the dialog's
@@ -394,20 +149,19 @@ object Preferences {
 
     /** ------------ General -------------*/
     val REMEMBER_INFO = Pref("pref_remember_info", true) {
-        title = Res.string.setting_remember_join_info_title
-        summary = Res.string.setting_remember_join_info_summary
-        summaryFormatArgs = arrayOf(appName)
+        title = { it.settingRememberJoinInfoTitle }
+        summary = { it.settingRememberJoinInfoSummary }
         icon = Icons.Filled.Face
     }
     val NEVER_SHOW_TIPS = Pref("pref_never_show_tips", false) {
-        title = Res.string.setting_never_show_tips_title
-        summary = Res.string.setting_never_show_tips_summary
+        title = { it.settingNeverShowTipsTitle }
+        summary = { it.settingNeverShowTipsSummary }
         icon = Icons.Filled.Lightbulb
     }
     /** Prints every row's explanation under it, for people who liked the old manuals. */
     val SHOW_SETTING_DESCRIPTIONS = Pref("pref_show_setting_descriptions", false) {
-        title = Res.string.settings_show_descriptions_title
-        summary = Res.string.settings_show_descriptions_summary
+        title = { it.settingsShowDescriptionsTitle }
+        summary = { it.settingsShowDescriptionsSummary }
         icon = Icons.Filled.Lightbulb
     }
     /** The control haptics (a rocker flip, a seek landing), separate from the room event pulses. */
@@ -416,23 +170,23 @@ object Preferences {
     val DESKTOP_WINDOW = Pref("pref_desktop_window", "")
 
     val REDUCE_MOTION = Pref("pref_reduce_motion", false) {
-        title = Res.string.setting_reduce_motion_title
-        summary = Res.string.setting_reduce_motion_summary
+        title = { it.settingReduceMotionTitle }
+        summary = { it.settingReduceMotionSummary }
         icon = Icons.Filled.Timer
     }
 
     val HAPTICS_ON_CONTROLS = Pref("pref_haptics_on_controls", true) {
-        title = Res.string.settings_haptics_controls_title
-        summary = Res.string.settings_haptics_controls_summary
+        title = { it.settingsHapticsControlsTitle }
+        summary = { it.settingsHapticsControlsSummary }
         icon = Icons.Filled.Vibration
     }
     val ERASE_SHORTCUTS = Pref("pref_erase_shortcuts", "") {
-        title = Res.string.setting_erase_shortcuts_title
-        summary = Res.string.setting_erase_shortcuts_summary
+        title = { it.settingEraseShortcutsTitle }
+        summary = { it.settingEraseShortcutsSummary }
         icon = Icons.Filled.BookmarkRemove
 
         extraConfig = PrefExtraConfig.YesNoDialog(
-            rationale = Res.string.setting_erase_shortcuts_dialog,
+            rationale = { it.settingEraseShortcutsDialog },
             destructive = true,
             onYes = {
                 platformCallback.onEraseConfigShortcuts()
@@ -440,9 +194,8 @@ object Preferences {
         )
     }
     val MEDIA_DIRECTORIES = Pref<Set<String>>("pref_syncplay_media_directories", emptySet()) {
-        title = Res.string.media_directories
-        summary = Res.string.media_directories_setting_summary
-        summaryFormatArgs = arrayOf(appName)
+        title = { it.mediaDirectories }
+        summary = { it.mediaDirectoriesSettingSummary }
         icon = Icons.AutoMirrored.Filled.QueueMusic
 
         extraConfig = PrefExtraConfig.ShowComposable(
@@ -453,33 +206,22 @@ object Preferences {
     /** ------------ Language -------------*/
     /** Blank means the device's language; a code forces that language on Android. */
     val DISPLAY_LANG = Pref("pref_lang", "") {
-        title = Res.string.setting_display_language_title
-        summary = Res.string.setting_display_language_summry
-        summaryFormatArgs = arrayOf(appName)
+        title = { it.settingDisplayLanguageTitle }
+        summary = { it.settingDisplayLanguageSummry(appName) }
         icon = Icons.Filled.Translate
 
-        extraConfig = if (platform == Platform.Android) {
-            PrefExtraConfig.MultiChoice(
-                entries = {
-                    val langNames = stringArrayResource(Res.array.language_names)
-                    val langCodes = stringArrayResource(Res.array.language_codes)
-                    linkedMapOf(stringResource(Res.string.setting_display_language_system) to "") + langNames.zip(langCodes).toMap()
-                },
-                onItemChosen = { v ->
-                    platformCallback.onLanguageChanged(v)
-                }
-            )
-        } else {
-            PrefExtraConfig.PerformAction(
-                onClick = {
-                    platformCallback.onLanguageChanged("")
-                }
-            )
-        }
+        /* The same picker everywhere. The app holds its own strings now, so a choice takes
+         * effect where it is made instead of through a restart or the system settings. */
+        extraConfig = PrefExtraConfig.MultiChoice(
+            entries = {
+                linkedMapOf(strings.settingDisplayLanguageSystem to "") +
+                    strings.languageNames.zip(strings.languageCodes).toMap()
+            }
+        )
     }
     val AUDIO_LANG = Pref("pref_audio_preferred_lang", "eng") {
-        title = Res.string.setting_audio_default_language_title
-        summary = Res.string.setting_audio_default_language_summry
+        title = { it.settingAudioDefaultLanguageTitle }
+        summary = { it.settingAudioDefaultLanguageSummry }
         icon = Icons.Filled.SpatialAudio
 
         extraConfig = PrefExtraConfig.MultiChoice(
@@ -487,8 +229,8 @@ object Preferences {
         )
     }
     val CC_LANG = Pref("pref_cc_preferred_lang", "eng") {
-        title = Res.string.setting_cc_default_language_title
-        summary = Res.string.setting_cc_default_language_summry
+        title = { it.settingCcDefaultLanguageTitle }
+        summary = { it.settingCcDefaultLanguageSummry }
         icon = Icons.Filled.ClosedCaptionOff
 
         extraConfig = PrefExtraConfig.MultiChoice(
@@ -506,68 +248,68 @@ object Preferences {
 
     /** ------------ Syncing -------------*/
     val READY_FIRST_HAND = Pref("pref_ready_first_hand", true) {
-        title = Res.string.setting_ready_firsthand_title
-        summary = Res.string.setting_ready_firsthand_summary
+        title = { it.settingReadyFirsthandTitle }
+        summary = { it.settingReadyFirsthandSummary }
         icon = Icons.Filled.TaskAlt
     }
     /** Start the room on its own once everyone with a file says they are ready. */
     val AUTOPLAY = Pref("pref_inroom_autoplay", false) {
-        title = Res.string.setting_autoplay_title
-        summary = Res.string.setting_autoplay_summary
+        title = { it.settingAutoplayTitle }
+        summary = { it.settingAutoplaySummary }
         icon = Icons.Filled.PlayCircle
     }
     val UNPAUSE_ACTION = Pref("pref_unpause_action", "IfOthersReady") {
-        title = Res.string.setting_unpause_action_title
-        summary = Res.string.setting_unpause_action_summary
+        title = { it.settingUnpauseActionTitle }
+        summary = { it.settingUnpauseActionSummary }
         icon = Icons.Filled.PlayArrow
 
         extraConfig = PrefExtraConfig.MultiChoice(
             entries = {
                 mapOf(
-                    stringResource(Res.string.setting_unpause_action_if_ready) to "IfAlreadyReady",
-                    stringResource(Res.string.setting_unpause_action_if_others_ready) to "IfOthersReady",
-                    stringResource(Res.string.setting_unpause_action_if_min_users_ready) to "IfMinUsersReady",
-                    stringResource(Res.string.setting_unpause_action_always) to "Always"
+                    strings.settingUnpauseActionIfReady to "IfAlreadyReady",
+                    strings.settingUnpauseActionIfOthersReady to "IfOthersReady",
+                    strings.settingUnpauseActionIfMinUsersReady to "IfMinUsersReady",
+                    strings.settingUnpauseActionAlways to "Always"
                 )
             }
         )
     }
     val PAUSE_ON_SOMEONE_LEAVE = Pref("pref_pause_if_someone_left", false) {
-        title = Res.string.setting_pause_if_someone_left_title
-        summary = Res.string.setting_pause_if_someone_left_summary
+        title = { it.settingPauseIfSomeoneLeftTitle }
+        summary = { it.settingPauseIfSomeoneLeftSummary }
         icon = Icons.Filled.FrontHand
     }
     val FILE_MISMATCH_WARNING = Pref("pref_file_mismatch_warning", true) {
-        title = Res.string.setting_warn_file_mismatch_title
-        summary = Res.string.setting_warn_file_mismatch_summary
+        title = { it.settingWarnFileMismatchTitle }
+        summary = { it.settingWarnFileMismatchSummary }
         icon = Icons.Filled.ErrorOutline
     }
     val HASH_FILENAME = Pref("pref_hash_filename", "1") {
-        title = Res.string.setting_fileinfo_behaviour_name_title
-        summary = Res.string.setting_fileinfo_behaviour_name_summary
+        title = { it.settingFileinfoBehaviourNameTitle }
+        summary = { it.settingFileinfoBehaviourNameSummary }
         icon = Icons.Filled.DesignServices
 
         extraConfig = PrefExtraConfig.MultiChoice(
             entries = {
                 mapOf(
-                    stringResource(Res.string.setting_fileinfo_behavior_a) to "1",
-                    stringResource(Res.string.setting_fileinfo_behavior_b) to "2",
-                    stringResource(Res.string.setting_fileinfo_behavior_c) to "3"
+                    strings.settingFileinfoBehaviorA to "1",
+                    strings.settingFileinfoBehaviorB to "2",
+                    strings.settingFileinfoBehaviorC to "3"
                 )
             }
         )
     }
     val HASH_FILESIZE = Pref("pref_hash_filesize", "1") {
-        title = Res.string.setting_fileinfo_behaviour_size_title
-        summary = Res.string.setting_fileinfo_behaviour_size_summary
+        title = { it.settingFileinfoBehaviourSizeTitle }
+        summary = { it.settingFileinfoBehaviourSizeSummary }
         icon = Icons.Filled.DesignServices
 
         extraConfig = PrefExtraConfig.MultiChoice(
             entries = {
                 mapOf(
-                    stringResource(Res.string.setting_fileinfo_behavior_a) to "1",
-                    stringResource(Res.string.setting_fileinfo_behavior_b) to "2",
-                    stringResource(Res.string.setting_fileinfo_behavior_c) to "3"
+                    strings.settingFileinfoBehaviorA to "1",
+                    strings.settingFileinfoBehaviorB to "2",
+                    strings.settingFileinfoBehaviorC to "3"
                 )
             }
         )
@@ -575,46 +317,45 @@ object Preferences {
 
     /** ------------ Network -------------*/
     val NETWORK_ENGINE = Pref("pref_network_engine", if (platform == Platform.IOS) "swiftnio" else "netty") {
-        title = Res.string.setting_network_engine_title
-        summary = Res.string.setting_network_engine_summary
+        title = { it.settingNetworkEngineTitle }
+        summary = { it.settingNetworkEngineSummary }
         icon = Icons.Filled.Lan
 
         extraConfig = PrefExtraConfig.MultiChoice(
             entries = {
                 buildMap {
                     if (platform == Platform.IOS) {
-                        put(stringResource(Res.string.setting_network_engine_swift_nio), "swiftnio")
+                        put(strings.settingNetworkEngineSwiftNio, "swiftnio")
                     } else {
                         // Android and Desktop both run the Netty engine.
-                        put(stringResource(Res.string.setting_network_engine_netty), "netty")
+                        put(strings.settingNetworkEngineNetty, "netty")
                     }
 
-                    put(stringResource(Res.string.setting_network_engine_ktor), "ktor")
+                    put(strings.settingNetworkEngineKtor, "ktor")
                 }
             }
         )
     }
     val TLS_ENABLE = Pref("pref_tls", true) {
-        title = Res.string.setting_tls_title
-        summary = Res.string.setting_tls_summary
-        detail = Res.string.setting_tls_detail
-        summaryFormatArgs = arrayOf(appName)
+        title = { it.settingTlsTitle }
+        summary = { it.settingTlsSummary }
+        detail = { it.settingTlsDetail }
         icon = Icons.Filled.Key
     }
     /** With this on, a server that cannot encrypt is refused instead of joined in plain text. */
     val TLS_REQUIRED = Pref("pref_tls_required", false) {
-        title = Res.string.setting_tls_required_title
-        summary = Res.string.setting_tls_required_summary
-        detail = Res.string.setting_tls_required_detail
+        title = { it.settingTlsRequiredTitle }
+        summary = { it.settingTlsRequiredSummary }
+        detail = { it.settingTlsRequiredDetail }
         icon = Icons.Filled.Lock
     }
     /** When true, page URLs (YouTube, SoundCloud, …) entered as media are run through the
      *  platform's native extractor before reaching the player. A heuristic short-circuits when
      *  the URL is already direct media, so there's no cost in the common case. */
     val MEDIA_RESOLVER_ENABLED = Pref("pref_media_resolver_enabled", true) {
-        title = Res.string.setting_media_resolver_title
-        summary = Res.string.setting_media_resolver_summary
-        detail = Res.string.setting_media_resolver_detail
+        title = { it.settingMediaResolverTitle }
+        summary = { it.settingMediaResolverSummary }
+        detail = { it.settingMediaResolverDetail }
         icon = Icons.Filled.Language
     }
 
@@ -628,17 +369,17 @@ object Preferences {
      *  Surface type is fixed when the player view is inflated, so a change lands on the next
      *  room entry, matching how the other engine options behave. */
     val DISABLE_FROSTED_GLASS = Pref("pref_disable_frosted_glass", false) {
-        title = Res.string.setting_disable_glass_title
-        summary = Res.string.setting_disable_glass_summary
-        detail = Res.string.setting_disable_glass_detail
+        title = { it.settingDisableGlassTitle }
+        summary = { it.settingDisableGlassSummary }
+        detail = { it.settingDisableGlassDetail }
         icon = Icons.Filled.BlurOff
     }
 
     /** ------------ Security -------------*/
     val TRUSTED_DOMAINS = Pref("pref_trusted_domains", "youtube.com\nyoutu.be") {
-        title = Res.string.setting_trusted_domains_title
-        summary = Res.string.setting_trusted_domains_summary
-        detail = Res.string.setting_trusted_domains_detail
+        title = { it.settingTrustedDomainsTitle }
+        summary = { it.settingTrustedDomainsSummary }
+        detail = { it.settingTrustedDomainsDetail }
         icon = Icons.Filled.Web
 
         extraConfig = PrefExtraConfig.ShowComposable(
@@ -648,18 +389,18 @@ object Preferences {
 
     /** ------------ Sync Mechanisms (In-Room) -------------*/
     val SYNC_FASTFORWARD = Pref("pref_inroom_sync_fastforward", true) {
-        title = Res.string.uisetting_sync_fastforward_title
-        summary = Res.string.uisetting_sync_fastforward_summary
+        title = { it.uisettingSyncFastforwardTitle }
+        summary = { it.uisettingSyncFastforwardSummary }
         icon = Icons.Filled.FastForward
     }
     val SYNC_SLOWDOWN = Pref("pref_inroom_sync_slowdown", true) {
-        title = Res.string.uisetting_sync_slowdown_title
-        summary = Res.string.uisetting_sync_slowdown_summary
+        title = { it.uisettingSyncSlowdownTitle }
+        summary = { it.uisettingSyncSlowdownSummary }
         icon = Icons.Filled.SlowMotionVideo
     }
     val SYNC_REWIND = Pref("pref_inroom_sync_rewind", true) {
-        title = Res.string.uisetting_sync_rewind_title
-        summary = Res.string.uisetting_sync_rewind_summary
+        title = { it.uisettingSyncRewindTitle }
+        summary = { it.uisettingSyncRewindSummary }
         icon = Icons.Filled.FastRewind
     }
     /**
@@ -668,8 +409,8 @@ object Preferences {
      * because below that ordinary jitter would trigger it constantly.
      */
     val SYNC_REWIND_THRESHOLD = Pref("pref_inroom_sync_rewind_threshold", 40) {
-        title = Res.string.uisetting_sync_rewind_threshold_title
-        summary = Res.string.uisetting_sync_rewind_threshold_summary
+        title = { it.uisettingSyncRewindThresholdTitle }
+        summary = { it.uisettingSyncRewindThresholdSummary }
         icon = Icons.Filled.FastRewind
         dependencyEnable = { SYNC_REWIND.value() }
 
@@ -678,8 +419,8 @@ object Preferences {
 
     /** How far ahead you may drift before playback slows to let the room catch up, in tenths. */
     val SYNC_SLOWDOWN_THRESHOLD = Pref("pref_inroom_sync_slowdown_threshold", 15) {
-        title = Res.string.uisetting_sync_slowdown_threshold_title
-        summary = Res.string.uisetting_sync_slowdown_threshold_summary
+        title = { it.uisettingSyncSlowdownThresholdTitle }
+        summary = { it.uisettingSyncSlowdownThresholdSummary }
         icon = Icons.Filled.SlowMotionVideo
         dependencyEnable = { SYNC_SLOWDOWN.value() }
 
@@ -688,8 +429,8 @@ object Preferences {
 
     /** How far behind you may fall before the room pulls you forward, in tenths. */
     val SYNC_FASTFORWARD_THRESHOLD = Pref("pref_inroom_sync_fastforward_threshold", 50) {
-        title = Res.string.uisetting_sync_fastforward_threshold_title
-        summary = Res.string.uisetting_sync_fastforward_threshold_summary
+        title = { it.uisettingSyncFastforwardThresholdTitle }
+        summary = { it.uisettingSyncFastforwardThresholdSummary }
         icon = Icons.Filled.FastForward
         dependencyEnable = { SYNC_FASTFORWARD.value() }
 
@@ -705,8 +446,8 @@ object Preferences {
      * only what we do locally.
      */
     val USER_TIME_OFFSET = Pref("pref_inroom_user_time_offset", 600) {
-        title = Res.string.uisetting_user_offset_title
-        summary = Res.string.uisetting_user_offset_summary
+        title = { it.uisettingUserOffsetTitle }
+        summary = { it.uisettingUserOffsetSummary }
         icon = Icons.Filled.MoreTime
 
         extraConfig = PrefExtraConfig.Slider(
@@ -720,16 +461,16 @@ object Preferences {
      * does not sit on the subtitles (issue 160). Zero lets chat use the full height.
      */
     val CHAT_SUBTITLE_CLEARANCE = Pref("pref_inroom_chat_subtitle_clearance", 15) {
-        title = Res.string.uisetting_chat_clearance_title
-        summary = Res.string.uisetting_chat_clearance_summary
+        title = { it.uisettingChatClearanceTitle }
+        summary = { it.uisettingChatClearanceSummary }
         icon = Icons.Filled.Subtitles
 
         extraConfig = PrefExtraConfig.Slider(minValue = 0, maxValue = 40, unit = "%", zeroMeansOff = true)
     }
 
     val SYNC_DONT_SLOW_WITH_ME = Pref("pref_inroom_sync_dont_slow_with_me", false) {
-        title = Res.string.uisetting_sync_dont_slow_with_me_title
-        summary = Res.string.uisetting_sync_dont_slow_with_me_summary
+        title = { it.uisettingSyncDontSlowWithMeTitle }
+        summary = { it.uisettingSyncDontSlowWithMeSummary }
         icon = Icons.Filled.Speed
     }
 
@@ -737,8 +478,8 @@ object Preferences {
     /** One entry gathering the COLOR_* prefs below as a nested page, so the room's settings
      *  panel can show them beside the chat they colour. */
     val CHAT_COLORS_ENTRY = Pref("pref_inroom_chat_colors_entry", "") {
-        title = Res.string.uisetting_categ_chat_colors
-        summary = Res.string.uisetting_chat_colors_entry_summary
+        title = { it.uisettingCategChatColors }
+        summary = { it.uisettingChatColorsEntrySummary }
         icon = Icons.Filled.Palette
 
         extraConfig = PrefExtraConfig.Nested {
@@ -752,125 +493,125 @@ object Preferences {
     }
 
     val COLOR_TIMESTAMP = Pref("pref_inroom_color_timestamp", CHAT_COLOR_FOLLOWS_THEME) {
-        title = Res.string.uisetting_timestamp_color_title
-        summary = Res.string.uisetting_timestamp_summary
+        title = { it.uisettingTimestampColorTitle }
+        summary = { it.uisettingTimestampSummary }
         icon = Icons.Filled.Brush
         extraConfig = PrefExtraConfig.ColorPick(themeRole = { it.inkFaint })
     }
     val COLOR_SELFTAG = Pref("pref_inroom_color_selftag", CHAT_COLOR_FOLLOWS_THEME) {
-        title = Res.string.uisetting_self_color_title
-        summary = Res.string.uisetting_self_color_summary
+        title = { it.uisettingSelfColorTitle }
+        summary = { it.uisettingSelfColorSummary }
         icon = Icons.Filled.Brush
         extraConfig = PrefExtraConfig.ColorPick(themeRole = { it.accent })
     }
     val COLOR_FRIENDTAG = Pref("pref_inroom_color_friendtag", CHAT_COLOR_FOLLOWS_THEME) {
-        title = Res.string.uisetting_friend_color_title
-        summary = Res.string.uisetting_friend_color_summary
+        title = { it.uisettingFriendColorTitle }
+        summary = { it.uisettingFriendColorSummary }
         icon = Icons.Filled.Brush
         extraConfig = PrefExtraConfig.ColorPick(themeRole = { it.ok })
     }
     val COLOR_SYSTEMMSG = Pref("pref_inroom_color_systemmsg", CHAT_COLOR_FOLLOWS_THEME) {
-        title = Res.string.uisetting_system_color_title
-        summary = Res.string.uisetting_system_color_summary
+        title = { it.uisettingSystemColorTitle }
+        summary = { it.uisettingSystemColorSummary }
         icon = Icons.Filled.Brush
         extraConfig = PrefExtraConfig.ColorPick(themeRole = { it.inkDim })
     }
     val COLOR_USERMSG = Pref("pref_inroom_color_usermsg", CHAT_COLOR_FOLLOWS_THEME) {
-        title = Res.string.uisetting_human_color_title
-        summary = Res.string.uisetting_human_color_summary
+        title = { it.uisettingHumanColorTitle }
+        summary = { it.uisettingHumanColorSummary }
         icon = Icons.Filled.Brush
         extraConfig = PrefExtraConfig.ColorPick(themeRole = { it.ink })
     }
     val COLOR_ERRORMSG = Pref("pref_inroom_color_errormsg", CHAT_COLOR_FOLLOWS_THEME) {
-        title = Res.string.uisetting_error_color_title
-        summary = Res.string.uisetting_error_color_summary
+        title = { it.uisettingErrorColorTitle }
+        summary = { it.uisettingErrorColorSummary }
         icon = Icons.Filled.Brush
         extraConfig = PrefExtraConfig.ColorPick(themeRole = { it.bad })
     }
 
     /** ------------ Hosted server (persisted so a host does not retype them) ------------ */
     val SERVER_PORT = Pref("pref_server_port", "8999") {
-        title = Res.string.server_host_port
+        title = { it.serverHostPort }
         icon = Icons.Filled.Keyboard
         extraConfig = PrefExtraConfig.TextField(keyboardType = 1)
     }
     val SERVER_PASSWORD = Pref("pref_server_password", "") {
-        title = Res.string.server_host_password
-        summary = Res.string.server_host_password_detail
+        title = { it.serverHostPassword }
+        summary = { it.serverHostPasswordDetail }
         icon = Icons.Filled.Keyboard
         extraConfig = PrefExtraConfig.TextField()
     }
     val SERVER_MOTD = Pref("pref_server_motd", "") {
-        title = Res.string.server_host_motd
+        title = { it.serverHostMotd }
         icon = Icons.Filled.Keyboard
         extraConfig = PrefExtraConfig.TextField()
     }
     val SERVER_ISOLATE_ROOMS = Pref("pref_server_isolate_rooms", true) {
-        title = Res.string.server_host_isolate_rooms
+        title = { it.serverHostIsolateRooms }
         icon = Icons.Filled.Pin
     }
     val SERVER_DISABLE_CHAT = Pref("pref_server_disable_chat", false) {
-        title = Res.string.server_host_disable_chat
+        title = { it.serverHostDisableChat }
         icon = Icons.Filled.Pin
     }
     val SERVER_DISABLE_READY = Pref("pref_server_disable_ready", false) {
-        title = Res.string.server_host_disable_ready
+        title = { it.serverHostDisableReady }
         icon = Icons.Filled.Pin
     }
 
     /** ------------ Chat Properties -------------*/
     /** Zero switches the outline off; there is no separate switch. */
     val MSG_OUTLINE_THICKNESS = Pref("pref_inroom_msg_outline_thickness", 2) {
-        title = Res.string.uisetting_msgoutline_title
-        summary = Res.string.uisetting_msgoutline_summary
+        title = { it.uisettingMsgoutlineTitle }
+        summary = { it.uisettingMsgoutlineSummary }
         icon = Icons.Filled.BorderColor
 
         extraConfig = PrefExtraConfig.Slider(maxValue = 30, minValue = 0, zeroMeansOff = true)
     }
     val MSG_SHADOW_ACTIVATE = Pref("pref_inroom_msg_shadow_activate", false) {
-        title = Res.string.uisetting_msgshadow_title
-        summary = Res.string.uisetting_msgshadow_summary
+        title = { it.uisettingMsgshadowTitle }
+        summary = { it.uisettingMsgshadowSummary }
         icon = Icons.Filled.BorderColor
     }
     val MSG_BG_OPACITY = Pref("pref_inroom_msg_bg_opacity", 0) {
-        title = Res.string.uisetting_messagery_alpha_title
-        summary = Res.string.uisetting_messagery_alpha_summary
+        title = { it.uisettingMessageryAlphaTitle }
+        summary = { it.uisettingMessageryAlphaSummary }
         icon = Icons.Filled.Opacity
 
         extraConfig = PrefExtraConfig.Slider(maxValue = 255, minValue = 0)
     }
     /** 5 to 24, default 10; existing choices are preserved. MessageStyle uses the same floor. */
     val MSG_FONTSIZE = Pref("pref_inroom_msg_fontsize", 10) {
-        title = Res.string.uisetting_msgsize_title
-        summary = Res.string.uisetting_msgsize_summary
+        title = { it.uisettingMsgsizeTitle }
+        summary = { it.uisettingMsgsizeSummary }
         icon = Icons.Filled.FormatSize
 
         extraConfig = PrefExtraConfig.Slider(maxValue = 24, minValue = 5)
     }
     /** How many recent unseen lines the fading layout shows over the video. */
     val MSG_MAXCOUNT = Pref("pref_inroom_msg_maxcount", 3) {
-        title = Res.string.uisetting_msgcount_title
-        summary = Res.string.uisetting_msgcount_summary
+        title = { it.uisettingMsgcountTitle }
+        summary = { it.uisettingMsgcountSummary }
         icon = Icons.Filled.FormatListNumbered
 
         extraConfig = PrefExtraConfig.Slider(maxValue = 10, minValue = 1)
     }
     val MSG_FADING_DURATION = Pref("pref_inroom_fading_msg_duration", 3) {
-        title = Res.string.uisetting_msglife_title
-        summary = Res.string.uisetting_msglife_summary
+        title = { it.uisettingMsglifeTitle }
+        summary = { it.uisettingMsglifeSummary }
         icon = Icons.Filled.Timer
 
         extraConfig = PrefExtraConfig.Slider(maxValue = 10, minValue = 1, unit = "s")
     }
     val MSG_BOX_ACTION = Pref("pref_inroom_msg_box_action", true) {
-        title = Res.string.uisetting_msgboxaction_title
-        summary = Res.string.uisetting_msgboxaction_summary
+        title = { it.uisettingMsgboxactionTitle }
+        summary = { it.uisettingMsgboxactionSummary }
         icon = Icons.Filled.Keyboard
     }
 
     val OSD_DURATION = Pref("pref_inroom_osd_duration", 2) {
-        title = Res.string.uisetting_osd_duration_title
-        summary = Res.string.uisetting_osd_duration_summary
+        title = { it.uisettingOsdDurationTitle }
+        summary = { it.uisettingOsdDurationSummary }
         icon = Icons.Filled.Timer
 
         extraConfig = PrefExtraConfig.Slider(maxValue = 10, minValue = 0, unit = "s")
@@ -882,37 +623,37 @@ object Preferences {
      *  OSD overlays bubble up via [RoomViewmodel.dispatchOSD]. They do NOT affect the chat log. */
     /** Routine room events stay in chat by default instead of crowding the video with notices. */
     val OSD_SAME_ROOM = Pref("pref_inroom_osd_same_room", false) {
-        title = Res.string.uisetting_osd_sameroom_title
-        summary = Res.string.uisetting_osd_sameroom_summary
+        title = { it.uisettingOsdSameroomTitle }
+        summary = { it.uisettingOsdSameroomSummary }
         icon = Icons.Filled.SupervisedUserCircle
     }
     val OSD_NON_OPERATOR = Pref("pref_inroom_osd_non_operator", true) {
-        title = Res.string.uisetting_osd_nonoperator_title
-        summary = Res.string.uisetting_osd_nonoperator_summary
+        title = { it.uisettingOsdNonoperatorTitle }
+        summary = { it.uisettingOsdNonoperatorSummary }
         icon = Icons.Filled.Face
         dependencyEnable = { OSD_SAME_ROOM.value() }
     }
     /** Default false to match Syncplay PC's SHOW_DIFFERENT_ROOM_OSD = False default. */
     val OSD_OTHER_ROOM = Pref("pref_inroom_osd_other_room", false) {
-        title = Res.string.uisetting_osd_otherroom_title
-        summary = Res.string.uisetting_osd_otherroom_summary
+        title = { it.uisettingOsdOtherroomTitle }
+        summary = { it.uisettingOsdOtherroomSummary }
         icon = Icons.Filled.Web
     }
     val OSD_SLOWDOWN = Pref("pref_inroom_osd_slowdown", true) {
-        title = Res.string.uisetting_osd_slowdown_title
-        summary = Res.string.uisetting_osd_slowdown_summary
+        title = { it.uisettingOsdSlowdownTitle }
+        summary = { it.uisettingOsdSlowdownSummary }
         icon = Icons.Filled.SlowMotionVideo
     }
     val OSD_WARNINGS = Pref("pref_inroom_osd_warnings", true) {
-        title = Res.string.uisetting_osd_warnings_title
-        summary = Res.string.uisetting_osd_warnings_summary
+        title = { it.uisettingOsdWarningsTitle }
+        summary = { it.uisettingOsdWarningsSummary }
         icon = Icons.Filled.ErrorOutline
     }
 
     /** ------------ Player Settings -------------*/
     val SUBTITLE_SIZE = Pref("pref_inroom_subtitle_size", 16) {
-        title = Res.string.uisetting_subtitle_size_title
-        summary = Res.string.uisetting_subtitle_size_summary
+        title = { it.uisettingSubtitleSizeTitle }
+        summary = { it.uisettingSubtitleSizeSummary }
         icon = Icons.Filled.SortByAlpha
 
         extraConfig = PrefExtraConfig.Slider(
@@ -924,65 +665,65 @@ object Preferences {
     }
 
     val CUSTOM_SEEK_AMOUNT = Pref("pref_inroom_custom_seek_amount", 90) {
-        title = Res.string.uisetting_custom_seek_amount_title
-        summary = Res.string.uisetting_custom_seek_amount_summary
+        title = { it.uisettingCustomSeekAmountTitle }
+        summary = { it.uisettingCustomSeekAmountSummary }
         icon = Icons.Filled.Update
 
         extraConfig = PrefExtraConfig.Slider(maxValue = 300, minValue = 30, unit = "s")
     }
     val CUSTOM_SEEK_FRONT = Pref("pref_inroom_custom_seek_front", true) {
-        title = Res.string.uisetting_custom_seek_front_title
-        summary = Res.string.uisetting_custom_seek_front_summary
+        title = { it.uisettingCustomSeekFrontTitle }
+        summary = { it.uisettingCustomSeekFrontSummary }
         icon = Icons.Filled.Update
 
     }
     val SEEK_FORWARD_JUMP = Pref("pref_inroom_seek_forward_jump", 10) {
-        title = Res.string.uisetting_seek_forward_jump_title
-        summary = Res.string.uisetting_seek_forward_jump_summary
+        title = { it.uisettingSeekForwardJumpTitle }
+        summary = { it.uisettingSeekForwardJumpSummary }
         icon = Icons.Filled.FastForward
 
         extraConfig = PrefExtraConfig.Slider(maxValue = 120, minValue = 1, unit = "s")
 
     }
     val SEEK_BACKWARD_JUMP = Pref("pref_inroom_seek_backward_jump", 10) {
-        title = Res.string.uisetting_seek_backward_jump_title
-        summary = Res.string.uisetting_seek_backward_jump_summary
+        title = { it.uisettingSeekBackwardJumpTitle }
+        summary = { it.uisettingSeekBackwardJumpSummary }
         icon = Icons.Filled.FastRewind
 
         extraConfig = PrefExtraConfig.Slider(maxValue = 120, minValue = 1, unit = "s")
     }
 
     val SHOW_CHAPTER_DOTS = Pref("pref_inroom_show_chapter_dots", true) {
-        title = Res.string.uisetting_show_chapter_dots_title
-        summary = Res.string.uisetting_show_chapter_dots_summary
+        title = { it.uisettingShowChapterDotsTitle }
+        summary = { it.uisettingShowChapterDotsSummary }
         icon = Icons.Filled.FormatListNumbered
     }
 
     val CHAPTER_DOTS_CLICKABLE = Pref("pref_inroom_chapter_dots_clickable", false) {
-        title = Res.string.uisetting_chapter_dots_clickable_title
-        summary = Res.string.uisetting_chapter_dots_clickable_summary
+        title = { it.uisettingChapterDotsClickableTitle }
+        summary = { it.uisettingChapterDotsClickableSummary }
         icon = Icons.Filled.TouchApp
         dependencyEnable = { SHOW_CHAPTER_DOTS.value() }
     }
 
     /** Off by default: double-tap-to-seek fights with tap-to-reveal-HUD for most users. */
     val DOUBLETAP_SEEK = Pref("pref_inroom_doubletap_seek", false) {
-        title = Res.string.uisetting_doubletap_seek_title
-        summary = Res.string.uisetting_doubletap_seek_summary
-        detail = Res.string.uisetting_doubletap_seek_detail
+        title = { it.uisettingDoubletapSeekTitle }
+        summary = { it.uisettingDoubletapSeekSummary }
+        detail = { it.uisettingDoubletapSeekDetail }
         icon = Icons.Filled.TouchApp
     }
 
     val SWIPE_GESTURES = Pref("pref_inroom_swipe_gestures", true) {
-        title = Res.string.uisetting_swipe_gestures_title
-        summary = Res.string.uisetting_swipe_gestures_summary
+        title = { it.uisettingSwipeGesturesTitle }
+        summary = { it.uisettingSwipeGesturesSummary }
         icon = Icons.Filled.Swipe
     }
 
     /** Idle seconds during playback before the HUD hides; zero keeps it up until tapped away. */
     val HUD_AUTO_HIDE_SECONDS = Pref("pref_inroom_hud_auto_hide_seconds", 15) {
-        title = Res.string.room_hud_auto_hide_title
-        summary = Res.string.room_hud_auto_hide_summary
+        title = { it.roomHudAutoHideTitle }
+        summary = { it.roomHudAutoHideSummary }
         icon = Icons.Filled.Timer
 
         extraConfig = PrefExtraConfig.Slider(maxValue = 30, minValue = 0, unit = "s", zeroMeansOff = true)
@@ -993,119 +734,119 @@ object Preferences {
 
     /** ------------ KitePlayer Settings -------------*/
     val KITE_COMPOSE_RENDERER = Pref("pref_kite_compose_renderer", false) {
-        title = Res.string.uisetting_kite_compose_renderer_title
-        summary = Res.string.uisetting_kite_compose_renderer_summary
+        title = { it.uisettingKiteComposeRendererTitle }
+        summary = { it.uisettingKiteComposeRendererSummary }
         icon = Icons.Filled.Layers
     }
     val KITE_HARDWARE_ACCELERATION = Pref("pref_kite_hw", true) {
-        title = Res.string.uisetting_kite_hw_title
-        summary = Res.string.uisetting_kite_hw_summary
+        title = { it.uisettingKiteHwTitle }
+        summary = { it.uisettingKiteHwSummary }
         icon = Icons.Filled.Speed
     }
     val KITE_SUBTITLE_AUTOSELECT = Pref("pref_kite_sub_autoselect", true) {
-        title = Res.string.uisetting_kite_sub_autoselect_title
-        summary = Res.string.uisetting_kite_sub_autoselect_summary
+        title = { it.uisettingKiteSubAutoselectTitle }
+        summary = { it.uisettingKiteSubAutoselectSummary }
         icon = Icons.Filled.Subtitles
     }
     val KITE_SUBTITLE_DELAY_MS = Pref("pref_kite_sub_delay_ms", 0) {
-        title = Res.string.uisetting_kite_sub_delay_title
-        summary = Res.string.uisetting_kite_sub_delay_summary
+        title = { it.uisettingKiteSubDelayTitle }
+        summary = { it.uisettingKiteSubDelaySummary }
         icon = Icons.Filled.Timer
     }
     val KITE_AUDIO_DELAY_MS = Pref("pref_kite_audio_delay_ms", 0) {
-        title = Res.string.uisetting_kite_audio_delay_title
-        summary = Res.string.uisetting_kite_audio_delay_summary
+        title = { it.uisettingKiteAudioDelayTitle }
+        summary = { it.uisettingKiteAudioDelaySummary }
         icon = Icons.Filled.Timer
     }
     val KITE_PRESERVE_PITCH = Pref("pref_kite_preserve_pitch", true) {
-        title = Res.string.uisetting_kite_preserve_pitch_title
-        summary = Res.string.uisetting_kite_preserve_pitch_summary
+        title = { it.uisettingKitePreservePitchTitle }
+        summary = { it.uisettingKitePreservePitchSummary }
         icon = Icons.Filled.MusicNote
     }
     val KITE_SUBTITLE_POS = Pref("pref_kite_sub_pos", 100) {
-        title = Res.string.uisetting_kite_sub_pos_title
-        summary = Res.string.uisetting_kite_sub_pos_summary
+        title = { it.uisettingKiteSubPosTitle }
+        summary = { it.uisettingKiteSubPosSummary }
         icon = Icons.Filled.VerticalAlignBottom
     }
     val KITE_EQ_BRIGHTNESS = Pref("pref_kite_eq_brightness", 0) {
-        title = Res.string.uisetting_kite_eq_brightness_title
-        summary = Res.string.uisetting_kite_eq_brightness_summary
+        title = { it.uisettingKiteEqBrightnessTitle }
+        summary = { it.uisettingKiteEqBrightnessSummary }
         icon = Icons.Filled.BrightnessMedium
     }
     val KITE_EQ_CONTRAST = Pref("pref_kite_eq_contrast", 100) {
-        title = Res.string.uisetting_kite_eq_contrast_title
-        summary = Res.string.uisetting_kite_eq_contrast_summary
+        title = { it.uisettingKiteEqContrastTitle }
+        summary = { it.uisettingKiteEqContrastSummary }
         icon = Icons.Filled.Contrast
     }
     val KITE_EQ_SATURATION = Pref("pref_kite_eq_saturation", 100) {
-        title = Res.string.uisetting_kite_eq_saturation_title
-        summary = Res.string.uisetting_kite_eq_saturation_summary
+        title = { it.uisettingKiteEqSaturationTitle }
+        summary = { it.uisettingKiteEqSaturationSummary }
         icon = Icons.Filled.Palette
     }
     val KITE_EQ_HUE = Pref("pref_kite_eq_hue", 0) {
-        title = Res.string.uisetting_kite_eq_hue_title
-        summary = Res.string.uisetting_kite_eq_hue_summary
+        title = { it.uisettingKiteEqHueTitle }
+        summary = { it.uisettingKiteEqHueSummary }
         icon = Icons.Filled.Colorize
     }
     val KITE_DEBUG_STATS = Pref("pref_kite_debug_stats", false) {
-        title = Res.string.uisetting_kite_debug_stats_title
-        summary = Res.string.uisetting_kite_debug_stats_summary
+        title = { it.uisettingKiteDebugStatsTitle }
+        summary = { it.uisettingKiteDebugStatsSummary }
         icon = Icons.Filled.Adb
     }
 
     /** ------------ MPV Settings -------------*/
     val MPV_HARDWARE_ACCELERATION = Pref("pref_mpv_hw", true) {
-        title = Res.string.uisetting_mpv_hardware_acceleration_title
-        summary = Res.string.uisetting_mpv_hardware_acceleration_summary
+        title = { it.uisettingMpvHardwareAccelerationTitle }
+        summary = { it.uisettingMpvHardwareAccelerationSummary }
         icon = Icons.Filled.Speed
     }
     val MPV_GPU_NEXT = Pref("pref_mpv_gpunext", true) {
-        title = Res.string.uisetting_mpv_gpunext_title
-        summary = Res.string.uisetting_mpv_gpunext_summary
+        title = { it.uisettingMpvGpunextTitle }
+        summary = { it.uisettingMpvGpunextSummary }
         icon = Icons.Filled.Memory
     }
     val MPV_DEBUG_MODE = Pref("pref_mpv_debug_mode", 0) {
-        title = Res.string.ui_setting_mpv_debug_title
-        summary = Res.string.ui_setting_mpv_debug_summary
+        title = { it.uiSettingMpvDebugTitle }
+        summary = { it.uiSettingMpvDebugSummary }
         icon = Icons.Filled.Adb
     }
     val MPV_VIDSYNC = Pref("pref_mpv_video_sync", "audio") {
-        title = Res.string.ui_setting_mpv_vidsync_title
-        summary = Res.string.ui_setting_mpv_vidsync_summary
-        detail = Res.string.ui_setting_mpv_vidsync_detail
+        title = { it.uiSettingMpvVidsyncTitle }
+        summary = { it.uiSettingMpvVidsyncSummary }
+        detail = { it.uiSettingMpvVidsyncDetail }
         icon = Icons.Filled.SlowMotionVideo
     }
     val MPV_PROFILE = Pref("pref_mpv_profile", "fast") {
-        title = Res.string.ui_setting_mpv_profile_title
-        summary = Res.string.ui_setting_mpv_profile_summary
-        detail = Res.string.ui_setting_mpv_profile_detail
+        title = { it.uiSettingMpvProfileTitle }
+        summary = { it.uiSettingMpvProfileSummary }
+        detail = { it.uiSettingMpvProfileDetail }
         icon = Icons.Filled.SupervisedUserCircle
     }
     val MPV_INTERPOLATION = Pref("pref_mpv_interpolation", false) {
-        title = Res.string.ui_setting_mpv_interpolation_title
-        summary = Res.string.ui_setting_mpv_interpolation_summary
-        detail = Res.string.ui_setting_mpv_interpolation_detail
+        title = { it.uiSettingMpvInterpolationTitle }
+        summary = { it.uiSettingMpvInterpolationSummary }
+        detail = { it.uiSettingMpvInterpolationDetail }
         icon = Icons.Filled.Animation
     }
 
     /** ------------ ExoPlayer Settings -------------*/
     val EXO_MAX_BUFFER = Pref("pref_max_buffer_size", 30) {
-        title = Res.string.setting_max_buffer_title
-        summary = Res.string.setting_max_buffer_summary
+        title = { it.settingMaxBufferTitle }
+        summary = { it.settingMaxBufferSummary }
         icon = Icons.Filled.HourglassTop
 
         extraConfig = PrefExtraConfig.Slider(maxValue = 60, minValue = 1, unit = "s")
     }
     val EXO_MIN_BUFFER = Pref("pref_min_buffer_size", 15) {
-        title = Res.string.setting_min_buffer_title
-        summary = Res.string.setting_min_buffer_summary
+        title = { it.settingMinBufferTitle }
+        summary = { it.settingMinBufferSummary }
         icon = Icons.Filled.HourglassBottom
 
         extraConfig = PrefExtraConfig.Slider(maxValue = 30, minValue = 1, unit = "s")
     }
     val EXO_SEEK_BUFFER = Pref("pref_seek_buffer_size", 5000) {
-        title = Res.string.setting_playback_buffer_title
-        summary = Res.string.setting_playback_buffer_summary
+        title = { it.settingPlaybackBufferTitle }
+        summary = { it.settingPlaybackBufferSummary }
         icon = Icons.Filled.HourglassEmpty
 
         extraConfig = PrefExtraConfig.Slider(maxValue = 15000, minValue = 100, unit = "ms")
@@ -1113,43 +854,43 @@ object Preferences {
 
     /** ------------ Haptics -------------*/
     val HAPTIC_ON_JOINED = Pref("pref_haptic_on_joined", false) {
-        title = Res.string.uisetting_haptic_on_joined_title
-        summary = Res.string.uisetting_haptic_on_joined_summary
+        title = { it.uisettingHapticOnJoinedTitle }
+        summary = { it.uisettingHapticOnJoinedSummary }
         icon = Icons.Filled.Vibration
     }
     val HAPTIC_ON_LEFT = Pref("pref_haptic_on_left", true) {
-        title = Res.string.uisetting_haptic_on_left_title
-        summary = Res.string.uisetting_haptic_on_left_summary
+        title = { it.uisettingHapticOnLeftTitle }
+        summary = { it.uisettingHapticOnLeftSummary }
         icon = Icons.Filled.Vibration
     }
     val HAPTIC_ON_CHAT = Pref("pref_haptic_on_chat", true) {
-        title = Res.string.uisetting_haptic_on_chat_title
-        summary = Res.string.uisetting_haptic_on_chat_summary
+        title = { it.uisettingHapticOnChatTitle }
+        summary = { it.uisettingHapticOnChatSummary }
         icon = Icons.Filled.Vibration
     }
     val HAPTIC_ON_PAUSED = Pref("pref_haptic_on_paused", false) {
-        title = Res.string.uisetting_haptic_on_paused_title
-        summary = Res.string.uisetting_haptic_on_paused_summary
+        title = { it.uisettingHapticOnPausedTitle }
+        summary = { it.uisettingHapticOnPausedSummary }
         icon = Icons.Filled.Vibration
     }
     val HAPTIC_ON_PLAYED = Pref("pref_haptic_on_played", false) {
-        title = Res.string.uisetting_haptic_on_played_title
-        summary = Res.string.uisetting_haptic_on_played_summary
+        title = { it.uisettingHapticOnPlayedTitle }
+        summary = { it.uisettingHapticOnPlayedSummary }
         icon = Icons.Filled.Vibration
     }
     val HAPTIC_ON_SEEKED = Pref("pref_haptic_on_seeked", false) {
-        title = Res.string.uisetting_haptic_on_seeked_title
-        summary = Res.string.uisetting_haptic_on_seeked_summary
+        title = { it.uisettingHapticOnSeekedTitle }
+        summary = { it.uisettingHapticOnSeekedSummary }
         icon = Icons.Filled.Vibration
     }
     val HAPTIC_ON_PLAYLIST = Pref("pref_haptic_on_playlist", false) {
-        title = Res.string.uisetting_haptic_on_playlist_title
-        summary = Res.string.uisetting_haptic_on_playlist_summary
+        title = { it.uisettingHapticOnPlaylistTitle }
+        summary = { it.uisettingHapticOnPlaylistSummary }
         icon = Icons.Filled.Vibration
     }
     val HAPTIC_ON_CONNECTION = Pref("pref_haptic_on_connection", false) {
-        title = Res.string.uisetting_haptic_on_connection_title
-        summary = Res.string.uisetting_haptic_on_connection_summary
+        title = { it.uisettingHapticOnConnectionTitle }
+        summary = { it.uisettingHapticOnConnectionSummary }
         icon = Icons.Filled.Vibration
     }
 
@@ -1159,28 +900,28 @@ object Preferences {
      * Opaque ARGB, same storage convention as the chat colour prefs.
      */
     val VIDEO_BACKGROUND_COLOR = Pref("pref_video_background_color", androidx.compose.ui.graphics.Color.Black.toArgb()) {
-        title = Res.string.uisetting_video_bg_color_title
-        summary = Res.string.uisetting_video_bg_color_summary
+        title = { it.uisettingVideoBgColorTitle }
+        summary = { it.uisettingVideoBgColorSummary }
         icon = Icons.Filled.Brush
         extraConfig = PrefExtraConfig.ColorPick()
     }
 
     /** ------------ Advanced -------------*/
     val RECONNECTION_INTERVAL = Pref("pref_inroom_reconnection_interval", 2) {
-        title = Res.string.uisetting_reconnect_interval_title
-        summary = Res.string.uisetting_reconnect_interval_summary
+        title = { it.uisettingReconnectIntervalTitle }
+        summary = { it.uisettingReconnectIntervalSummary }
         icon = Icons.Filled.Web
 
         extraConfig = PrefExtraConfig.Slider(maxValue = 15, minValue = 0, unit = "s")
     }
 
     val GLOBAL_RESET_DEFAULTS: Pref<String> = Pref("global_reset_defaults", "") {
-        title = Res.string.setting_resetdefault_title
-        summary = Res.string.setting_resetdefault_summary
+        title = { it.settingResetdefaultTitle }
+        summary = { it.settingResetdefaultSummary }
         icon = Icons.Filled.ClearAll
 
         extraConfig = PrefExtraConfig.YesNoDialog(
-            rationale = Res.string.setting_resetdefault_dialog,
+            rationale = { it.settingResetdefaultDialog },
             destructive = true,
             onYes = {
                 // Only the global categories' keys. Identity, themes, favourites and the saved
@@ -1193,12 +934,12 @@ object Preferences {
     }
 
     val INROOM_RESET_DEFAULTS: Pref<String> = Pref("inroom_reset_defaults", "") {
-        title = Res.string.uisetting_resetdefault_title
-        summary = Res.string.uisetting_resetdefault_summary
+        title = { it.uisettingResetdefaultTitle }
+        summary = { it.uisettingResetdefaultSummary }
         icon = Icons.Filled.ClearAll
 
         extraConfig = PrefExtraConfig.YesNoDialog(
-            rationale = Res.string.setting_resetdefault_dialog,
+            rationale = { it.settingResetdefaultDialog },
             destructive = true,
             onYes = {
                 // Every in-room and engine key, by prefix; nothing else.
@@ -1222,8 +963,8 @@ object Preferences {
      * install id, the saved join config, the server salt, the server password, watch positions.
      */
     val EXPORT_SETTINGS = Pref<String>("settings_export", "") {
-        title = Res.string.setting_export_settings_title
-        summary = Res.string.setting_export_settings_summary
+        title = { it.settingExportSettingsTitle }
+        summary = { it.settingExportSettingsSummary }
         icon = Icons.Filled.FileDownload
 
         extraConfig = PrefExtraConfig.ShowComposable(
@@ -1244,8 +985,8 @@ object Preferences {
      * guessed at, because a settings file is a text file and someone will hand-edit one.
      */
     val IMPORT_SETTINGS = Pref<String>("settings_import", "") {
-        title = Res.string.setting_import_settings_title
-        summary = Res.string.setting_import_settings_summary
+        title = { it.settingImportSettingsTitle }
+        summary = { it.settingImportSettingsSummary }
         icon = Icons.Filled.FileUpload
 
         extraConfig = PrefExtraConfig.ShowComposable(
@@ -1272,20 +1013,20 @@ object Preferences {
     }
 
     val CLEAR_LOGS = Pref("log_clear", "") {
-        title = Res.string.setting_clear_logs_title
-        summary = Res.string.setting_clear_logs_summary
+        title = { it.settingClearLogsTitle }
+        summary = { it.settingClearLogsSummary }
         icon = Icons.Filled.ClearAll
 
         extraConfig = PrefExtraConfig.YesNoDialog(
-            rationale = Res.string.setting_clear_logs_dialog,
+            rationale = { it.settingClearLogsDialog },
             destructive = true,
             onYes = { clearLogs() }
         )
     }
 
     val EXPORT_LOGS = Pref<String>("log_saver", "") {
-        title = Res.string.setting_export_log_title
-        summary = Res.string.setting_export_log_summary
+        title = { it.settingExportLogTitle }
+        summary = { it.settingExportLogSummary }
         icon = Icons.Filled.LogoDev
 
         extraConfig = PrefExtraConfig.ShowComposable(
@@ -1315,9 +1056,9 @@ object Preferences {
      * (re)initialization.
      */
     val VLC_CUSTOM_FLAGS = Pref("pref_vlc_custom_flags", "") {
-        title = Res.string.uisetting_vlc_custom_flags_title
-        summary = Res.string.uisetting_vlc_custom_flags_summary
-        detail = Res.string.uisetting_vlc_custom_flags_detail
+        title = { it.uisettingVlcCustomFlagsTitle }
+        summary = { it.uisettingVlcCustomFlagsSummary }
+        detail = { it.uisettingVlcCustomFlagsDetail }
         icon = Icons.Filled.Keyboard
         extraConfig = PrefExtraConfig.TextField()
     }
@@ -1331,8 +1072,8 @@ object Preferences {
      * fresh) because `MPVLib.setOptionString("config-dir", ...)` is read at init() time.
      */
     val MPV_IMPORT_CONF = Pref<String>("mpv_import_conf", "") {
-        title = Res.string.uisetting_mpv_import_conf_title
-        summary = Res.string.uisetting_mpv_import_conf_summary
+        title = { it.uisettingMpvImportConfTitle }
+        summary = { it.uisettingMpvImportConfSummary }
         icon = Icons.Filled.FileUpload
 
         extraConfig = PrefExtraConfig.ShowComposable(
@@ -1366,8 +1107,8 @@ object Preferences {
      * no-op (user is informed via logs).
      */
     val MPV_EXPORT_CONF = Pref<String>("mpv_export_conf", "") {
-        title = Res.string.uisetting_mpv_export_conf_title
-        summary = Res.string.uisetting_mpv_export_conf_summary
+        title = { it.uisettingMpvExportConfTitle }
+        summary = { it.uisettingMpvExportConfSummary }
         icon = Icons.Filled.FileDownload
 
         extraConfig = PrefExtraConfig.ShowComposable(

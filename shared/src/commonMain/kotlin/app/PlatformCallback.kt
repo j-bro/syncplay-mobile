@@ -12,12 +12,6 @@ import app.home.JoinConfig
  */
 interface PlatformCallback {
 
-    /**
-     * Called when the user changes the application language.
-     *
-     * @param newLang The new language code (e.g., "en", "fr", "es")
-     */
-    fun onLanguageChanged(newLang: String)
 
     /**
      * Saves a room configuration as a platform-specific shortcut.

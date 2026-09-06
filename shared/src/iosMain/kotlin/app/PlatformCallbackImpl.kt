@@ -104,13 +104,6 @@ object ApplePlatformCallback : PlatformCallback {
         // No-op on iOS
     }
 
-    /** Opens iOS Settings — iOS only allows per-app language changes there, not in-app. */
-    override fun onLanguageChanged(newLang: String) {
-        NSURL(string = UIApplicationOpenSettingsURLString).let { url ->
-            UIApplication.sharedApplication.openURL(url, mapOf<Any?, Any>(), null)
-        }
-    }
-
     /**
      * Adds a Home Screen Quick Action for joining a room. The [JoinConfig] rides in the
      * shortcut's `type` string as JSON, which is what [handleShortcut] decodes.

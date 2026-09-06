@@ -55,8 +55,6 @@ private var mutedFrom: Int? = null
 fun main(args: Array<String>) {
     initializeDatastore()
     warmPreferences()
-    // Before anything composes: Compose Desktop resolves its strings against the JVM locale.
-    applyDisplayLanguage(runCatching { Preferences.DISPLAY_LANG.value() }.getOrDefault(""))
     // The trace reaches the log file before the JVM's own handler prints and exits.
     val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
     Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->

@@ -68,8 +68,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.uisetting_categ_kite
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -335,7 +333,8 @@ internal class KiteImpl(
     }
 
     override suspend fun configurableSettings() = SettingCategory(
-        title = Res.string.uisetting_categ_kite,
+        key = "engine-kite",
+        title = { it.uisettingCategKite },
         icon = Icons.Filled.SettingsInputComponent,
     ) {
         // Creation-time settings: they say so in their summaries and apply at the next load.

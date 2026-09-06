@@ -29,7 +29,6 @@ import app.uicomponents.controls.BackGlyph
 import app.uicomponents.controls.GlyphButton
 import app.uicomponents.controls.ProgressBar
 import app.uicomponents.frames.PanelFrame
-import org.jetbrains.compose.resources.stringResource
 
 object CardRoomPrefs {
 
@@ -47,7 +46,7 @@ object CardRoomPrefs {
             categories = roomSettings(viewmodel.player.configurableSettings())
         }
 
-        val title = pages.lastOrNull()?.title ?: open?.let { stringResource(it.title) } ?: strings.roomCardTitleInRoomPrefs
+        val title = pages.lastOrNull()?.title ?: open?.title?.invoke(strings) ?: strings.roomCardTitleInRoomPrefs
         PanelFrame(
             title = title,
             modifier = Modifier.fillMaxSize(),

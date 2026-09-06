@@ -86,12 +86,6 @@ internal class AndroidPlatformCallback(
         runCatching { a.startForegroundService(intent) }
     }
 
-    /** Recreates the activity to apply the new language. */
-    override fun onLanguageChanged(newLang: String) {
-        val a = activity ?: return
-        a.runOnUiThread { a.recreate() }
-    }
-
     /**
      * Creates a pinned home screen shortcut and dynamic shortcut for quick room access, with the
      * room configuration in the intent extras.

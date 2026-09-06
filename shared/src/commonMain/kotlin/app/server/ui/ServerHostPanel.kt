@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.i18n.serverHostClients
 import app.i18n.strings
 import app.preferences.Preferences.SERVER_DISABLE_CHAT
 import app.preferences.Preferences.SERVER_DISABLE_READY
@@ -61,9 +62,6 @@ import app.utils.platform
 import app.utils.platformCallback
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.jetbrains.compose.resources.pluralStringResource
-import syncplaymobile.shared.generated.resources.Res
-import syncplaymobile.shared.generated.resources.server_host_clients
 import kotlin.time.Instant
 import app.server.ServerLogEvent
 
@@ -195,7 +193,7 @@ private fun StatusRow(status: ServerStatus, clients: Int, detail: ServerLogEvent
             RowGap(Space.gapTight + 2.dp)
             Text(label, style = Type.label, color = p.ink, modifier = Modifier.weight(1f))
             if (status == ServerStatus.Running) {
-                Text(pluralStringResource(Res.plurals.server_host_clients, clients, clients), style = Type.value, color = p.inkDim)
+                Text(strings.serverHostClients(clients), style = Type.value, color = p.inkDim)
             }
         }
         if (status == ServerStatus.Error && detail != null) {
