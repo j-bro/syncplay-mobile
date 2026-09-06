@@ -46,6 +46,15 @@ object RoomPasswordProvider {
     }
 
     /**
+     * The plain name inside a managed name, or the input when it is not one.
+     *
+     * Asking to manage a room you are already managing means asking about its base name: sending
+     * the full "+movie:HASH" as the target mints a name from a name.
+     */
+    fun baseName(roomName: String): String =
+        CONTROLLED_ROOM_REGEX.matchEntire(roomName)?.groupValues?.get(1) ?: roomName
+
+    /**
      * What a managed name costs on top of its base: the leading `+`, the `:`, and the 12
      * characters of hash. A base name longer than the room limit minus this cannot be managed.
      */

@@ -334,6 +334,8 @@ class RoomCallback(val viewmodel: RoomViewmodel) : AbstractManager(viewmodel) {
 
         hapticIf(HAPTIC_ON_CONNECTION)
         protocol.stopChannelHealthMonitoring()
+        // A countdown outliving the connection would start playback into a room we have left.
+        viewmodel.readiness.stop()
         network.state.value = ConnectionState.DISCONNECTED
         val osdMessage: suspend () -> String = { Localization.strings.roomConnectionFailed }
         dispatcher.broadcastMessage(message = osdMessage, isChat = false, isError = true)
@@ -346,6 +348,7 @@ class RoomCallback(val viewmodel: RoomViewmodel) : AbstractManager(viewmodel) {
 
         hapticIf(HAPTIC_ON_CONNECTION)
         protocol.stopChannelHealthMonitoring()
+        viewmodel.readiness.stop()
         network.state.value = ConnectionState.DISCONNECTED
         val osdMessage: suspend () -> String = { Localization.strings.roomAttemptingReconnection }
         dispatcher.broadcastMessage(message = osdMessage, isChat = false, isError = true)

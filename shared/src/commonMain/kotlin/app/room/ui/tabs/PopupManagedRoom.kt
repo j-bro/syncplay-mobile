@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.ImeAction
 import app.LocalRoomViewmodel
 import app.i18n.strings
 import app.protocol.WireMessage
+import app.server.model.RoomPasswordProvider
 import app.theme.Space
 import app.theme.Type
 import app.theme.palette
@@ -48,9 +49,15 @@ fun ManagedRoomModal() {
     fun send() {
         close()
         val auth = if (create) {
-            // Creating moves us to the minted room; the flag mutes the transition's own events.
-            viewmodel.protocol.isRoomChanging = true
-            WireMessage.controllerAuth(room = roomName, password = generateRoomPassword())
+            // Creating moves us to the minted room; the transition mutes its own events, and
+            // gives up on its own if the answer never comes.
+            viewmodel.protocol.beginRoomChange()
+            // The base name, so managing a room that is already managed does not mint a name
+            // from a name.
+            WireMessage.controllerAuth(
+                room = RoomPasswordProvider.baseName(roomName),
+                password = generateRoomPassword(),
+            )
         } else {
             // Identifying stays in this room. The attempt is kept so a success can store it for
             // the re-identification every reconnect performs.

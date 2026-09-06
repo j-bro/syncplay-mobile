@@ -19,6 +19,8 @@ import app.protocol.sync.PositionInputs
 import app.utils.SyncClock
 import app.utils.loggy
 import kotlinx.atomicfu.atomic
+import kotlinx.atomicfu.locks.SynchronizedObject
+import kotlinx.atomicfu.locks.synchronized
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
@@ -152,8 +154,44 @@ class ProtocolManager(val viewmodel: RoomViewmodel) : AbstractManager(viewmodel)
             speedChanged = value.speedChanged
         }
 
-    /** Set during room transitions to ignore stale packets from the previous room. */
+    /**
+     * Held across a read-modify-write of the sync anchor.
+     *
+     * The anchor is eight fields projected into one [SyncState] and written back whole, so a
+     * concurrent write to any one of them between the read and the write is lost. The window is
+     * short, but the writers are a reconnect, a file load and the outbound State builder, all of
+     * which run on their own threads. Nothing inside the lock suspends: the decision is a pure
+     * function and the reads around it are plain.
+     */
+    val syncLock = SynchronizedObject()
+
+    /**
+     * Set during a room transition so the events it causes are not broadcast as divergence.
+     *
+     * Owned rather than a bare flag: a creation the server refuses, or one whose answer never
+     * arrives, used to leave this true for the rest of the session, and every playback notice
+     * stayed muted afterwards with nothing on screen to explain it.
+     */
     var isRoomChanging = false
+        private set
+
+    private var roomChangeWatchdog: Job? = null
+
+    /** Mutes divergence broadcasts until [endRoomChange], or for five seconds, whichever is first. */
+    fun beginRoomChange() {
+        isRoomChanging = true
+        roomChangeWatchdog?.cancel()
+        roomChangeWatchdog = viewmodel.viewModelScope.launch {
+            delay(ROOM_CHANGE_TIMEOUT)
+            isRoomChanging = false
+        }
+    }
+
+    fun endRoomChange() {
+        roomChangeWatchdog?.cancel()
+        roomChangeWatchdog = null
+        isRoomChanging = false
+    }
 
     val supportsChat = MutableStateFlow(true)
     val supportsManagedRooms = MutableStateFlow(false)
@@ -387,7 +425,8 @@ class ProtocolManager(val viewmodel: RoomViewmodel) : AbstractManager(viewmodel)
      * / [behindFirstDetected] (the slowdown/fastforward state self-heals via the normal sync
      * algorithm once States resume), and [pingService] intact.
      */
-    fun resetSyncAnchorForReconnect() {
+    fun resetSyncAnchorForReconnect() = synchronized(syncLock) {
+        endRoomChange()
         clockOffset.reset()
         lastGlobalUpdate = null
         lastGlobalPositionSetAt = null
@@ -417,7 +456,7 @@ class ProtocolManager(val viewmodel: RoomViewmodel) : AbstractManager(viewmodel)
      * (harmless to keep; only feeds position extrapolation). That narrower scope is what separates
      * this from [resetSyncAnchorForReconnect], which resets more because the socket itself changed.
      */
-    fun reanchorSyncOnFileLoad() {
+    fun reanchorSyncOnFileLoad() = synchronized(syncLock) {
         lastGlobalUpdate = null
     }
 
@@ -496,12 +535,12 @@ class ProtocolManager(val viewmodel: RoomViewmodel) : AbstractManager(viewmodel)
             clientRtt = pingService.rtt
         )
 
-        if (isLocalStateChange) {
-            _clientIgnFly.incrementAndGet()
+        // The increment and both reads are one step: a handler writing the anchor back between
+        // them would otherwise see a count that never existed.
+        val (snapshotServer, snapshotClient) = synchronized(syncLock) {
+            if (isLocalStateChange) _clientIgnFly.incrementAndGet()
+            _serverIgnFly.value to _clientIgnFly.value
         }
-
-        val snapshotServer = _serverIgnFly.value
-        val snapshotClient = _clientIgnFly.value
         val ignoring = if (snapshotClient != 0 || snapshotServer != 0) {
             val ign = IgnoringOnTheFlyData(
                 server = snapshotServer.takeIf { it != 0 },
@@ -568,6 +607,11 @@ class ProtocolManager(val viewmodel: RoomViewmodel) : AbstractManager(viewmodel)
          * broken and trigger a reconnect. Chosen to match the Syncplay server's own
          * ~10–15s threshold for dropping unresponsive clients. */
         const val STATE_TIMEOUT_SECONDS = 15L
+
+        /** How long a room transition may mute divergence broadcasts before it gives up on
+         * ever being told the outcome. Comfortably longer than a round trip, short enough that
+         * a lost answer is not felt. */
+        val ROOM_CHANGE_TIMEOUT = 5.seconds
 
         /** Max seconds a freshly-loaded file may advertise the room position instead of its own
          * while catching up, before [reportableStatePositionSec] reverts to the true local

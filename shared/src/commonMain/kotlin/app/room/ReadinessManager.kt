@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.isActive
 import androidx.lifecycle.viewModelScope
+import app.protocol.models.ConnectionState
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
@@ -40,13 +41,29 @@ class ReadinessManager(private val viewmodel: RoomViewmodel) : AbstractManager(v
         field = MutableStateFlow(ReadinessSummary(emptyList(), emptyList()))
 
     private var countdown: Job? = null
+    private var roster: Job? = null
 
-    /** Watches the roster, our own readiness and the room's pause state. */
+    /**
+     * Watches the roster, our own readiness and the room's pause state.
+     *
+     * Idempotent, and the job is owned. Every connect used to launch another collector that
+     * nothing held or stopped, so a room that reconnected a few times re-evaluated the same
+     * roster change once per attempt ever made.
+     */
     fun start() {
         if (viewmodel.isSoloMode) return
-        onIOThread {
+        if (roster?.isActive == true) return
+        roster = onIOThread {
             viewmodel.session.userList.collect { evaluate() }
         }
+    }
+
+    /** Nothing to wait for while there is no connection. */
+    fun stop() {
+        roster?.cancel()
+        roster = null
+        cancelCountdown()
+        state.value = AutoplayState.Idle
     }
 
     /**
@@ -98,6 +115,9 @@ class ReadinessManager(private val viewmodel: RoomViewmodel) : AbstractManager(v
     }
 
     private fun stillEligible(): Boolean {
+        // A countdown that survives losing the room would start playback into nothing.
+        if (viewmodel.networkManager.state.value != ConnectionState.CONNECTED) return false
+        if (viewmodel.uiState.isInBackground || viewmodel.media == null) return false
         val session = viewmodel.session
         val room = summariseReadiness(session.userList.value, session.currentUsername)
         summary.value = room
@@ -115,8 +135,5 @@ class ReadinessManager(private val viewmodel: RoomViewmodel) : AbstractManager(v
         countdown = null
     }
 
-    override fun invalidate() {
-        cancelCountdown()
-        state.value = AutoplayState.Idle
-    }
+    override fun invalidate() = stop()
 }

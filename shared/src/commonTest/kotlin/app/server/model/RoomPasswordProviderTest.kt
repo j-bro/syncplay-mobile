@@ -182,4 +182,12 @@ class RoomPasswordProviderTest {
             assertTrue(regex.matches(pw), "Generated '$pw' does not match XX-###-###")
         }
     }
+
+    @Test
+    fun `baseName strips a managed suffix and leaves plain names alone`() {
+        assertEquals("movie", RoomPasswordProvider.baseName("+movie:ABCDEF123456"))
+        assertEquals("movie", RoomPasswordProvider.baseName("movie"))
+        // A plus with no hash is not a managed name, so it is its own base.
+        assertEquals("+odd", RoomPasswordProvider.baseName("+odd"))
+    }
 }

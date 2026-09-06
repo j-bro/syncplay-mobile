@@ -25,6 +25,7 @@ import app.protocol.wire.ReadyData
 import app.protocol.wire.UserSetData
 import app.utils.SyncClock
 import app.utils.loggy
+import kotlinx.atomicfu.locks.synchronized
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -103,35 +104,40 @@ class RoomServerMessageHandler(private val viewmodel: RoomViewmodel) : WireMessa
             messageAge = protocol.pingService.forwardDelay
         }
 
-        // The decision itself is a pure function; see app.protocol.sync.SyncDecision. Everything
-        // it needs is gathered here, and everything it decides is applied below, in order.
-        protocol.syncState = protocol.syncState.withIgnoringOnTheFly(state.ignoringOnTheFly)
-        val outcome = decideSync(
-            playstate = state.playstate,
-            state = protocol.syncState,
-            ctx = SyncContext(
-                now = SyncClock.now(),
-                playerPositionMs = viewmodel.playerManager.estimatedPositionMs().toDouble(),
-                hasMedia = viewmodel.media != null,
-                isInBackground = viewmodel.uiState.isInBackground,
-                supportsSpeedAdjustment = viewmodel.player.supportsSpeedAdjustment,
-                selfName = session.currentUsername,
-                followerInControlledRoom = session.isInControlledRoomWithoutController(),
-                prefs = SyncPrefs(
-                    rewind = Preferences.SYNC_REWIND.value(),
-                    fastForward = Preferences.SYNC_FASTFORWARD.value(),
-                    slowdown = Preferences.SYNC_SLOWDOWN.value(),
-                    dontSlowWithMe = Preferences.SYNC_DONT_SLOW_WITH_ME.value(),
+        /* The decision itself is a pure function; see app.protocol.sync.SyncDecision. Everything
+         * it needs is gathered here, and everything it decides is applied below, in order.
+         *
+         * Read, decide and write back are one step. The anchor is eight fields written back as a
+         * whole, so a reconnect or a file load landing between the read and the write would be
+         * erased. Nothing in here suspends. */
+        val outcome = synchronized(protocol.syncLock) {
+            protocol.syncState = protocol.syncState.withIgnoringOnTheFly(state.ignoringOnTheFly)
+            decideSync(
+                playstate = state.playstate,
+                state = protocol.syncState,
+                ctx = SyncContext(
+                    now = SyncClock.now(),
+                    playerPositionMs = viewmodel.playerManager.estimatedPositionMs().toDouble(),
+                    hasMedia = viewmodel.media != null,
+                    isInBackground = viewmodel.uiState.isInBackground,
+                    supportsSpeedAdjustment = viewmodel.player.supportsSpeedAdjustment,
+                    selfName = session.currentUsername,
+                    followerInControlledRoom = session.isInControlledRoomWithoutController(),
+                    prefs = SyncPrefs(
+                        rewind = Preferences.SYNC_REWIND.value(),
+                        fastForward = Preferences.SYNC_FASTFORWARD.value(),
+                        slowdown = Preferences.SYNC_SLOWDOWN.value(),
+                        dontSlowWithMe = Preferences.SYNC_DONT_SLOW_WITH_ME.value(),
+                    ),
+                    messageAge = messageAge,
+                    // Stored in tenths of a second so the sliders are whole numbers.
+                    rewindThreshold = Preferences.SYNC_REWIND_THRESHOLD.value() / 10.0,
+                    slowdownThreshold = Preferences.SYNC_SLOWDOWN_THRESHOLD.value() / 10.0,
+                    fastForwardThreshold = Preferences.SYNC_FASTFORWARD_THRESHOLD.value() / 10.0,
+                    userOffsetSeconds = protocol.userTimeOffsetSeconds(),
                 ),
-                messageAge = messageAge,
-                // Stored in tenths of a second so the sliders are whole numbers.
-                rewindThreshold = Preferences.SYNC_REWIND_THRESHOLD.value() / 10.0,
-                slowdownThreshold = Preferences.SYNC_SLOWDOWN_THRESHOLD.value() / 10.0,
-                fastForwardThreshold = Preferences.SYNC_FASTFORWARD_THRESHOLD.value() / 10.0,
-                userOffsetSeconds = protocol.userTimeOffsetSeconds(),
-            ),
-        )
-        protocol.syncState = outcome.state
+            ).also { protocol.syncState = it.state }
+        }
         outcome.actions.forEach { apply(it) }
 
         /* Acknowledge with our own State packet. The gate is "the message carried a playstate
@@ -488,12 +494,14 @@ class RoomServerMessageHandler(private val viewmodel: RoomViewmodel) : WireMessa
         } finally {
             viewmodel.viewModelScope.launch {
                 delay(1000)
-                viewmodel.protocol.isRoomChanging = false
+                viewmodel.protocol.endRoomChange()
             }
         }
     }
 
     private fun handleControllerAuth(data: ControllerAuthData) {
+        // Any answer settles a creation that is waiting on one, including a refusal.
+        viewmodel.protocol.endRoomChange()
         callback.onHandleControllerAuth(data)
     }
 
