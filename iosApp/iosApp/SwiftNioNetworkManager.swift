@@ -96,8 +96,14 @@ class SwiftNioNetworkManager: NetworkManager, ChannelInboundHandler, @unchecked 
         let handshakePromise = channel.eventLoop.makePromise(of: Void.self)
         let trackingHandler = TLSHandshakeTrackingHandler(promise: handshakePromise)
 
-        try await channel.pipeline.addHandler(tlsHandler, position: .first).get()
+        // The observer first: added after the TLS handler, it can miss a handshake that has
+        // already finished or already failed, and then nothing ever settles the promise.
         try await channel.pipeline.addHandler(trackingHandler).get()
+        try await channel.pipeline.addHandler(tlsHandler, position: .first).get()
+
+        // A server that accepts the socket and then says nothing must not hold this forever.
+        let deadline = channel.eventLoop.scheduleTask(in: .seconds(15)) { trackingHandler.timedOut() }
+        defer { deadline.cancel() }
         try await handshakePromise.futureResult.get()
     }
 
@@ -140,6 +146,9 @@ class SwiftNioNetworkManager: NetworkManager, ChannelInboundHandler, @unchecked 
 
     func errorCaught(context: ChannelHandlerContext, error: Error) {
         print("Reader exception: \(error)")
+        // The handshake tracker sits behind this handler and has to hear the failure before
+        // the close, or a failed handshake leaves its promise unresolved forever.
+        context.fireErrorCaught(error)
         context.close(promise: nil)
     }
 }
@@ -167,6 +176,11 @@ private final class BoundedLineFrameDecoder: ByteToMessageDecoder {
         }
         // The view's indices are the buffer's own, so the line runs from the reader index to the newline.
         let lineLength = newlineIndex - buffer.readerIndex
+        // A line that arrives complete is still a line: the ceiling is about what one message
+        // may be, not about whether the sender remembered a newline.
+        if lineLength > maxLength {
+            throw LineTooLongError(bytes: lineLength)
+        }
         var line = buffer.readSlice(length: lineLength)!
         buffer.moveReaderIndex(forwardBy: 1)
         // Strip a trailing carriage return: the protocol delimits with CRLF.
@@ -195,9 +209,23 @@ private final class BoundedLineFrameDecoder: ByteToMessageDecoder {
 private final class TLSHandshakeTrackingHandler: ChannelInboundHandler, RemovableChannelHandler {
     typealias InboundIn = NIOAny
     private let promise: EventLoopPromise<Void>
+    private var settled = false
+
+    struct HandshakeTimedOut: Error {}
 
     init(promise: EventLoopPromise<Void>) {
         self.promise = promise
+    }
+
+    /// Every exit goes through here, and only the first one counts.
+    private func settle(_ result: Result<Void, Error>) {
+        guard !settled else { return }
+        settled = true
+        promise.completeWith(result)
+    }
+
+    func timedOut() {
+        settle(.failure(HandshakeTimedOut()))
     }
 
     func userInboundEventTriggered(context: ChannelHandlerContext, event: Any) {
@@ -205,14 +233,25 @@ private final class TLSHandshakeTrackingHandler: ChannelInboundHandler, Removabl
         // with an associated `negotiatedProtocol: String?` payload, so we pattern-match
         // instead of using `==`.
         if let tlsEvent = event as? TLSUserEvent, case .handshakeCompleted = tlsEvent {
-            promise.succeed(())
+            settle(.success(()))
             context.pipeline.removeHandler(self, promise: nil)
         }
         context.fireUserInboundEventTriggered(event)
     }
 
     func errorCaught(context: ChannelHandlerContext, error: Error) {
-        promise.fail(error)
+        settle(.failure(error))
         context.fireErrorCaught(error)
+    }
+
+    /// The channel closed without ever completing a handshake.
+    func channelInactive(context: ChannelHandlerContext) {
+        settle(.failure(ChannelError.eof))
+        context.fireChannelInactive()
+    }
+
+    /// Removed from the pipeline before the handshake landed: nothing else will report it.
+    func handlerRemoved(context: ChannelHandlerContext) {
+        settle(.failure(ChannelError.ioOnClosedChannel))
     }
 }

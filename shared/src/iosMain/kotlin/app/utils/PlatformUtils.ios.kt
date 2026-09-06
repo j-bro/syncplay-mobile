@@ -61,6 +61,7 @@ import platform.UIKit.UIInterfaceOrientationMask
 import platform.UIKit.UIInterfaceOrientationMaskAll
 import platform.UIKit.UIInterfaceOrientationMaskLandscape
 import platform.UIKit.UIInterfaceOrientationMaskPortrait
+import platform.UIKit.UIViewController
 import platform.UIKit.UIWindow
 import platform.UIKit.UIWindowScene
 import platform.UIKit.UIWindowSceneGeometryPreferencesIOS
@@ -187,6 +188,11 @@ actual fun ClipEntry.getText(): String? {
     return this.getPlainText()
 }
 
+/** The major version of the system this is running on, read once. */
+private val iosMajorVersion: Int by lazy {
+    UIDevice.currentDevice.systemVersion.substringBefore('.').toIntOrNull() ?: 0
+}
+
 /**
  * Applies an orientation mask: updates the delegate's `supportedInterfaceOrientationsForWindow`
  * answer, requests the new geometry, and pokes the root view controller with
@@ -196,16 +202,27 @@ actual fun ClipEntry.getText(): String? {
  * the delegate. A geometry request naming a concrete orientation (e.g. landscape) takes effect,
  * but an "All" mask names no target orientation, so without the poke the stale cached mask keeps
  * rotation locked after leaving a room.
+ *
+ * Everything after the delegate is iOS 16 and later. `UIWindowSceneGeometryPreferencesIOS` is
+ * constructed, not merely called, so `respondsToSelector` cannot guard it and an iOS 14 or 15
+ * device would meet a class that does not exist. The app's deployment target is 14.1 and this
+ * runs on Home as well as in the room, so the version check comes first.
  */
 private fun applyOrientationMask(mask: UIInterfaceOrientationMask) {
     delegato.myOrientationMask = mask
+
+    if (iosMajorVersion < 16) {
+        // Older systems re-read the delegate on the next rotation; ask for one now.
+        UIViewController.attemptRotationToDeviceOrientation()
+        return
+    }
+
     val scene = UIApplication.sharedApplication.connectedScenes.firstOrNull() as? UIWindowScene
     scene?.requestGeometryUpdateWithPreferences(
         geometryPreferences = UIWindowSceneGeometryPreferencesIOS(interfaceOrientations = mask),
         errorHandler = null
     )
-    // Not in Kotlin's UIKit bindings: invoke the iOS 16+ selector dynamically.
-    // respondsToSelector doubles as the availability guard on older systems.
+    // Not in Kotlin's UIKit bindings: invoke the selector dynamically.
     val rootVc = (scene?.windows?.firstOrNull() as? UIWindow)?.rootViewController
     val needsUpdate = NSSelectorFromString("setNeedsUpdateOfSupportedInterfaceOrientations")
     if (rootVc?.respondsToSelector(needsUpdate) == true) {
