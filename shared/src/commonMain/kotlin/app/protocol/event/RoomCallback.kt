@@ -350,6 +350,16 @@ class RoomCallback(val viewmodel: RoomViewmodel) : AbstractManager(viewmodel) {
         network.reconnect()
     }
 
+    /**
+     * Encryption is required and this connection cannot give it. Say so once and stop: no Hello
+     * in plain text, no retry loop that would only refuse again.
+     */
+    fun onTlsRequiredButUnavailable() {
+        val refused: suspend () -> String = { Localization.strings.roomTlsRequiredDowngrade }
+        dispatcher.broadcastMessage(message = refused, isChat = false, isError = true)
+        viewmodel.dispatchOSD(OSDCategory.WARNING, getter = refused)
+    }
+
     fun onTLSCheck() {
         loggy("SYNCPLAY Protocol: Checking TLS...")
 
@@ -386,10 +396,7 @@ class RoomCallback(val viewmodel: RoomViewmodel) : AbstractManager(viewmodel) {
             }
         } else {
             if (TLS_REQUIRED.value()) {
-                // The user asked for encryption or nothing: no Hello in plain text, no retry loop.
-                val refused: suspend () -> String = { Localization.strings.roomTlsRequiredDowngrade }
-                dispatcher.broadcastMessage(message = refused, isChat = false, isError = true)
-                viewmodel.dispatchOSD(OSDCategory.WARNING, getter = refused)
+                onTlsRequiredButUnavailable()
                 network.abortConnection()
                 return
             }

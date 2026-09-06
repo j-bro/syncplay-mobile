@@ -18,7 +18,6 @@ import app.protocol.Session
 import app.protocol.resolveServerEndpoint
 import app.protocol.event.RoomCallback
 import app.protocol.event.RoomEventDispatcher
-import app.protocol.models.TlsState
 import app.protocol.network.NetworkManager
 import app.room.sharedplaylist.SharedPlaylistManager
 import app.utils.FileComparison
@@ -148,13 +147,8 @@ class RoomViewmodel(val joinConfig: JoinConfig?, val backStack: SnapshotStateLis
                     // also survives every later reconnect.
                     session.currentOperatorPassword = joinConfig.operatorPassword
 
-                    /** Connecting (via TLS or noTLS) */
-                    val tls = Preferences.TLS_ENABLE.value()
-                    if (tls && networkManager.supportsTLS()) {
-                        callback.onTLSCheck()
-                        networkManager.tls = TlsState.TLS_ASK
-                    }
-
+                    // connect() decides TLS from the settings and this transport, and refuses
+                    // outright when encryption is required and cannot be had.
                     networkManager.connect()
                 }
             }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import app.AbstractManager
 import app.preferences.Preferences.RECONNECTION_INTERVAL
 import app.preferences.Preferences.TLS_ENABLE
+import app.preferences.Preferences.TLS_REQUIRED
 import app.preferences.value
 import app.protocol.WireMessage
 import app.protocol.WireMessageDeserializer
@@ -82,11 +83,24 @@ abstract class NetworkManager(val viewmodel: RoomViewmodel) : AbstractManager(vi
      * has a deadline: a server that accepts and then says nothing must not leave the room in
      * CONNECTING forever, where no watchdog runs.
      */
-    open suspend fun connect() {
+    open suspend fun connect(announceTlsCheck: Boolean = true) {
         if (viewmodel.isSoloMode) return
 
         terminateExistingConnection()
         encrypted.value = false
+
+        /* Before the socket, not after an answer. A refusal here has cost nothing; the same
+         * refusal one step later has already put the password hash on the wire in plain text. */
+        when (armTlsFromSettings()) {
+            TlsDecision.REFUSE -> {
+                viewmodel.callback.onTlsRequiredButUnavailable()
+                abortConnection()
+                return
+            }
+            TlsDecision.ASK -> if (announceTlsCheck) viewmodel.callback.onTLSCheck()
+            TlsDecision.PLAIN -> Unit
+        }
+
         viewmodel.callback.onConnectionAttempt()
         state.value = ConnectionState.CONNECTING
         armHandshakeDeadline()
@@ -129,6 +143,18 @@ abstract class NetworkManager(val viewmodel: RoomViewmodel) : AbstractManager(vi
         handshakeDeadlineJob = null
         terminateExistingConnection()
         state.value = ConnectionState.DISCONNECTED
+    }
+
+    /**
+     * Decides the TLS mode for a fresh socket from the settings and this transport, and applies
+     * it. Called by [connect] on every attempt, including reconnects: a new socket has no TLS
+     * handler in its pipeline, and a server that answered "false" once must be asked again
+     * rather than pinned to plain text.
+     */
+    fun armTlsFromSettings(): TlsDecision {
+        val decision = decideTls(TLS_ENABLE.value(), TLS_REQUIRED.value(), supportsTLS())
+        tls = if (decision == TlsDecision.ASK) TlsState.TLS_ASK else TlsState.TLS_NO
+        return decision
     }
 
     abstract suspend fun connectSocket()
@@ -189,15 +215,11 @@ abstract class NetworkManager(val viewmodel: RoomViewmodel) : AbstractManager(vi
                 val backoff = (base * (1 shl attempt.coerceAtMost(5))).coerceAtMost(MAX_RECONNECT_INTERVAL)
                 delay(backoff)
                 if (!isActive || state.value == ConnectionState.CONNECTED) break
-                // Re-arm TLS negotiation for the fresh socket from the setting, not from the last
-                // answer: a new socket has no TLS handler in its pipeline, and a server that
-                // answered "false" once must be asked again rather than pinned to plain text.
-                tls = if (TLS_ENABLE.value() && supportsTLS()) TlsState.TLS_ASK else TlsState.TLS_NO
                 // connect() flips state to CONNECTING; on success the onConnected callback
                 // sets CONNECTED. On failure (sync, async, or the handshake deadline) the state
                 // lands back on DISCONNECTED. Either way, wait for it before trying again, or a
                 // slow handshake gets torn down by its own retry.
-                connect()
+                connect(announceTlsCheck = false)
                 state.first { it != ConnectionState.CONNECTING }
                 attempt++
             }
@@ -214,8 +236,7 @@ abstract class NetworkManager(val viewmodel: RoomViewmodel) : AbstractManager(vi
         reconnectionJob?.cancel()
         reconnectionJob = null
         viewmodel.viewModelScope.launch(Dispatchers.IO) {
-            tls = if (TLS_ENABLE.value() && supportsTLS()) TlsState.TLS_ASK else TlsState.TLS_NO
-            connect()
+            connect(announceTlsCheck = false)
             // Whatever the outcome, the ordinary loop takes over from here.
             state.first { it != ConnectionState.CONNECTING }
             if (state.value != ConnectionState.CONNECTED) reconnect()

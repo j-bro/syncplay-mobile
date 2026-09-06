@@ -50,6 +50,18 @@ class RoomServerMessageHandler(private val viewmodel: RoomViewmodel) : WireMessa
     private val session get() = viewmodel.session
 
     override suspend fun onHello(message: WireMessage.Hello) {
+        /* We asked to upgrade and got a Hello instead: this server skipped the answer, so the
+         * socket is still plain text. Required means we leave rather than carry on. */
+        if (network.tls == TlsState.TLS_ASK) {
+            if (Preferences.TLS_REQUIRED.value()) {
+                callback.onTlsRequiredButUnavailable()
+                network.abortConnection()
+                return
+            }
+            loggy("SYNCPLAY Protocol: Hello arrived before the TLS answer; continuing in plain text")
+            network.tls = TlsState.TLS_NO
+        }
+
         val data = message.data
         data.username?.let { session.currentUsername = it.take(MAX_USERNAME_CHARS) }
         session.roomFeatures = data.features
