@@ -54,14 +54,16 @@ suspend fun RoomViewmodel.runSlashCommand(command: SlashCommand): Boolean {
 
         is SlashCommand.JoinRoom -> {
             loggy("Slash command: joining room ${command.name}")
-            networkManager.sendAsync(WireMessage.roomChange(command.name))
-            session.currentRoom = command.name
+            switchRoom(command.name)
         }
 
-        is SlashCommand.Identify ->
+        is SlashCommand.Identify -> {
+            // Kept so a success can store it for the re-identification every reconnect performs.
+            session.lastControlPasswordAttempt = command.password
             networkManager.sendAsync(
                 WireMessage.controllerAuth(room = session.currentRoom, password = command.password)
             )
+        }
 
         is SlashCommand.Seek -> {
             if (media == null) {

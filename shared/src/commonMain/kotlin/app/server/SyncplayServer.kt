@@ -13,6 +13,7 @@ import app.server.model.ServerWatcher
 import app.utils.SyncClock
 import app.utils.loggy
 import app.utils.playlistIsValid
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -414,9 +415,12 @@ class SyncplayServer(
 
     // --- Logging ---
 
+    private val logSeq = atomic(0L)
+
     private fun log(event: ServerLogEvent) {
         loggy("SyncplayServer: $event")
         val entry = ServerLogEntry(
+            seq = logSeq.incrementAndGet(),
             timestamp = SyncClock.nowMillis(),
             event = event,
         )
@@ -501,6 +505,8 @@ sealed interface ServerLogEvent {
 }
 
 data class ServerLogEntry(
+    /** Increases for the life of the server. A reader's place in the log, once the list rotates. */
+    val seq: Long,
     val timestamp: Long,
     val event: ServerLogEvent,
     val level: ServerLogLevel = event.level,

@@ -93,13 +93,9 @@ object ServerHostSession {
 
                 collectorsJob = launch {
                     launch {
-                        /* Server lines are consumed by their own count. Dropping by the screen
-                         * list's size mixed in the session's lines and swallowed a restarted
-                         * server's log. */
-                        var consumed = 0
+                        val cursor = ServerLogCursor()
                         newServer.serverLog.collect { entries ->
-                            for (entry in entries.drop(consumed)) addEntry(entry)
-                            consumed = entries.size
+                            cursor.newSince(entries).forEach(::addEntry)
                         }
                     }
                     launch {
@@ -179,7 +175,28 @@ object ServerHostSession {
         while (serverLogs.size > LOG_CAP) serverLogs.removeAt(0)
     }
 
+    /* The session's own lines are added straight to the screen list and never pass through a
+     * cursor, but every entry carries a sequence number, so they count too. */
+    private var ownLogSeq = 0L
+
     private fun addLog(event: ServerLogEvent) {
-        addEntry(ServerLogEntry(timestamp = generateTimestampMillis(), event = event))
+        addEntry(ServerLogEntry(seq = ++ownLogSeq, timestamp = generateTimestampMillis(), event = event))
+    }
+}
+
+/**
+ * A reader's place in a log that rotates.
+ *
+ * The server keeps the last 500 lines, so past 500 the list stops growing and a reader counting
+ * how many it had already seen sees the same number forever and shows nothing new. The sequence
+ * number does not rotate, so it is what the place is kept in.
+ */
+class ServerLogCursor {
+    private var lastSeq = 0L
+
+    fun newSince(entries: List<ServerLogEntry>): List<ServerLogEntry> {
+        val fresh = entries.filter { it.seq > lastSeq }
+        fresh.lastOrNull()?.let { lastSeq = it.seq }
+        return fresh
     }
 }

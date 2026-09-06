@@ -437,6 +437,9 @@ class RoomCallback(val viewmodel: RoomViewmodel) : AbstractManager(viewmodel) {
         if (data.success && user.isSelf() && session.lastControlPasswordAttempt.isNotEmpty()) {
             session.currentOperatorPassword = session.lastControlPasswordAttempt
         }
+        // Whatever the answer, the attempt is spent. Keeping a refused one meant a later
+        // success by somebody else could save the wrong password as ours.
+        if (user.isSelf()) session.lastControlPasswordAttempt = ""
 
         network.sendAsync(WireMessage.listRequest())
 

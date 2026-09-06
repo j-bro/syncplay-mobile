@@ -355,19 +355,7 @@ class RoomServerMessageHandler(private val viewmodel: RoomViewmodel) : WireMessa
                     }
                 }
                 event.joined != null && inOurRoom -> {
-                    if (updated.none { it.name == userName }) {
-                        // A hostile server streaming joins must not grow the roster without end.
-                        if (updated.size >= Session.MAX_USERS) return
-                        val nextIndex = (updated.maxOfOrNull { it.index } ?: 0) + 1
-                        updated.add(
-                            User(
-                                name = userName,
-                                index = nextIndex,
-                                readiness = false,
-                                file = null,
-                                isController = false,
-                            )
-                        )
+                    if (updated.none { it.name == userName } && updated.addNewUser(userName)) {
                         changed = true
                     }
                     callback.onSomeoneJoined(userName)
@@ -386,18 +374,8 @@ class RoomServerMessageHandler(private val viewmodel: RoomViewmodel) : WireMessa
                 // Moved away from our room — drop them from the list immediately.
                 updated.removeAt(idx)
                 changed = true
-            } else if (inOurRoom && idx < 0) {
+            } else if (inOurRoom && idx < 0 && updated.addNewUser(userName)) {
                 // Moved into our room.
-                val nextIndex = (updated.maxOfOrNull { it.index } ?: 0) + 1
-                updated.add(
-                    User(
-                        name = userName,
-                        index = nextIndex,
-                        readiness = false,
-                        file = null,
-                        isController = false,
-                    )
-                )
                 changed = true
                 callback.onSomeoneJoined(userName)
             }
@@ -497,6 +475,26 @@ class RoomServerMessageHandler(private val viewmodel: RoomViewmodel) : WireMessa
                 viewmodel.protocol.endRoomChange()
             }
         }
+    }
+
+    /**
+     * Adds an unknown user, or refuses when the roster is full. Says whether it was added.
+     *
+     * A hostile server streaming joins must not grow the roster without end, and both ways in,
+     * a join event and a room switch, have to say so.
+     */
+    private fun MutableList<User>.addNewUser(name: String): Boolean {
+        if (size >= Session.MAX_USERS) return false
+        add(
+            User(
+                name = name,
+                index = (maxOfOrNull { it.index } ?: 0) + 1,
+                readiness = false,
+                file = null,
+                isController = false,
+            )
+        )
+        return true
     }
 
     private fun handleControllerAuth(data: ControllerAuthData) {
