@@ -1,9 +1,8 @@
 package app.room.ui.rightcards
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.CompositionLocalProvider
@@ -19,6 +18,7 @@ import app.LocalRoomViewmodel
 import app.preferences.settings.LocalSettingsDensity
 import app.preferences.settings.LocalInlineEditor
 import app.preferences.settings.InlineEditorHost
+import app.preferences.settings.InlineEditorPage
 import app.preferences.settings.SettingCategory
 import app.preferences.settings.SettingsCategoryBody
 import app.preferences.settings.SettingsCategoryList
@@ -42,18 +42,19 @@ object CardRoomPrefs {
         var categories: List<SettingCategory>? by remember { mutableStateOf(null) }
         var open by remember { mutableStateOf<SettingCategory?>(null) }
         // Nested pages (chat colours, one colour) stack here, inline, so the chat stays in view.
-        val pages = remember { mutableStateListOf<Pair<String, @Composable () -> Unit>>() }
-        val host = remember { InlineEditorHost { title, content -> pages.add(title to content) } }
+        val pages = remember { mutableStateListOf<InlineEditorPage>() }
+        val host = remember { InlineEditorHost { page -> pages.add(page) } }
 
         LaunchedEffect(Unit) {
             categories = roomSettings(viewmodel.player.configurableSettings())
         }
 
-        val title = pages.lastOrNull()?.first ?: open?.let { stringResource(it.title) } ?: stringResource(Res.string.room_card_title_in_room_prefs)
+        val title = pages.lastOrNull()?.title ?: open?.let { stringResource(it.title) } ?: stringResource(Res.string.room_card_title_in_room_prefs)
         PanelFrame(
             title = title,
             modifier = Modifier.fillMaxSize(),
             shape = shape,
+            scrollable = pages.lastOrNull()?.scrollable != false,
             actions = {
                 if (open != null || pages.isNotEmpty()) {
                     GlyphButton(BackGlyph, name = stringResource(Res.string.action_back)) {
@@ -73,7 +74,7 @@ object CardRoomPrefs {
                     val page = pages.lastOrNull()
                     val current = open
                     when {
-                        page != null -> Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) { page.second() }
+                        page != null -> InRoomNestedPage(page.content)
                         current == null -> SettingsCategoryList(list, columns = 2) { open = it }
                         else -> SettingsCategoryBody(current)
                     }
@@ -81,4 +82,13 @@ object CardRoomPrefs {
             }
         }
     }
+}
+
+/**
+ * One nested page in the panel's body slot. Lists use the panel's scroll; fitted editors switch
+ * that scroll off so their child receives the actual available height. Pages never nest scrolls.
+ */
+@Composable
+internal fun InRoomNestedPage(content: @Composable () -> Unit) {
+    Column(Modifier.fillMaxWidth()) { content() }
 }

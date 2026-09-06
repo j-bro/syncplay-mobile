@@ -36,6 +36,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import app.LocalGlobalViewmodel
 import app.preferences.Pref
 import app.preferences.PrefExtraConfig
@@ -105,7 +106,12 @@ val LocalExpandedSettings = staticCompositionLocalOf { mutableStateMapOf<String,
  * A host that shows a nested page (a colour editor, the chat colours list) inline, in place of
  * the rows, so what the page changes stays visible beside it. Without a host, rows open modals.
  */
-class InlineEditorHost(val open: (title: String, content: @Composable () -> Unit) -> Unit)
+class InlineEditorPage(val title: String, val scrollable: Boolean = true, val content: @Composable () -> Unit)
+
+class InlineEditorHost(private val onOpen: (InlineEditorPage) -> Unit) {
+    fun open(title: String, scrollable: Boolean = true, content: @Composable () -> Unit) =
+        onOpen(InlineEditorPage(title, scrollable, content))
+}
 
 val LocalInlineEditor = staticCompositionLocalOf<InlineEditorHost?> { null }
 
@@ -193,6 +199,7 @@ fun SettingEntry.Render(highlighted: Boolean = false) {
                     max = extra.maxValue,
                     unit = extra.unit,
                     zeroMeansOff = extra.zeroMeansOff,
+                    formatValue = extra.formatValue,
                     enabled = enabled,
                     highlighted = highlighted,
                     icon = icon,
@@ -217,7 +224,17 @@ fun SettingEntry.Render(highlighted: Boolean = false) {
                 val onColor: (Color) -> Unit = { c -> scope.launch { pref.setAny(c.toArgb()) } }
                 val onReset: () -> Unit = { scope.launch { pref.setAny(pref.default as Int) } }
                 val edit: () -> Unit = {
-                    if (inline != null) inline.open(title) { InlineColorPage(summary, color, onColor, onReset) }
+                    if (inline != null) inline.open(title, scrollable = false) {
+                        // A preference write must survive leaving the nested page or panel.
+                        val editorScope = LocalGlobalViewmodel.current.viewModelScope
+                        val resetColor = if (pref.default == CHAT_COLOR_FOLLOWS_THEME) extra.themeRole(palette) else Color(pref.default as Int)
+                        InlineColorPage(
+                            summary, color,
+                            onColor = { c -> editorScope.launch(Dispatchers.IO) { pref.setAny(c.toArgb()) } },
+                            onReset = { editorScope.launch(Dispatchers.IO) { pref.setAny(pref.default as Int) } },
+                            resetColor = resetColor,
+                        )
+                    }
                     else editorOpen.value = true
                 }
                 ListRow(onClick = edit, onLongClick = ::toggleExplain, enabled = enabled, selected = highlighted) {
@@ -234,7 +251,7 @@ fun SettingEntry.Render(highlighted: Boolean = false) {
             extra is PrefExtraConfig.Nested -> {
                 val inline = LocalInlineEditor.current
                 OpenRow(title, "", enabled, highlighted, icon, onOpen = {
-                    if (inline != null) inline.open(title, extra.content) else editorOpen.value = true
+                    if (inline != null) inline.open(title, content = extra.content) else editorOpen.value = true
                 })
                 if (inline == null) {
                     Modal(open = editorOpen.value, onDismiss = { editorOpen.value = false }, title = title, size = ModalSize.Panel, inset = false) {
@@ -351,6 +368,7 @@ private fun ScrubRow(
     max: Int,
     unit: String,
     zeroMeansOff: Boolean,
+    formatValue: (Int) -> String,
     enabled: Boolean,
     highlighted: Boolean,
     icon: (@Composable () -> Unit)?,
@@ -370,6 +388,8 @@ private fun ScrubRow(
     val shown = if (dragging) preview else (settled - min).toFloat() / span
     val shownValue = (min + (shown * span)).roundToInt()
     val offLabel = stringResource(Res.string.settings_value_off)
+    fun describeValue(v: Int): String =
+        if (zeroMeansOff && v == 0) offLabel else "${formatValue(v)} $unit".trim()
     var lastLive by remember { mutableStateOf(TimeSource.Monotonic.markNow()) }
 
     ListRow(onLongClick = onLongPress, enabled = enabled, selected = highlighted, minHeight = Space.rowTall) {
@@ -379,11 +399,7 @@ private fun ScrubRow(
                 RowLabel(title)
                 RowGap()
                 Text(
-                    text = when {
-                        zeroMeansOff && shownValue == 0 -> offLabel
-                        unit.isEmpty() -> "$shownValue"
-                        else -> "$shownValue $unit"
-                    },
+                    text = describeValue(shownValue),
                     style = Type.value,
                     color = if (enabled) p.accent else p.disabled,
                     maxLines = 1,
@@ -394,7 +410,7 @@ private fun ScrubRow(
                 value = shown,
                 enabled = enabled,
                 keyStep = 1f / span,
-                describe = { f -> "${(min + f * span).roundToInt()} $unit".trim() },
+                describe = { f -> describeValue((min + f * span).roundToInt()) },
                 name = title,
                 hitHeight = 24.dp,
                 onValueChange = { f ->
@@ -492,16 +508,6 @@ internal fun ColorModal(
         },
     ) {
         ColorEditorBody(summary, initial, onColor)
-    }
-}
-
-/** The colour editor inside the room's settings panel: the chat beside it shows every change. */
-@Composable
-private fun InlineColorPage(summary: String, initial: Color, onColor: (Color) -> Unit, onReset: () -> Unit) {
-    Column(Modifier.fillMaxWidth().padding(Space.gutter)) {
-        ColorEditorBody(summary, initial, onColor)
-        Spacer(Modifier.height(Space.gap))
-        SecondaryAction(stringResource(Res.string.reset_default), onClick = onReset)
     }
 }
 
