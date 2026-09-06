@@ -15,6 +15,7 @@ import app.protocol.models.TlsState
 import app.protocol.syncplayJson
 import app.room.RoomViewmodel
 import app.utils.loggy
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -87,6 +88,7 @@ abstract class NetworkManager(val viewmodel: RoomViewmodel) : AbstractManager(vi
         if (viewmodel.isSoloMode) return
 
         terminateExistingConnection()
+        generation.incrementAndGet()
         encrypted.value = false
 
         /* Before the socket, not after an answer. A refusal here has cost nothing; the same
@@ -253,8 +255,23 @@ abstract class NetworkManager(val viewmodel: RoomViewmodel) : AbstractManager(vi
      */
     private val inboundLines = Channel<String>(capacity = Channel.UNLIMITED)
 
-    /** One outbound packet: its JSON, whether a failed write may be replayed, and who is waiting on it. */
-    private class Outbound(val json: String, val queueable: Boolean, val done: CompletableDeferred<Unit>?)
+    /**
+     * One outbound packet: its JSON, whether a failed write may be replayed, who is waiting on
+     * it, and which socket it was written for.
+     */
+    private class Outbound(
+        val json: String,
+        val queueable: Boolean,
+        val done: CompletableDeferred<Unit>?,
+        val generation: Int,
+    )
+
+    /**
+     * Which socket we are on. Increases on every connect, so work that was queued for the
+     * previous one can be told apart from work meant for this one: a State computed against a
+     * room we have since left is not something the new socket should say.
+     */
+    private val generation = atomic(0)
 
     /**
      * Outbound packets, written STRICTLY in the order they were handed in by one writer. Two
@@ -270,6 +287,12 @@ abstract class NetworkManager(val viewmodel: RoomViewmodel) : AbstractManager(vi
         viewmodel.viewModelScope.launch(Dispatchers.IO) {
             for (item in outbound) {
                 try {
+                    if (item.generation != generation.value) {
+                        // Written for a socket that is gone. Anything replayable waits for the
+                        // new handshake instead of going out stale.
+                        if (item.queueable) viewmodel.session.queueOutbound(item.json)
+                        continue
+                    }
                     transmitPacket(item.json, item.queueable)
                 } finally {
                     item.done?.complete(Unit)
@@ -331,21 +354,21 @@ abstract class NetworkManager(val viewmodel: RoomViewmodel) : AbstractManager(vi
     suspend fun send(message: WireMessage) {
         if (viewmodel.isSoloMode) return
         val done = CompletableDeferred<Unit>()
-        outbound.send(Outbound(message.toJson(), message.isQueueable(), done))
+        outbound.send(Outbound(message.toJson(), message.isQueueable(), done, generation.value))
         done.await()
     }
 
     /** Fire-and-forget [send]: same writer, same order, nobody waits. */
     fun sendAsync(message: WireMessage) {
         if (viewmodel.isSoloMode) return
-        outbound.trySend(Outbound(message.toJson(), message.isQueueable(), null))
+        outbound.trySend(Outbound(message.toJson(), message.isQueueable(), null, generation.value))
     }
 
     /** A pre-encoded line (a replayed queue entry) through the same ordered writer. */
     suspend fun sendRaw(json: String, queueable: Boolean) {
         if (viewmodel.isSoloMode) return
         val done = CompletableDeferred<Unit>()
-        outbound.send(Outbound(json, queueable, done))
+        outbound.send(Outbound(json, queueable, done, generation.value))
         done.await()
     }
 

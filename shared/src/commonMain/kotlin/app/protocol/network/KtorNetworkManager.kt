@@ -62,6 +62,8 @@ class KtorNetworkManager(viewmodel: RoomViewmodel) : NetworkManager(viewmodel) {
                     // is not the Syncplay protocol.
                     while (true) {
                         val line = conn.input.readLineStrict(limit = MAX_LINE_BYTES) ?: break
+                        // A line from a socket we have already replaced is not ours to act on.
+                        if (socket !== sock) break
                         handlePacket(line)
                     }
                     lost(sock)

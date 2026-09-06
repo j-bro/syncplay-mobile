@@ -77,7 +77,8 @@ class NettyNetworkManager(viewmodel: RoomViewmodel) : NetworkManager(viewmodel) 
                         }
 
                         override fun channelRead0(ctx: ChannelHandlerContext?, msg: String?) {
-                            if (msg != null) handlePacket(msg)
+                            // A line from a socket we have already replaced is not ours to act on.
+                            if (msg != null && ctx?.channel() === channel) handlePacket(msg)
                         }
 
                         override fun channelInactive(ctx: ChannelHandlerContext) {

@@ -111,7 +111,10 @@ class SwiftNioNetworkManager: NetworkManager, ChannelInboundHandler, @unchecked 
     // MARK: - Channel Handler Methods
 
     /// Decodes the inbound `ByteBuffer` as UTF-8 and forwards it to `handlePacket(jsonString:)`.
+    /// Only the current channel counts: a line from a socket we have already replaced would be
+    /// answered against a room we are no longer in.
     func channelRead(context: ChannelHandlerContext, data: NIOAny) {
+        guard context.channel === channel else { return }
         var buffer = self.unwrapInboundIn(data)
         let readableBytes = buffer.readableBytes
         let data = buffer.readData(length: readableBytes)!
