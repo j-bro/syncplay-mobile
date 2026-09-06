@@ -1,10 +1,9 @@
 <p align="center">
-  <img src="art/readme-feature.webp" width="960" alt="Synkplay — Your video. Everyone in sync. Watch together on phones and computers.">
+  <img src="art/readme-feature.webp" width="960" alt="Synkplay banner with Android and macOS screenshots: watch together on phones and computers">
 </p>
 
 <p align="center">
-  <b>Android · iOS · Windows · macOS · Linux</b><br>
-  No sign-up. No ads. Open source.
+  <b>Android · iOS · Windows · macOS · Linux</b>
 </p>
 
 <p align="center">
@@ -15,11 +14,12 @@
   <a href="docs/DEVELOPING.md">Build</a>
 </p>
 
-Play, pause and seek together. Synkplay is an independent [Syncplay](https://syncplay.pl/) client,
-compatible with the official desktop app.
+Synkplay is an independent [Syncplay](https://syncplay.pl/) client for phones and computers.
+When one person in the room pauses, plays or skips, the same thing happens for everyone else.
+It works with the official desktop client, so friends on PC can join the same room.
 
 > [!NOTE]
-> Everyone opens the same video from their own file or link. Synkplay syncs playback; it does not send video or share your screen.
+> Each person opens the same video from their own file or link. Synkplay only keeps playback in step. Nothing from your video or screen is sent to anyone.
 
 ## Download
 
@@ -67,47 +67,48 @@ compatible with the official desktop app.
   </tr>
 </table>
 
-**Android:** 8.0+ · **Latest IPA:** iOS 14.1+ · Store versions may arrive later.
+Android 8.0 or newer. The IPA needs iOS 14.1 or newer. Store builds usually land a few days after the GitHub release.
 
-**On a computer?** [Run Synkplay from source](docs/DEVELOPING.md#desktop), or install [official Syncplay](https://syncplay.pl/download/) to join the same rooms.
+There is no desktop download yet. On a computer, [run Synkplay from source](docs/DEVELOPING.md#desktop), or install the [official Syncplay client](https://syncplay.pl/download/) and join the same room.
 
 <details>
 <summary><b>Which download should I choose?</b></summary>
 
-- **Android:** choose Google Play for a store install, or the latest full GitHub APK for mpv, ExoPlayer and KitePlayer. The universal APK covers all supported CPU types.
-- **IzzyOnDroid:** a smaller, ExoPlayer-only app. It installs alongside the full app and has separate settings.
-- **iPhone / iPad:** install from the App Store. For an IPA, [set up AltStore Classic](https://faq.altstore.io/), then use **Add to AltStore** above.
+- **Android:** Google Play is the easy route. The full APK on GitHub is the same app, with mpv, ExoPlayer and KitePlayer, and it runs on every supported CPU.
+- **IzzyOnDroid:** a smaller build with ExoPlayer only. It installs next to the full app as a separate app, with its own settings.
+- **iPhone and iPad:** the App Store. If you would rather sideload, [set up AltStore Classic](https://faq.altstore.io/), then use **Add to AltStore** above.
 
 </details>
 
 ## Start a room
 
-1. **Meet in the same room.** Use the same server, port and room name. The default public server is fine.
-2. **Open your video.** Each person loads their file or video link.
-3. **Mark yourself ready.** When everyone is ready, press play.
+1. Everyone joins the same room: same server, same port, same room name. The default public server works fine.
+2. Everyone opens the same video, from a file on their device or from a link.
+3. Tap **Ready**. When everyone is ready, press play.
 
-You can share an invite from inside the room. Friends need Synkplay installed to open its invite links.
+You can share an invite link from inside the room. The link only opens on a device that has Synkplay installed.
 
-**Watching alone?** Tap the logo on Home, then **Watch alone**. No server needed; your playback position is saved.
+To watch by yourself, tap the logo on Home and pick **Watch alone**. It needs no server, and it remembers where you stopped.
 
 ## What you can do
 
-| Want to… | Use… |
-|:---|:---|
-| Pause or skip together | Shared playback controls |
-| Talk during the video | Text, emoji and GIF chat |
-| Queue the next episode | Shared playlists with auto-advance |
-| Adjust for a different intro | Your own time offset |
-| Use your subtitle files | External tracks on supported players |
-| Host your own room | **Host mine** on Home |
+- Play, pause and seek together.
+- Chat with text, emoji and GIFs while you watch.
+- Share a playlist that moves on to the next file by itself.
+- Set your own time offset when your copy has a longer intro.
+- Load your own subtitle files, on players that support them.
+- Host a room on your own device with **Host mine** on Home.
 
 <details>
-<summary><b>More controls, when you need them</b></summary>
+<summary><b>Also in there</b></summary>
 
-Themes, gesture controls, reduced motion, shared-playlist undo, and audio/subtitle language preferences.
-Picture-in-Picture is available on Android and with AVPlayer or VLCKit on iOS.
-Managed rooms let a controller decide playback. Filename and file-size sharing can be hidden or hashed.
-Encrypted connections are available when the server supports them.
+- Themes, gesture controls and a reduced-motion option.
+- Undo for the shared playlist.
+- Preferred audio and subtitle languages.
+- Picture-in-Picture on Android, and on iOS with AVPlayer or VLCKit.
+- Managed rooms, where one controller decides playback.
+- Hidden or hashed filenames and file sizes.
+- Encrypted connections, when the server supports them.
 
 </details>
 
@@ -125,23 +126,23 @@ Encrypted connections are available when the server supports them.
   <a href="art/screenshots/macos.png"><img src="art/screenshots/macos.webp" width="720" alt="macOS room: video, chat, playback controls and player settings"></a>
 </p>
 
-<p align="center"><sub>macOS room · Select any screenshot to see it full size.</sub></p>
+<p align="center"><sub>macOS room · Click a screenshot to open it full size.</sub></p>
 
 ## Help
 
 <details>
 <summary><b>Can my friends use Syncplay on PC?</b></summary>
 
-Yes. Join the same server, port and room, then open the same video. You can mix Synkplay and the official Syncplay desktop client.
+Yes. They join the same server, port and room, and open the same video. Synkplay and the official desktop client mix fine in one room.
 
 </details>
 
 <details>
-<summary><b>A video or subtitle will not play correctly.</b></summary>
+<summary><b>A video or subtitle does not play right.</b></summary>
 
-Leave the room and choose a different player on Home before joining again.
-The defaults are **mpv** on full Android builds and **VLCKit** on iOS.
-KitePlayer is experimental on mobile. AVPlayer cannot load external subtitle files.
+Leave the room, pick a different player on Home, and join again.
+The defaults are **mpv** on the full Android build and **VLCKit** on iOS.
+KitePlayer is still experimental on phones. AVPlayer cannot load subtitle files.
 [Compare the players](docs/DEVELOPING.md#player-capabilities).
 
 </details>
@@ -149,28 +150,28 @@ KitePlayer is experimental on mobile. AVPlayer cannot load external subtitle fil
 <details>
 <summary><b>Why do I have two Android apps?</b></summary>
 
-The IzzyOnDroid app and the full GitHub / Google Play app use different app IDs, so they can coexist.
-One does not update the other. Each keeps its own settings.
+The IzzyOnDroid app and the full app (GitHub or Google Play) use different app IDs, so Android treats them as two apps.
+One does not update the other, and each keeps its own settings.
 
 </details>
 
-**Still stuck?** [Report a bug](https://github.com/yuroyami/syncplay-mobile/issues/new?template=bug_report.yml) · [Ask a question](https://github.com/yuroyami/syncplay-mobile/discussions) · [Request a feature](https://github.com/yuroyami/syncplay-mobile/issues/new?template=feature_request.yml)
+For anything else: [Report a bug](https://github.com/yuroyami/syncplay-mobile/issues/new?template=bug_report.yml) · [Ask a question](https://github.com/yuroyami/syncplay-mobile/discussions) · [Request a feature](https://github.com/yuroyami/syncplay-mobile/issues/new?template=feature_request.yml)
 
-## Make it better
+## Contributing
 
-Small fixes help. A clearer translation, a reproducible bug report, or a tested patch is welcome.
+Translations are the easiest way to help. Bug reports with steps to reproduce, and tested patches, are welcome too.
 
 **[Translate on Weblate](https://hosted.weblate.org/engage/syncplay-mobile/)** &nbsp;·&nbsp;
 **[Build & test](docs/DEVELOPING.md)** &nbsp;·&nbsp;
 **[Support development](https://ko-fi.com/sidenaakram)**
 
 <details>
-<summary><b>Thanks to the people behind it</b></summary>
+<summary><b>Credits</b></summary>
 
-[Syncplay](https://syncplay.pl/) and [Et0h](https://github.com/Et0h) for the original project and help;
-[soredake](https://github.com/soredake) for testing;
-[Osanosa](https://github.com/Osanosa) for contributions;
-[Zhaodaidai](https://github.com/Zhaodaidai), [DoncanC](https://github.com/DoncanC), [ivy-reps](https://github.com/ivy-reps), and everyone translating on Weblate.
+- [Syncplay](https://syncplay.pl/) and [Et0h](https://github.com/Et0h), for the original project and their help.
+- [soredake](https://github.com/soredake), for testing.
+- [Osanosa](https://github.com/Osanosa), for contributions.
+- [Zhaodaidai](https://github.com/Zhaodaidai), [DoncanC](https://github.com/DoncanC), [ivy-reps](https://github.com/ivy-reps) and everyone translating on Weblate.
 
 </details>
 
