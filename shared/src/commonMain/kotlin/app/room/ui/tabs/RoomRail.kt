@@ -83,6 +83,7 @@ fun RoomRail(modifier: Modifier = Modifier, horizontal: Boolean = false) {
     val viewmodel = LocalRoomViewmodel.current
     val ui = LocalRoomUiState.current
     val solo = viewmodel.isSoloMode
+    val playerIsReady by viewmodel.playerManager.isPlayerReady.collectAsState()
 
     val stateUserInfo by ui.tabCardUserInfo.collectAsState()
     val statePlaylist by ui.tabCardSharedPlaylist.collectAsState()
@@ -95,9 +96,13 @@ fun RoomRail(modifier: Modifier = Modifier, horizontal: Boolean = false) {
     unfolded.targetState = expanded
 
     val panels = buildList {
-        add(RailCell(Icons.Filled.Tune, stringResource(Res.string.room_card_title_in_room_prefs), statePrefs) { ui.toggleRoomPreferences() })
+        if (playerIsReady) {
+            add(RailCell(Icons.Filled.Tune, stringResource(Res.string.room_card_title_in_room_prefs), statePrefs) { ui.toggleRoomPreferences() })
+        }
         if (!solo) {
-            add(RailCell(Icons.AutoMirrored.Filled.PlaylistPlay, stringResource(Res.string.room_shared_playlist), statePlaylist) { ui.toggleSharedPlaylist() })
+            if (playerIsReady) {
+                add(RailCell(Icons.AutoMirrored.Filled.PlaylistPlay, stringResource(Res.string.room_shared_playlist), statePlaylist) { ui.toggleSharedPlaylist() })
+            }
             add(RailCell(Icons.Filled.Groups, stringResource(Res.string.room_card_title_user_info), stateUserInfo) { ui.toggleUserInfo() })
         }
         add(RailCell(Icons.Filled.Lock, stringResource(Res.string.room_lock)) {
@@ -106,7 +111,7 @@ fun RoomRail(modifier: Modifier = Modifier, horizontal: Boolean = false) {
         })
     }
     val actions = buildList {
-        if (viewmodel.player.supportsPictureInPicture) {
+        if (playerIsReady && viewmodel.player.supportsPictureInPicture) {
             add(RailCell(Icons.Filled.PictureInPicture, stringResource(Res.string.room_overflow_pip)) { platformCallback.onPictureInPicture(true) })
         }
         if (!solo) {

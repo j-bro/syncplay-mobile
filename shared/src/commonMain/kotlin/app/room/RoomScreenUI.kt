@@ -18,6 +18,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -84,6 +85,7 @@ import syncplaymobile.shared.generated.resources.room_untrusted_ask_title
 import app.theme.palette
 import app.theme.Type
 import app.uicomponents.controls.Text
+import app.uicomponents.controls.ProgressBar
 import app.uicomponents.controls.SecondaryAction
 import app.uicomponents.controls.PrimaryAction
 import app.uicomponents.frames.ModalSize
@@ -304,6 +306,7 @@ private fun RoomHud(
     initialFocusRequester: FocusRequester,
 ) {
     val ui = viewmodel.uiState
+    val playerIsReady by viewmodel.playerManager.isPlayerReady.collectAsState()
     val isHUDVisible by ui.visibleHUD.collectAsState()
     val focusManager = LocalFocusManager.current
     val isKeyboardMode = LocalInputModeManager.current.inputMode == InputMode.Keyboard
@@ -311,9 +314,9 @@ private fun RoomHud(
     /* Under keyboard or D-pad input, focus lands on the primary control when the HUD shows; on
      * touch that would be jarring and could raise the soft keyboard. Focus drops on hide so the
      * composed-but-invisible controls keep no off-screen focus stop. */
-    LaunchedEffect(isHUDVisible, hasVideo, isKeyboardMode) {
+    LaunchedEffect(isHUDVisible, hasVideo, isKeyboardMode, playerIsReady) {
         if (isHUDVisible) {
-            if (isKeyboardMode) {
+            if (isKeyboardMode && playerIsReady) {
                 delay(150)
                 runCatching { initialFocusRequester.requestFocus() }
             }
@@ -335,10 +338,11 @@ private fun RoomHud(
             .fillMaxSize()
             .alpha(hudAlpha)
             .then(
-                if (isHUDVisible) Modifier.pointerInput(Unit) {
+                if (isHUDVisible) Modifier.pointerInput(playerIsReady) {
                     detectTapGestures(onTap = {
                         // Typing: a stray tap only closes the keyboard. Otherwise it hides the HUD.
-                        if (isKeyboardOpen) focusManager.clearFocus(force = true) else ui.visibleHUD.value = false
+                        if (isKeyboardOpen) focusManager.clearFocus(force = true)
+                        else if (playerIsReady) ui.visibleHUD.value = false
                     })
                 } else Modifier
             )
@@ -357,29 +361,33 @@ private fun RoomHud(
         RoomFrame(
             tall = tall,
             railHorizontal = railHorizontal,
-            status = if (soloMode) null else ({ RoomStatusInfoSection() }),
+            status = if (soloMode || !playerIsReady) null else ({ RoomStatusInfoSection() }),
             rail = { RoomRail(horizontal = railHorizontal) },
             chat = if (soloMode) null else ({ RoomChatSection(modifier = Modifier.fillMaxSize()) }),
-            side = { RoomSidePanels(Modifier.fillMaxSize(), tall = tall) },
-            bottom = { RoomBottomBarSection(modifier = Modifier.fillMaxWidth()) },
-            center = { RoomTransportKeys() },
+            // Room creation waits for the previous engine's teardown. Until it publishes
+            // the new player, keep chat/navigation usable but do not compose player tools.
+            side = if (playerIsReady) ({ RoomSidePanels(Modifier.fillMaxSize(), tall = tall) }) else null,
+            bottom = if (playerIsReady) ({ RoomBottomBarSection(modifier = Modifier.fillMaxWidth()) }) else null,
+            center = { if (playerIsReady) RoomTransportKeys() else ProgressBar(progress = null) },
         )
     }
     }
 
     /* Above the HUD: with the HUD hidden it takes the touches that would otherwise reach the
      * still-composed controls; with it visible it attaches no pointer input at all. */
-    RoomGestureInterceptor(modifier = Modifier.fillMaxSize())
+    if (playerIsReady) RoomGestureInterceptor(modifier = Modifier.fillMaxSize())
 }
 
 /**
- * The auto-hide policy: after the configured idle seconds the HUD hides, unless a panel or the keyboard
- * is open, the track is being scrubbed, a message is half-typed, or there is no video to see.
+ * The idle window runs only while video is playing. Panels, the keyboard, scrubbing and an
+ * unfinished message hold it open; each release or playback restart gets the full window.
  */
 @Composable
 private fun HudAutoHide(viewmodel: RoomViewmodel, hudVisible: Boolean, keyboardOpen: Boolean, hasVideo: Boolean) {
     val idleSeconds by HUD_AUTO_HIDE_SECONDS.watchPref()
     val ui = viewmodel.uiState
+    val isPlaying by viewmodel.playerManager.isNowPlaying.collectAsState()
+    val isBuffering by viewmodel.playerManager.isBuffering.collectAsState()
     val activity by ui.hudActivity.collectAsState()
     val userInfo by ui.tabCardUserInfo.collectAsState()
     val playlist by ui.tabCardSharedPlaylist.collectAsState()
@@ -394,9 +402,10 @@ private fun HudAutoHide(viewmodel: RoomViewmodel, hudVisible: Boolean, keyboardO
     val draft by ui.msg.collectAsState()
     val held = userInfo || playlist || prefs || tracks || gestures || seekTo || addMedia || controls || gifs || scrubbing || keyboardOpen || draft.isNotBlank()
 
-    LaunchedEffect(idleSeconds, hudVisible, hasVideo, held, activity) {
-        if (idleSeconds <= 0 || !hudVisible || !hasVideo || held) return@LaunchedEffect
-        delay(idleSeconds * 1000L)
-        ui.visibleHUD.value = false
+    val state by rememberUpdatedState(
+        HudAutoHideState(idleSeconds, hudVisible, hasVideo, isPlaying, isBuffering, held, activity)
+    )
+    LaunchedEffect(ui) {
+        autoHideHud(snapshotFlow { state }) { ui.visibleHUD.value = it }
     }
 }

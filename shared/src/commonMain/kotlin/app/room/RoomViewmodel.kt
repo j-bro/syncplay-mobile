@@ -112,7 +112,7 @@ class RoomViewmodel(val joinConfig: JoinConfig?, val backStack: SnapshotStateLis
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            launch {
+            val playerInitialization = launch {
                 // The previous room's engine may still be tearing down (mpv's handle is
                 // process-global); never build the next one over it.
                 PlayerManager.awaitPendingDestroy()
@@ -139,6 +139,10 @@ class RoomViewmodel(val joinConfig: JoinConfig?, val backStack: SnapshotStateLis
 
             joinConfig?.let {
                 launch {
+                    // Initial State/playlist messages can read player capabilities or load
+                    // media immediately. Publish the player before opening that inbound path.
+                    playerInitialization.join()
+                    if (!playerManager.isPlayerReady.value) return@launch
                     val endpoint = resolveServerEndpoint(joinConfig.ip)
                     session.tlsPeerHost = endpoint.certificateHost
                     session.serverHost = endpoint.dialHost

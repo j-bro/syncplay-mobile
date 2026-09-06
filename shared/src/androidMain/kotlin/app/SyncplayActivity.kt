@@ -250,8 +250,10 @@ class SyncplayActivity : ComponentActivity() {
 
         /* Loading subtitle appearance */
         lifecycleScope.launch(Dispatchers.Main) {
+            val room = roomViewmodel ?: return@launch
+            if (!room.playerManager.isPlayerReady.value) return@launch
             val ccsize = SUBTITLE_SIZE.value()
-            (roomViewmodel?.player as? ExoImpl)?.retweakSubtitleAppearance(ccsize.toFloat())
+            (room.player as? ExoImpl)?.retweakSubtitleAppearance(ccsize.toFloat())
         }
     }
 
@@ -390,7 +392,8 @@ class SyncplayActivity : ComponentActivity() {
 
         /** Applying track choices again so the player doesn't forget about track choices **/
         lifecycleScope.launch {
-            roomViewmodel?.player?.reapplyTrackChoices()
+            val room = roomViewmodel ?: return@launch
+            if (room.playerManager.isPlayerReady.value) room.player.reapplyTrackChoices()
         }
     }
 
