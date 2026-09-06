@@ -1,56 +1,55 @@
 package app.room.ui.rightcards
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ViewList
-import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ViewCompact
 import androidx.compose.runtime.Composable
-import app.uicomponents.controls.pressFeedback
-import app.uicomponents.controls.controlStates
-import app.uicomponents.controls.Feedback
-import app.theme.Motion
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.hoverable
-import androidx.compose.foundation.clickable
-import androidx.compose.animation.togetherWith
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import app.LocalRoomViewmodel
+import androidx.compose.ui.unit.lerp
 import app.LocalRoomUiState
+import app.LocalRoomViewmodel
 import app.player.models.MediaFile
 import app.preferences.Preferences.USER_INFO_VIEW
 import app.preferences.set
@@ -58,302 +57,310 @@ import app.preferences.watchPref
 import app.protocol.WireMessage
 import app.protocol.models.User
 import app.theme.Radius
+import app.theme.Motion
 import app.theme.Space
 import app.theme.Type
 import app.theme.palette
+import app.uicomponents.controls.Chevron
+import app.uicomponents.controls.ChevronDirection
+import app.uicomponents.controls.Feedback
+import app.uicomponents.controls.GlyphButton
 import app.uicomponents.controls.Icon
 import app.uicomponents.controls.ListRow
 import app.uicomponents.controls.RowGap
-import app.uicomponents.controls.RowLabel
-import app.uicomponents.controls.RowValue
+import app.uicomponents.controls.Rule
 import app.uicomponents.controls.SecondaryAction
 import app.uicomponents.controls.Text
 import app.uicomponents.frames.PanelFrame
 import app.utils.FileComparison
 import app.utils.timestampFromMillis
-import kotlin.math.roundToLong
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import io.ktor.http.encodeURLParameter
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import syncplaymobile.shared.generated.resources.Res
 import syncplaymobile.shared.generated.resources.room_alone
 import syncplaymobile.shared.generated.resources.room_card_title_user_info
-import syncplaymobile.shared.generated.resources.room_details_file_properties
-import syncplaymobile.shared.generated.resources.room_details_user_position
 import syncplaymobile.shared.generated.resources.room_file_different
 import syncplaymobile.shared.generated.resources.room_file_has
-import syncplaymobile.shared.generated.resources.room_file_group_mine
-import syncplaymobile.shared.generated.resources.room_file_group_none
-import syncplaymobile.shared.generated.resources.room_file_group_other
 import syncplaymobile.shared.generated.resources.room_file_none
 import syncplaymobile.shared.generated.resources.room_file_same
+import syncplaymobile.shared.generated.resources.room_roster_duration
+import syncplaymobile.shared.generated.resources.room_roster_size
+import syncplaymobile.shared.generated.resources.room_roster_view_compact
+import syncplaymobile.shared.generated.resources.room_roster_view_standard
+import syncplaymobile.shared.generated.resources.room_user_controller
+import syncplaymobile.shared.generated.resources.room_user_details_hidden
+import syncplaymobile.shared.generated.resources.room_user_details_shown
+import syncplaymobile.shared.generated.resources.room_user_mute
 import syncplaymobile.shared.generated.resources.room_user_not_ready_label
-import syncplaymobile.shared.generated.resources.room_user_unmute
+import syncplaymobile.shared.generated.resources.room_user_ready_label
 import syncplaymobile.shared.generated.resources.room_user_report
 import syncplaymobile.shared.generated.resources.room_user_set_not_ready
 import syncplaymobile.shared.generated.resources.room_user_set_ready
-import syncplaymobile.shared.generated.resources.room_user_mute
-import syncplaymobile.shared.generated.resources.room_user_ready_label
-import syncplaymobile.shared.generated.resources.room_roster_view_compact
-import syncplaymobile.shared.generated.resources.room_roster_view_files
-import syncplaymobile.shared.generated.resources.room_roster_view_standard
-import app.uicomponents.controls.touchTarget
-
-/** The three ways to read the roster. Persisted, so the panel opens the way it was left. */
-private enum class RosterView(val key: String, val icon: ImageVector, val label: StringResource) {
-    Compact("compact", Icons.Filled.ViewCompact, Res.string.room_roster_view_compact),
-    Standard("standard", Icons.AutoMirrored.Filled.ViewList, Res.string.room_roster_view_standard),
-    Files("files", Icons.Filled.Folder, Res.string.room_roster_view_files),
-}
+import syncplaymobile.shared.generated.resources.room_user_unmute
+import syncplaymobile.shared.generated.resources.room_user_you
+import kotlin.math.roundToLong
 
 object CardUserInfo {
-
-    /**
-     * The roster, three ways. Standard: one row per user with a readiness square, the name and
-     * whether their file matches ours, a tap opening the file line. Compact: the same people as
-     * dense chips, for a full room. By file: users grouped under the file each has loaded, our
-     * own group marked, so who is on the wrong file is one glance.
-     */
     @Composable
     fun UserInfoCard(shape: Shape = Radius.panelShape) {
-        val viewmodel = LocalRoomViewmodel.current
-        val users by viewmodel.session.userList.collectAsState()
-        val me = viewmodel.session.currentUsername
-        val myFile by viewmodel.playerManager.media.collectAsState()
-        val p = palette
-        val scope = rememberCoroutineScope { Dispatchers.IO }
+        val vm = LocalRoomViewmodel.current
+        val ui = LocalRoomUiState.current
+        val users by vm.session.userList.collectAsState()
+        val myFile by vm.playerManager.media.collectAsState()
         val viewKey by USER_INFO_VIEW.watchPref()
-        val view = RosterView.entries.firstOrNull { it.key == viewKey } ?: RosterView.Standard
-
-        PanelFrame(
-            title = stringResource(Res.string.room_card_title_user_info),
-            modifier = Modifier.fillMaxSize(),
+        val scope = rememberCoroutineScope()
+        val uriHandler = LocalUriHandler.current
+        val me = vm.session.currentUsername
+        val canSetReady = users.any { it.name == me && it.isController }
+        UserRosterPanel(
+            users = users,
+            me = me,
+            myFile = myFile,
+            // Saved "files" and unknown values naturally fall back to the full-information view.
+            compact = viewKey == "compact",
+            onCompactChange = { compact -> scope.launch { USER_INFO_VIEW.set(if (compact) "compact" else "standard") } },
+            mutedUsers = ui.mutedUsers,
+            onToggleMute = ui::toggleMute,
+            onReport = { uriHandler.openUri(reportUserUrl(it)) },
+            onSetReady = if (canSetReady) { user ->
+                vm.networkManager.sendAsync(WireMessage.readiness(!user.readiness, manuallyInitiated = true, username = user.name))
+            } else null,
             shape = shape,
-            actions = {
-                ViewToggler(view) { next -> scope.launch { USER_INFO_VIEW.set(next.key) } }
-            },
-        ) {
+        )
+    }
+}
+
+/** The same roster in two densities. Information and row actions have independent visibility. */
+@Composable
+internal fun UserRosterPanel(
+    users: List<User>,
+    me: String,
+    myFile: MediaFile?,
+    compact: Boolean,
+    onCompactChange: (Boolean) -> Unit,
+    mutedUsers: Set<String> = emptySet(),
+    onToggleMute: (String) -> Unit = {},
+    onReport: (String) -> Unit = {},
+    onSetReady: ((User) -> Unit)? = null,
+    shape: Shape = Radius.panelShape,
+) {
+    var selectedUser by remember(compact) { mutableStateOf<String?>(null) }
+    PanelFrame(
+        title = stringResource(Res.string.room_card_title_user_info),
+        modifier = Modifier.fillMaxSize(),
+        shape = shape,
+        scrollable = false,
+        actions = { RosterViewSwitcher(compact, onCompactChange) },
+    ) {
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
             if (users.size <= 1) {
-                Text(
-                    text = stringResource(Res.string.room_alone),
-                    style = Type.note,
-                    color = p.inkDim,
-                    modifier = Modifier.padding(horizontal = Space.gutter, vertical = Space.gap),
-                )
+                Text(stringResource(Res.string.room_alone), color = palette.inkDim,
+                    modifier = Modifier.padding(horizontal = Space.gutter, vertical = Space.gapTight))
             }
-            when (view) {
-                RosterView.Standard -> users.forEach { user -> UserRow(user, isSelf = user.name == me, myFile = myFile) }
-                RosterView.Compact -> FlowRow(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = Space.gap, vertical = Space.gapTight),
-                    horizontalArrangement = Arrangement.spacedBy(Space.gapTight),
-                    verticalArrangement = Arrangement.spacedBy(Space.gapTight),
-                ) {
-                    users.forEach { user -> UserChip(user, isSelf = user.name == me) }
-                }
-                RosterView.Files -> {
-                    val myFileName = myFile?.fileName
-                    val groups = users.groupBy { it.file?.fileName }
-                    // Our own file first, then the other files, the file-less last.
-                    val ordered = groups.entries.sortedWith(
-                        compareBy<Map.Entry<String?, List<User>>> { it.key == null }
-                            .thenBy { !(myFileName != null && it.key != null && FileComparison.sameFilename(myFileName, it.key)) }
-                            .thenBy { it.key ?: "" },
+            users.forEach { user ->
+                key(user.name) {
+                    val isSelf = user.name == me
+                    val selected = selectedUser == user.name
+                    RosterUserRow(
+                        user = user, isSelf = isSelf, myFile = myFile, compact = compact,
+                        expanded = selected,
+                        onClick = if (compact || !isSelf) ({ selectedUser = if (selected) null else user.name }) else null,
                     )
-                    ordered.forEach { (fileName, group) ->
-                        val mine = myFileName != null && fileName != null && FileComparison.sameFilename(myFileName, fileName)
-                        FileGroupHeading(fileName, mine, group.firstOrNull()?.file)
+                    if (selected && !isSelf) {
                         FlowRow(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = Space.gap, vertical = Space.gapTight),
+                            modifier = Modifier.fillMaxWidth().padding(start = Space.gutter, end = Space.gutter, bottom = Space.gapTight),
                             horizontalArrangement = Arrangement.spacedBy(Space.gapTight),
-                            verticalArrangement = Arrangement.spacedBy(Space.gapTight),
                         ) {
-                            group.forEach { user -> UserChip(user, isSelf = user.name == me) }
+                            SecondaryAction(stringResource(if (user.name in mutedUsers) Res.string.room_user_unmute else Res.string.room_user_mute), { onToggleMute(user.name) })
+                            SecondaryAction(stringResource(Res.string.room_user_report), { onReport(user.name) })
+                            if (onSetReady != null) {
+                                SecondaryAction(stringResource(if (user.readiness) Res.string.room_user_set_not_ready else Res.string.room_user_set_ready), { onSetReady(user) })
+                            }
+                        }
+                    }
+                    Rule(Modifier.padding(horizontal = Space.gutter))
+                }
+            }
+        }
+    }
+}
+
+/** The original small header switch: one icon, two densities, no duplicate room count. */
+@Composable
+private fun RosterViewSwitcher(compact: Boolean, onCompactChange: (Boolean) -> Unit) {
+    AnimatedContent(
+        targetState = compact,
+        transitionSpec = {
+            (scaleIn(Motion.move(), initialScale = 0.6f) + fadeIn(Motion.move()))
+                .togetherWith(scaleOut(Motion.quick(), targetScale = 0.6f) + fadeOut(Motion.quick()))
+        },
+        label = "rosterView",
+    ) { isCompact ->
+        val current = stringResource(if (isCompact) Res.string.room_roster_view_compact else Res.string.room_roster_view_standard)
+        GlyphButton(
+            icon = if (isCompact) Icons.Filled.ViewCompact else Icons.AutoMirrored.Filled.ViewList,
+            name = stringResource(if (isCompact) Res.string.room_roster_view_standard else Res.string.room_roster_view_compact),
+            modifier = Modifier.semantics { stateDescription = current },
+            tint = palette.accent,
+            onClick = { Feedback.tick(); onCompactChange(!compact) },
+        )
+    }
+}
+
+@Composable
+private fun RosterUserRow(user: User, isSelf: Boolean, myFile: MediaFile?, compact: Boolean, expanded: Boolean, onClick: (() -> Unit)?) {
+    val p = palette
+    val file = user.file
+    val myDuration = myFile?.fileDuration?.takeIf { it.isFinite() && it > 0.0 }
+    val peerDuration = file?.fileDuration?.takeIf { it.isFinite() && it > 0.0 }
+    val sameFile = file != null && myFile != null && FileComparison.sameFilename(myFile.fileName, file.fileName) &&
+        FileComparison.sameFilesize(myFile.fileSize, file.fileSize) &&
+        (myDuration == null || peerDuration == null || FileComparison.sameFileduration(myDuration, peerDuration))
+    val fileState = stringResource(when {
+        file == null -> Res.string.room_file_none
+        myFile == null -> Res.string.room_file_has
+        sameFile -> Res.string.room_file_same
+        else -> Res.string.room_file_different
+    })
+    val ready = stringResource(if (user.readiness) Res.string.room_user_ready_label else Res.string.room_user_not_ready_label, user.name)
+    val controller = if (user.isController) stringResource(Res.string.room_user_controller) else ""
+    val self = if (isSelf) stringResource(Res.string.room_user_you) else ""
+    val filename = file?.fileName ?: stringResource(Res.string.room_file_none)
+    val expansion = if (onClick != null) stringResource(if (expanded) Res.string.room_user_details_shown else Res.string.room_user_details_hidden) else ""
+    val state = listOf(ready, self, controller, fileState, expansion).filter { it.isNotEmpty() }.joinToString(", ")
+    ListRow(
+        modifier = Modifier.background(if (isSelf) p.ink.copy(alpha = 0.045f) else Color.Transparent)
+            .semantics(mergeDescendants = true) { stateDescription = state },
+        onClick = onClick,
+        selected = user.isController,
+        minHeight = Space.touchMin,
+    ) {
+        Column(Modifier.fillMaxWidth().padding(vertical = Space.gapTight), verticalArrangement = Arrangement.spacedBy(Space.gapTight)) {
+            BoxWithConstraints(Modifier.fillMaxWidth()) {
+                // At enlarged text, the compact row becomes two lines before either column gets squeezed.
+                val stacked = maxWidth < 260.dp * LocalDensity.current.fontScale
+                val nameWidth = maxWidth * 0.36f
+                val identity: @Composable () -> Unit = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        ReadinessDot(user.readiness)
+                        RowGap(Space.gapTight + 2.dp)
+                        FullRosterText(user.name, modifier = Modifier.weight(1f), style = Type.label, preferredLines = 1)
+                        if (user.isController) {
+                            RowGap(Space.gapTight)
+                            Icon(Icons.Filled.Star, contentDescription = controller, tint = p.accent, modifier = Modifier.size(12.dp))
+                        }
+                    }
+                }
+                if (compact && !stacked) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(Modifier.width(nameWidth)) { identity() }
+                        RowGap(Space.gap)
+                        CompactFilename(filename, file != null, Modifier.weight(1f))
+                    }
+                } else {
+                    Column(verticalArrangement = Arrangement.spacedBy(Space.gapTight)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(Modifier.weight(1f)) { identity() }
+                            if (isSelf && !compact) {
+                                RowGap(Space.gap)
+                                Text(self, style = Type.value, color = p.inkDim)
+                            }
+                            if (onClick != null && !compact) {
+                                RowGap(Space.gap)
+                                Chevron(if (expanded) ChevronDirection.Up else ChevronDirection.Down, size = 12.dp)
+                            }
+                        }
+                        if (compact) CompactFilename(filename, file != null, Modifier.fillMaxWidth().padding(start = 15.dp))
+                    }
+                }
+            }
+            if (!compact || expanded) {
+                val detailSize = lerp(Type.group.fontSize, Type.note.fontSize, 0.5f)
+                val filenameStyle = Type.note.copy(fontSize = detailSize, lineHeight = lerp(Type.group.lineHeight, Type.note.lineHeight, 0.5f))
+                val metadataStyle = Type.value.copy(fontSize = detailSize, lineHeight = lerp(Type.group.lineHeight, Type.value.lineHeight, 0.5f))
+                Column(Modifier.padding(start = 15.dp), verticalArrangement = Arrangement.spacedBy(Space.gapTight)) {
+                    FullRosterText(filename, style = filenameStyle)
+                    if (file != null) {
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.gap), verticalArrangement = Arrangement.spacedBy(Space.gapTight)) {
+                            val duration = peerDuration?.let { timestampFromMillis((it * 1000).toLong()) } ?: "—"
+                            Text(stringResource(Res.string.room_roster_duration, duration), style = metadataStyle, color = p.inkDim)
+                            Text(stringResource(Res.string.room_roster_size, rosterFileSize(file.fileSize)), style = metadataStyle, color = p.inkDim)
+                            if (!isSelf && myFile != null) {
+                                Text(fileState, style = metadataStyle, color = if (sameFile) p.ok else p.warn)
+                            }
                         }
                     }
                 }
             }
         }
     }
+}
 
-    /** One key that cycles the views; its glyph scales out and the next one scales in. */
-    @Composable
-    private fun ViewToggler(view: RosterView, onNext: (RosterView) -> Unit) {
-        val p = palette
-        val source = remember { MutableInteractionSource() }
-        val name = stringResource(view.label)
-        val next = RosterView.entries[(view.ordinal + 1) % RosterView.entries.size]
-        Box(
-            modifier = Modifier
-                .size(Space.row)
-                .clip(Radius.controlShape)
-                .clickable(interactionSource = source, indication = null, role = Role.Button) { Feedback.tick(); onNext(next) }
-                .touchTarget()
-                .hoverable(source)
-                .semantics { contentDescription = name }
-                .controlStates(source, Radius.controlShape)
-                .pointerHoverIcon(PointerIcon.Hand)
-                .pressFeedback(source),
-            contentAlignment = Alignment.Center,
-        ) {
-            AnimatedContent(
-                targetState = view,
-                transitionSpec = {
-                    (scaleIn(Motion.move(), initialScale = 0.6f) + fadeIn(Motion.move()))
-                        .togetherWith(scaleOut(Motion.quick(), targetScale = 0.6f) + fadeOut(Motion.quick()))
-                },
-                label = "rosterView",
-            ) { v ->
-                Icon(v.icon, contentDescription = null, tint = p.accent, modifier = Modifier.size(Space.glyph))
-            }
-        }
-    }
+@Composable
+private fun ReadinessDot(ready: Boolean) {
+    val color = if (ready) palette.ok else palette.bad
+    Box(Modifier.size(7.dp).border(Space.hair, color, CircleShape)
+        .background(if (ready) color else color.copy(alpha = 0.2f), CircleShape))
+}
 
-    /**
-     * A file line: the name, its duration, and whether it is ours or nobody's.
-     *
-     * The square used to carry that last part in colour alone. It now differs in fill as well,
-     * and the whole row says which of the three states it is out loud.
-     */
-    @Composable
-    private fun FileGroupHeading(fileName: String?, mine: Boolean, file: MediaFile?) {
-        val p = palette
-        val square = Modifier.size(6.dp)
-        val spoken = when {
-            fileName == null -> stringResource(Res.string.room_file_group_none)
-            mine -> stringResource(Res.string.room_file_group_mine, fileName)
-            else -> stringResource(Res.string.room_file_group_other, fileName)
+@Composable
+private fun CompactFilename(filename: String, hasFile: Boolean, modifier: Modifier) {
+    val cleaned = remember(filename, hasFile) { if (hasFile) compactRosterFileName(filename) else filename }
+    val measurer = rememberTextMeasurer()
+    val style = Type.note
+    val minSize = Type.group.fontSize
+    val density = LocalDensity.current
+    BoxWithConstraints(modifier) {
+        val width = with(density) { maxWidth.roundToPx() }.coerceAtLeast(0)
+        val (display, fontSize) = remember(cleaned, width, density, style, minSize, measurer) {
+            val size = (0..2).map { lerp(style.fontSize, minSize, it / 2f) }.firstOrNull { size ->
+                measurer.measure(cleaned, style.copy(fontSize = size), softWrap = false, maxLines = 1).size.width <= width
+            } ?: minSize
+            // MiddleEllipsis is not implemented consistently by the platform text engines.
+            // Measure the actual head/ellipsis/tail string so the episode suffix survives everywhere.
+            abbreviateRosterFileName(cleaned) { candidate ->
+                measurer.measure(candidate, style.copy(fontSize = size), softWrap = false, maxLines = 1).size.width <= width
+            } to size
         }
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(start = Space.gutter, end = Space.gutter, top = Space.gap)
-                .semantics(mergeDescendants = true) { contentDescription = spoken },
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            when {
-                fileName == null -> Box(square.border(Space.hair, p.inkFaint, Radius.tightShape))
-                mine -> Box(square.background(p.ok, Radius.tightShape))
-                else -> Box(square.border(Space.hair, p.warn, Radius.tightShape))
-            }
-            RowGap(Space.gapTight + 2.dp)
-            Text(
-                text = fileName ?: stringResource(Res.string.room_file_none),
-                style = Type.value,
-                color = if (fileName == null) p.inkDim else p.ink,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f),
-            )
-            if (file != null) {
-                RowGap()
-                Text(timestampFromMillis(((file.fileDuration ?: 0.0) * 1000).toLong()), style = Type.value, color = p.inkDim, maxLines = 1)
-            }
-        }
-    }
-
-    /** A 30dp chip: the readiness square and the name; a controller carries the accent edge. */
-    @Composable
-    private fun UserChip(user: User, isSelf: Boolean) {
-        val p = palette
-        val square = Modifier.size(6.dp)
-        val spoken = readinessLabel(user)
-        Row(
-            modifier = Modifier
-                .height(30.dp)
-                .semantics(mergeDescendants = true) { contentDescription = spoken }
-                .clip(Radius.controlShape)
-                .background(if (isSelf) p.ink.copy(alpha = 0.08f) else Color.Transparent)
-                .border(Space.hair, if (user.isController) p.accent else p.rule, Radius.controlShape)
-                .padding(horizontal = Space.gap),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(if (user.readiness) square.background(p.ok, Radius.tightShape) else square.border(Space.hair, p.bad, Radius.tightShape))
-            RowGap(Space.gapTight + 2.dp)
-            Text(user.name, style = Type.value, color = p.ink, maxLines = 1)
-        }
+        Text(display, modifier = Modifier.fillMaxWidth().semantics { contentDescription = filename },
+            style = style.copy(fontSize = fontSize), color = palette.inkDim, maxLines = 1, softWrap = false)
     }
 }
 
-/** "name, ready" or "name, not ready": the square's colour, in words, for screen readers. */
+/** Shrink toward the preferred line count; longer names grow the row at the readable floor. */
 @Composable
-private fun readinessLabel(user: User): String =
-    stringResource(if (user.readiness) Res.string.room_user_ready_label else Res.string.room_user_not_ready_label, user.name)
+private fun FullRosterText(filename: String, modifier: Modifier = Modifier, style: TextStyle = Type.note, preferredLines: Int = 2) {
+    val measurer = rememberTextMeasurer()
+    val minSize = Type.group.fontSize
+    val density = LocalDensity.current
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        val width = with(density) { maxWidth.roundToPx() }.coerceAtLeast(1)
+        val size = remember(filename, width, density, style, minSize, measurer, preferredLines) {
+            (0..2).map { step -> lerp(style.fontSize, minSize, step / 2f) }.firstOrNull { size ->
+                !measurer.measure(filename, style.copy(fontSize = size), maxLines = preferredLines, constraints = Constraints(maxWidth = width)).hasVisualOverflow
+            } ?: minSize
+        }
+        Text(filename, style = style.copy(fontSize = size), modifier = Modifier.fillMaxWidth())
+    }
+}
 
-/** A report the maintainer can act on: who, in which room, and on which build. */
+/** Unknown/withheld sizes stay unknown; byte counts get a short decimal unit. */
+internal fun rosterFileSize(raw: String): String {
+    val bytes = raw.toLongOrNull()?.takeIf { it > 0L } ?: return "—"
+    val (divisor, suffix) = when {
+        bytes >= 1_000_000_000_000L -> 1_000_000_000_000.0 to "TB"
+        bytes >= 1_000_000_000L -> 1_000_000_000.0 to "GB"
+        bytes >= 1_000_000L -> 1_000_000.0 to "MB"
+        bytes >= 1_000L -> 1_000.0 to "KB"
+        else -> return "$bytes B"
+    }
+    val tenths = (bytes / divisor * 10).roundToLong()
+    val value = if (tenths % 10L == 0L) (tenths / 10).toString() else "${tenths / 10}.${tenths % 10}"
+    return "$value $suffix"
+}
+
 private fun reportUserUrl(username: String): String {
     val body = "Reporting a user in a Synkplay room.\n\nUser: $username\nWhat happened:\n"
-    return "https://github.com/yuroyami/syncplay-mobile/issues/new?title=" +
-        "[Report]%20user%20report&body=" + body.replace(" ", "%20").replace("\n", "%0A")
-}
-
-@Composable
-private fun UserRow(user: User, isSelf: Boolean, myFile: MediaFile?) {
-    val p = palette
-    val uriHandler = LocalUriHandler.current
-    val viewmodel = LocalRoomViewmodel.current
-    var expanded by remember(user.name) { mutableStateOf(false) }
-    val file = user.file
-    val state: StringResource = when {
-        file == null -> Res.string.room_file_none
-        myFile == null -> Res.string.room_file_has
-        FileComparison.sameFilename(myFile.fileName, file.fileName) -> Res.string.room_file_same
-        else -> Res.string.room_file_different
-    }
-    val spoken = readinessLabel(user) + ", " + stringResource(state)
-
-    ListRow(
-        modifier = (if (isSelf) Modifier.background(p.ink.copy(alpha = 0.06f)) else Modifier)
-            .semantics(mergeDescendants = true) { contentDescription = spoken },
-        // Always expandable now: even a user with no file can be muted from here.
-        onClick = { expanded = !expanded },
-        selected = user.isController,
-    ) {
-        val square = Modifier.size(6.dp)
-        Box(if (user.readiness) square.background(p.ok, Radius.tightShape) else square.border(Space.hair, p.bad, Radius.tightShape))
-        RowGap(Space.gapTight + 2.dp)
-        RowLabel(user.name)
-        RowValue(stringResource(state), accent = state == Res.string.room_file_same)
-    }
-    if (expanded && !isSelf) {
-        val ui = LocalRoomUiState.current
-        val isMuted = user.name in ui.mutedUsers
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(start = Space.gutter + Space.gap + 2.dp, end = Space.gutter, bottom = Space.gapTight),
-            horizontalArrangement = Arrangement.spacedBy(Space.gapTight),
-        ) {
-            SecondaryAction(
-                text = stringResource(if (isMuted) Res.string.room_user_unmute else Res.string.room_user_mute),
-                onClick = { ui.toggleMute(user.name) },
-            )
-            SecondaryAction(
-                text = stringResource(Res.string.room_user_report),
-                onClick = { uriHandler.openUri(reportUserUrl(user.name)) },
-            )
-            /* setOthersReadiness has been on the wire, implemented in the server and tested for
-             * as long as this app has existed, with nothing anywhere to reach it. */
-            if (viewmodel.session.userList.value.firstOrNull { it.name == viewmodel.session.currentUsername }?.isController == true) {
-                SecondaryAction(
-                    text = stringResource(if (user.readiness) Res.string.room_user_set_not_ready else Res.string.room_user_set_ready),
-                    onClick = {
-                        viewmodel.networkManager.sendAsync(
-                            WireMessage.readiness(isReady = !user.readiness, manuallyInitiated = true, username = user.name)
-                        )
-                    },
-                )
-            }
-        }
-    }
-    if (expanded && file != null) {
-        val megabytes = file.fileSize.toDoubleOrNull()?.div(1_000_000.0)?.let { ((it * 10).roundToLong() / 10.0).toString() } ?: "?"
-        val duration = timestampFromMillis(((file.fileDuration ?: 0.0) * 1000).toLong())
-        /* Where they actually are in the file. The server sends it on every List response and it
-         * used to be dropped on decode, so the room could not say who was behind. */
-        val at = user.position?.let { "\n" + stringResource(Res.string.room_details_user_position, timestampFromMillis((it * 1000).toLong())) } ?: ""
-        Text(
-            text = file.fileName + "\n" + stringResource(Res.string.room_details_file_properties, duration, megabytes) + at,
-            style = Type.note,
-            color = p.inkDim,
-            modifier = Modifier.padding(start = Space.gutter + Space.gap + 2.dp, end = Space.gutter, bottom = Space.gapTight),
-        )
-    }
+    return "https://github.com/yuroyami/syncplay-mobile/issues/new?title=${"[Report] user report".encodeURLParameter()}&body=${body.encodeURLParameter()}"
 }
