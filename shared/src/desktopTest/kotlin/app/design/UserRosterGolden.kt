@@ -252,6 +252,9 @@ class UserRosterGolden {
             val bounds = node.boundsInRoot
             scene.sendPointerEvent(PointerEventType.Press, bounds.center)
             scene.sendPointerEvent(PointerEventType.Release, bounds.center)
+            // A real pointer does not stay parked on the control it just pressed. Left hovering,
+            // a glyph button opens its desktop tooltip after 600 ms and adds its name to the tree.
+            scene.sendPointerEvent(PointerEventType.Exit, bounds.center)
             advance()
         }
 
