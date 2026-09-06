@@ -50,7 +50,7 @@ desugaring = "2.1.5"
 media3 = "1.11.0"
 netty = "4.1.131.Final" #"4.2.x" (and above) requires Api26 minimum
 conscrypt = "2.7.0"
-newpipeExtractor = "v0.24.6"
+newpipeExtractor = "v0.26.5"
 
 # Resolved from Maven Central. -PuseMavenLocal=true overrides it while a new version is
 # published locally but not yet served by Central.
