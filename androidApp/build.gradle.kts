@@ -1,8 +1,4 @@
 import io.github.yuroyami.kiteconfig.kiteConfig
-import NativeBuildConfig.registerExoOnlyLibcxxPrune
-import NativeBuildConfig.registerMpvLibcxxGuards
-import NativeBuildConfig.registerNativeBuildTask
-import NativeBuildConfig.validateNdk
 
 plugins {
     alias(libs.plugins.android.application)
@@ -13,6 +9,9 @@ plugins {
 // Overridable from the CLI / gradle.properties (-PexoOnly=true); defaults to AppConfig.exoOnly.
 val exoOnly = AppConfig.resolveExoOnly(providers)
 
+// Nothing native is compiled here: mpv arrives prebuilt inside the libmpvkt AAR. AGP still wants
+// an NDK to strip the packaged libraries and to extract native symbols for the release mapping,
+// which is why the pin stays.
 val ndkRequired = kiteConfig.ndk.get()
 
 kotlin {
@@ -22,7 +21,7 @@ kotlin {
 android {
     namespace = "androidApp"
     compileSdk = kiteConfig.compileSdk.get()
-    // Pinned for reproducible builds (issue #105) — AGP's default build-tools can resolve
+    // Pinned for reproducible builds (issue #105): AGP's default build-tools can resolve
     // differently on a clean CI checkout.
     buildToolsVersion = providers.gradleProperty("android.buildToolsVersion").get()
     ndkVersion = ndkRequired
@@ -92,9 +91,9 @@ android {
 
     packaging {
         jniLibs.useLegacyPackaging = true
-        // Always package our own NDK-matched libc++_shared (src/main/libs), never a copy that
-        // arrives inside some dependency's AAR — a mismatched one crashes mpv at load.
-        jniLibs.pickFirsts += "**/libc++_shared.so"
+        // No pickFirst for libc++_shared.so any more: only the libmpvkt AAR ships one. If a
+        // second dependency ever brings its own, AGP fails the merge, and that is the moment to
+        // look at which copy is newer, not the moment to add a pickFirst.
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             pickFirsts += "META-INF/INDEX.LIST"
@@ -103,7 +102,7 @@ android {
             excludes += "META-INF/license/**"
             excludes += "META-INF/native-image/**"
             // Dead SPI hooks from transitive deps (Rhino's JSR-223 entry, BlockHound's JVM
-            // agent hook) — neither can fire on Android; dropping them quiets R8 warnings.
+            // agent hook): neither can fire on Android; dropping them quiets R8 warnings.
             excludes += "META-INF/services/javax.script.ScriptEngineFactory"
             excludes += "META-INF/services/reactor.blockhound.integration.BlockHoundIntegration"
         }
@@ -112,8 +111,12 @@ android {
     if (exoOnly) {
         packaging {
             jniLibs {
-                for (mpvLib in AppConfig.mpvLibs) {
-                    excludes += ("**/$mpvLib")
+                // The exoOnly promise: no native player library in the APK. The libmpvkt
+                // dependency stays so the engine code compiles; its libraries are dropped here.
+                // verifyExoOnlyApk (buildSrc/ExoOnlyApkGate.kt) reads the finished APK and fails
+                // the build if any of them slipped through anyway.
+                for (lib in AppConfig.libmpvNativeLibs) {
+                    excludes += ("**/$lib")
                 }
                 // KitePlayer's FFmpeg backend, the single largest native library here: it carries
                 // a whole statically linked FFmpeg, so leaving it in would cost this flavor more
@@ -148,19 +151,9 @@ android {
     }
 }
 
-if (!exoOnly) {
-    afterEvaluate {
-        validateNdk(androidComponents.sdkComponents.ndkDirectory.get().asFile, ndkRequired)
-    }
-    registerNativeBuildTask(
-        sdkPathProvider = { androidComponents.sdkComponents.sdkDirectory.get().asFile },
-        ndkPathProvider = { androidComponents.sdkComponents.ndkDirectory.get().asFile }
-    )
-    // libc++ restore/verify guards — see NativeBuildConfig + CLAUDE.md "Android-only native gotchas".
-    registerMpvLibcxxGuards(androidComponents.sdkComponents.ndkDirectory)
-} else {
-    // Reproducible-builds prune (issue #105) — see NativeBuildConfig.
-    registerExoOnlyLibcxxPrune()
+if (exoOnly) {
+    // The exoOnly promise, checked on the bytes of every exoOnly APK. See buildSrc/ExoOnlyApkGate.kt.
+    registerExoOnlyApkGate()
 }
 
 androidComponents {

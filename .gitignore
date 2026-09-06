@@ -26,31 +26,12 @@ build/
 app/build/
 AndroidAppOutput/
 keystore/
-obj/
 *.jks
 *.pem
 *.so
-libavcodec.so
-libavdevice.so
-libavfilter.so
-libavformat.so
-libavutil.so
-libc++_shared.so
-libmpv.so
-libplayer.so
-libpostproc.so
-libswresample.so
-lbswscale.so
 Pods/
 *.mychanges
 
-buildscripts/deps
-buildscripts/deps/*
-buildscripts/sdk
-buildscripts/prefix
-buildscripts/prefix64
-*.h
-*.tgz
 syncplay-pc-src-master
 # Hide python files which i offload into my project for quickly viewing syncplay official code
 *.py

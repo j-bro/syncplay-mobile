@@ -5,8 +5,8 @@ import java.io.File
 
 /**
  * Every version number the build pins, read once from where each one actually lives: the
- * version catalog, gradle.properties, the Gradle wrapper, the Swift package lock, the CocoaPods
- * lock and the mpv build scripts. The CLAUDE.md version table and the release page's
+ * version catalog, gradle.properties, the Gradle wrapper, the Swift package lock and the
+ * CocoaPods lock. The CLAUDE.md version table and the release page's
  * dependency table both come from here, so the two cannot disagree.
  */
 internal class ToolVersions(root: File) {
@@ -35,11 +35,6 @@ internal class ToolVersions(root: File) {
             .findAll(text).map { it.groupValues[1] to it.groupValues[2].removePrefix("= ") }.distinctBy { it.first }.toMap()
     }.orEmpty()
 
-    /** The `v_*` pins of the mpv build scripts. mpv, libass, dav1d and libplacebo are git checkouts with no pin. */
-    val native: Map<String, String> = File(root, "buildscripts/include/depinfo.sh").takeIf { it.isFile }?.readText()?.let { text ->
-        Regex("""^v_([A-Za-z0-9_]+)=(\S+)$""", RegexOption.MULTILINE)
-            .findAll(text).associate { it.groupValues[1] to it.groupValues[2] }
-    }.orEmpty()
 }
 
 /** One row of the release page's dependency table. */
@@ -52,7 +47,6 @@ private class Row(val component: String, val where: String, val version: String?
  */
 internal fun releaseDependencyTable(v: ToolVersions): String {
     fun c(key: String) = v.catalog[key]
-    val ffmpeg = v.native["ci_ffmpeg"]?.let { ", FFmpeg $it" }.orEmpty()
     val rows = listOf(
         Row("Kotlin", "Toolchain", c("kotlin")),
         Row("Compose Multiplatform", "Toolchain", c("compose-multiplatform")),
@@ -62,7 +56,7 @@ internal fun releaseDependencyTable(v: ToolVersions): String {
         Row("Netty", "Network, Android and desktop", c("netty")),
         Row("SwiftNIO", "Network, iOS", v.swift["swift-nio"]),
         Row("ExoPlayer (Media3)", "Video engine, Android", c("media3")),
-        Row("mpv (built from source$ffmpeg)", "Video engine, Android", "latest git at build time"),
+        Row("libmpvKt (mpv, FFmpeg, libass and libplacebo inside)", "Video engine, Android, full build only", c("libmpvkt")),
         Row("VLCKit", "Video engine, iOS", v.pods["VLCKit"]),
         Row("KitePlayer, with KiteFFmpeg inside", "Video engine, all platforms, experimental", c("kiteplayer")),
     )

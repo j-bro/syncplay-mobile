@@ -25,14 +25,14 @@ object AppConfig {
     }
 
     /** Compile-time default for the [exoOnly] flavor. Override at build time with
-     *  `-PexoOnly=true` (or a line in gradle.properties) — see [resolveExoOnly]. */
+     *  `-PexoOnly=true` (or a line in gradle.properties), see [resolveExoOnly]. */
     const val exoOnly = false
 
     /**
      * Resolves the [exoOnly] flavor flag, letting it be overridden from the command line
      * or gradle.properties (`-PexoOnly=true`) without editing source. This is what lets a
-     * reproducible-build setup (e.g. IzzyOnDroid) select the exo-only variant — which skips
-     * the mpv native build scripts entirely — via a plain Gradle invocation. Both the
+     * reproducible-build setup (e.g. IzzyOnDroid) select the exo-only variant, which ships no
+     * native player library, via a plain Gradle invocation. Both the
      * build logic (androidApp) and the EXOPLAYER_ONLY BuildConfig field (shared) must read
      * through here so the build and the app code never disagree. Falls back to [exoOnly].
      */
@@ -47,17 +47,15 @@ object AppConfig {
     const val TRINITY_2 = 0xFFC331D8  // Softened orchid-magenta (logo stop 55%)
     const val TRINITY_3 = 0xFFD86B75  // Dusty coral (logo stop 88%)
 
-    val abiCodes = mapOf(
-        "armeabi-v7a" to "armv7l",
-        "arm64-v8a" to "arm64",
-        "x86" to "x86",
-        "x86_64" to "x86_64"
-    )
-
-    val mpvLibs = listOf(
-        "libavcodec.so", "libavdevice.so", "libavfilter.so",
-        "libavformat.so", "libavutil.so", "libmpv.so", "libplayer.so",
-        "libswresample.so", "libswscale.so"
+    /**
+     * Every native library the libmpvkt AAR carries. The exoOnly flavor strips them at packaging
+     * time so that build ships no native player, which IzzyOnDroid's reproducible build relies
+     * on. Keep it equal to what the pinned libmpvkt version ships; verifyExoOnlyApk fails the
+     * build if a player library reaches the APK anyway.
+     */
+    val libmpvNativeLibs = listOf(
+        "libavcodec.so", "libavdevice.so", "libavfilter.so", "libavformat.so", "libavutil.so",
+        "libswresample.so", "libswscale.so", "libmpv.so", "libmpvkt_jni.so", "libc++_shared.so",
     )
 
     /* ── Propagation: trinity colors → Android vector drawable gradients ────────────────────────── */

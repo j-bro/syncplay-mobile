@@ -192,7 +192,7 @@ Thanks to **[@Zhaodaidai](https://github.com/Zhaodaidai)** (Chinese), **[@Doncan
 
 **Requirements:** an Android Studio recent enough to open AGP 9.x projects, and a recent Xcode for iOS.
 
-**Android:** clone the repo and open it in Android Studio. No extra configuration needed. Two product flavors are available:
+**Android:** clone the repo and open it in Android Studio. No extra configuration needed: mpv arrives prebuilt from [libmpvKt](https://github.com/yuroyami/libmpvKt), so nothing native is compiled. Two product flavors are available:
 - `full` (default): ExoPlayer + mpv + KitePlayer.
 - `exoOnly`: ExoPlayer only, used for the IzzyOnDroid build. Select it with `-PexoOnly=true` or the matching Gradle variant.
 

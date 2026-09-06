@@ -93,3 +93,4 @@ Written for people who use the app. The full engineering history is in the commi
 - Startup no longer reads preferences on the drawing thread, and neither does logging.
 - Android downloads are two files now: the full universal APK and the smaller exo-only one. The per-CPU-type files are gone; Google Play serves each phone only what it needs.
 - The app also runs on desktop (Windows, macOS, Linux) with KitePlayer. Installers are not part of this release yet.
+- mpv now comes prebuilt from libmpvKt 0.1.0 (mpv 0.41.0, FFmpeg 9.0.1). Building the app no longer compiles mpv, and a clone builds without a native toolchain. The exoOnly build still ships no native player, and a build check now proves it on the APK.

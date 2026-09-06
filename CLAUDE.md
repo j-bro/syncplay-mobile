@@ -44,7 +44,7 @@ Kotlin Multiplatform (KMP) port of [Syncplay](https://syncplay.pl), a synchroniz
 | `:shared` | KMP library: `commonMain` + `androidMain` + `iosMain` + `desktopMain` + `commonTest` + `desktopTest` (design harness, ignored subtitle E2E); an empty `mobileMain` tree is an orphan |
 | `:androidApp` | Android app shell (single Activity, depends on `:shared`) |
 | `:desktopApp` | Compose for Desktop shell (`app.desktop.MainKt`), jpackage distributions |
-| `buildSrc` | Build config helpers: `AppConfig.kt`, `NativeBuildConfig.kt` |
+| `buildSrc` | Build config helpers: `AppConfig.kt`, `ExoOnlyApkGate.kt`, the release and gate tasks |
 | `iosApp/` | Xcode/SwiftUI shell hosting the Compose UI plus Swift bridges |
 
 **Toolchain (from `gradle.properties` / `libs.versions.toml`):** Kotlin 2.4.10, AGP 9.3.2, Compose Multiplatform 1.12.0, Gradle 9.7.1, compileSdk 37, minSdk 26, targetSdk 37, NDK 29.0.14206865, Java toolchain 21, buildToolsVersion 37.0.0 (pinned for reproducible builds).
@@ -105,8 +105,8 @@ defects this repo had. `koverVerify` enforces a line-coverage floor over `app.pr
 `app.server` only, currently 24 percent (`COVERAGE_FLOOR` in the root build file); it is a ratchet, raise it, never lower it.
 
 **buildSrc holds all non-trivial build logic; the four `build.gradle.kts` files stay declarative.**
-- `AppConfig.kt` - build helpers that are NOT app identity (identity now lives only in the root `kiteConfig { }` block): `SHARED_MODULE_NAME`, `localProperties(rootDir)` (signing secrets - caller must pass `rootDir` explicitly), the `exoOnly` flag + `resolveExoOnly(providers)`, Trinity brand colors (`0xFF9879EF` ultraviolet / `0xFFC331D8` orchid / `0xFFD86B75` coral, the three dominant stops of `art/synkplay_logo_palette.md`), `abiCodes`, `mpvLibs` (9 `.so` files), and the custom propagators `propagateTrinityColors()` (rewrites `ic_launcher_foreground.xml` gradient stops) + `propagateDefaultStrings()` (`values-en/strings.xml` → `values/strings.xml`); `propagateAllCustom()` runs them.
-- `NativeBuildConfig.kt` - mpv cross-compile `Exec` task (`runAndroidMpvNativeBuildScripts`, disabled on Windows), `validateNdk()`, plus the libc++ guards: `registerMpvLibcxxGuards()` (full flavor: `restoreMpvLibcxx` copies the NDK r29 `libc++_shared.so` next to the mpv libs, `verifyMpvLibcxx` greps for the `from_chars_floating` marker and fails packaging otherwise) and `registerExoOnlyLibcxxPrune()` (exoOnly reproducibility, issue #105).
+- `AppConfig.kt` - build helpers that are NOT app identity (identity now lives only in the root `kiteConfig { }` block): `SHARED_MODULE_NAME`, `localProperties(rootDir)` (signing secrets - caller must pass `rootDir` explicitly), the `exoOnly` flag + `resolveExoOnly(providers)`, Trinity brand colors (`0xFF9879EF` ultraviolet / `0xFFC331D8` orchid / `0xFFD86B75` coral, the three dominant stops of `art/synkplay_logo_palette.md`), `libmpvNativeLibs` (the ten libraries the libmpvkt AAR carries, stripped from exoOnly), and the custom propagators `propagateTrinityColors()` (rewrites `ic_launcher_foreground.xml` gradient stops) + `propagateDefaultStrings()` (`values-en/strings.xml` → `values/strings.xml`); `propagateAllCustom()` runs them.
+- `ExoOnlyApkGate.kt` - `verifyExoOnlyApk`, run after every exoOnly package task: opens the APK and fails if a native player library is inside.
 - `AndroidReleaseAllTask.kt` - the `androidReleaseAll` task class + root registration (see Release artifacts below).
 
 **KiteConfig (DONE, 2026-09-02; the plugin was called KiteSSOT until 4.2.0 and kmp-ssot before that).** The plugin is `io.github.yuroyami.kiteconfig` 1.0.0 from the Gradle Plugin Portal, applied in the root `build.gradle.kts`, which holds the whole `kiteConfig { }` block (identity, `modules`, `android`, `ios`, `logo`, `buildConfig`); modules read it back through the `kiteConfig` extension. Semantics to keep in mind:
@@ -127,9 +127,9 @@ live; the workflow fails if the version being built has no section in it.
 
 **Release artifacts.** `androidReleaseAll` (class + registration in `buildSrc/AndroidReleaseAllTask.kt`) shells out to **two** separate `./gradlew` runs to produce 3 files into `AndroidAppOutput/`: the full universal APK, the exoOnly universal APK, and the full AAB. Two processes because only one product flavor exists per Gradle invocation; the full APK and the AAB share one now that ABI splits are gone (0.24.0, owner decision: one universal APK per flavor, and Play serves per-ABI from the AAB). `printDependencyTable` (`buildSrc/ReleaseDependencies.kt`, whose `ToolVersions` reader also feeds `checkDocVersions`) prints the dependency table the release notes carry; `.github/scripts/release-body.sh` composes the GitHub release body (downloads table, changelog since the previous tag folded in a `<details>`, dependency table), and the workflow's `release` job runs it. Store uploads and the desktop installers are separate, switchable jobs the release does not wait on.
 
-**Android-only native gotchas.** `restoreMpvLibcxx` copies the NDK r29 `libc++_shared.so` into `src/main/libs/<abi>/`; `verifyMpvLibcxx` greps for the `from_chars_floating` symbol and fails the build if missing (an older libc++ lacks `__from_chars_floating_point`, crashing mpv at load). `exoOnly` runs `pruneStaleExoOnlyLibcxx` so the exo-only APK ships no libc++ at all, matching a clean checkout.
+**mpv arrives prebuilt.** `io.github.yuroyami:libmpvkt` (the libmpvKt repository) carries libmpv, its FFmpeg, the JNI library and `libc++_shared.so` for four ABIs; nothing native is compiled in this repository and there is no NDK gate. It is served from the static Maven repository `https://yuroyami.github.io/maven`, declared in `settings.gradle.kts` with a filter that keeps the other `io.github.yuroyami` artifacts on Central; `-PuseMavenLocal=true` overrides it like the others. The exoOnly flavor keeps the dependency so the engine code compiles and strips every library in it at packaging time (`AppConfig.libmpvNativeLibs`), which `verifyExoOnlyApk` checks on the finished APK. The AAR's `libc++_shared.so` is the NDK r29 one mpv needs; if another dependency ever ships its own copy, AGP fails the merge, and that failure is the moment to compare the two, not the moment to add a pickFirst.
 
-**Reproducible-build constraints (IzzyOnDroid, issue #105).** Do NOT re-add foojay-resolver or pin a JVM toolchain vendor; JDK 21 is requested vendor-neutrally. KitePlayer (0.0.23) now resolves from Maven Central; the two content-filtered `mavenLocal()` blocks in `settings.gradle.kts` remain only as a local-override escape hatch for `io.github.yuroyami` artifacts and could shadow Central for that group, so treat them as removal candidates. `jitpack.io` is for the NewPipe Extractor (unfiltered today).
+**Reproducible-build constraints (IzzyOnDroid, issue #105).** Do NOT re-add foojay-resolver or pin a JVM toolchain vendor; JDK 21 is requested vendor-neutrally. KitePlayer (0.0.23) now resolves from Maven Central; the two content-filtered `mavenLocal()` blocks in `settings.gradle.kts` remain only as a local-override escape hatch for `io.github.yuroyami` artifacts (KiteConfig, KitePlayer and now libmpvKt) and could shadow Central for that group, so treat them as removal candidates. `jitpack.io` is for the NewPipe Extractor (unfiltered today).
 
 ---
 
@@ -154,6 +154,7 @@ Kotlin 2.4.10, AGP 9.3.2, Compose Multiplatform 1.12.0, Gradle 9.7.1, NDK 29.0.1
 | Media3 / ExoPlayer | 1.11.0 |
 | VLCKit (iOS) | 4.0.0a19 |
 | KitePlayer | 0.0.23 |
+| libmpvKt (mpv, Android) | 0.1.0 |
 | Coil3 | 3.6.1 |
 | Haze | 2.0.0-beta02 |
 | MaterialKolor | 5.0.1 |
@@ -510,7 +511,7 @@ SwiftNIO throws `NetworkManager.SocketGoneException().asError()` when no socket 
 | Engine | Platform | Chapters | External subs | PiP | Notes |
 |---|---|:-:|:-:|:-:|---|
 | ExoPlayer (Media3) | Android | ✗ | ✓ | (Android PiP) | Default on `exoOnly`; `handleAudioFocus` **must stay false** or focus-loss auto-pause broadcasts a phantom unpause; ext subs require media reload; tracker 500 ms |
-| MPV (libmpv/JNI) | Android | ✓ | ✓ | ✗ | `full` flavor only and the default there; precise double `time-pos` seeking; needs NDK r29 libc++; `MpvSubfont` for subs; tracker 500 ms |
+| MPV (libmpv/JNI) | Android | ✓ | ✓ | ✗ | `full` flavor only and the default there; precise double `time-pos` seeking; prebuilt by libmpvKt; `MpvSubfont` for subs; tracker 500 ms |
 | AVPlayer (AVFoundation) | iOS | ✗ | ✗ | ✓ | The iOS **system** engine (badge "System"); KVO on `timeControlStatus` - only `Playing` counts (buffering must not); MP4/HLS only; per-inject new AVPlayer instance |
 | VLCKit 4 | iOS | ✓ | ✓ | ✓ | **Default iOS engine**; 250 ms main-thread position tracker (NOT libvlc callbacks - lock assert); `VLCEventsLegacyConfiguration` for async callbacks; `:start-paused`; seek-shadow convergence; every play/pause/seek guarded on `media != null`; configures AVAudioSession; volume 0-200 |
 | KitePlayer (KiteFFmpeg) | Android, iOS, Desktop | ✓ | ✓ | (Android PiP) | Experimental everywhere, and the only desktop engine (default there). One `KiteImpl` in commonMain; hardware decode is MediaCodec / VideoToolbox inside FFmpeg with a measured software fallback. Presentation is `KitePlayerVideo` (native view or pure Compose, switched live by the in-room `KITE_COMPOSE_RENDERER` toggle; desktop pins the Compose canvas because the JVM native view swallows clicks meant for the HUD). Subtitles cover SubRip and WebVTT, embedded or external, and styled ASS is typeset by libass. Network media arrives through the app's own HTTP stack, because the bundled FFmpeg has no https protocol and the transport module supplies the bytes instead. Speed 0.25x-4x pitch-preserved; no screenshot path; tracker 250 ms. Absent from `exoOnly` (its `libkitecodec_jni.so` is stripped) |
@@ -619,4 +620,4 @@ and room-wide playback behavior.
 - **Ktor networking** has no opportunistic TLS upgrade (KTOR-6623); encrypted connections require Netty (Android) or SwiftNIO (iOS).
 - **AVPlayer (iOS):** no external subtitles, no chapters, narrow format support (MP4/HLS).
 - **ExoPlayer (Android):** no chapters.
-- **mpv (Android):** requires the NDK r29 `libc++_shared.so` (verified at build time); ships only in the `full` flavor.
+- **mpv (Android):** prebuilt by libmpvKt; ships only in the `full` flavor. One core per process.

@@ -531,6 +531,7 @@ private fun Project.registerDocVersionGates(): List<TaskProvider<*>> {
                 "Media3 / ExoPlayer" to "media3",
                 "VLCKit (iOS)" to "libvlc-ios",
                 "KitePlayer" to "kiteplayer",
+                "libmpvKt (mpv, Android)" to "libmpvkt",
                 "Coil3" to "coil",
                 "Haze" to "haze",
                 "MaterialKolor" to "materialkolor",
