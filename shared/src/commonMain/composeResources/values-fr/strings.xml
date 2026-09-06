@@ -20,10 +20,10 @@
     <string name="reset_default">Réinitialiser par défaut</string>
 
     <!-- Home Screen -->
-    <string name="connect_username">Entrez votre nom d'utilisateur</string>
-    <string name="connect_roomname">Entrez le nom de la salle</string>
+    <string name="connect_username">Nom d'utilisateur</string>
+    <string name="connect_roomname">Nom de la salle</string>
     <string name="connect_server">Serveur</string>
-    <string name="connect_choose_video_engine">Choisissez votre moteur vidéo</string>
+    <string name="connect_choose_video_engine">Moteur vidéo</string>
     <string name="connect_button_join">Rejoindre la salle</string>
     <string name="connect_button_saveshortcut">Enregistrer comme raccourci</string>
     <string name="connect_username_empty_error">Le nom d'utilisateur ne doit pas être vide</string>
@@ -131,7 +131,7 @@
     <string name="setting_remember_join_info_title">Se souvenir des infos de connexion</string>
     <string name="setting_remember_join_info_summary">Retient vos derniers nom, salle et serveur utilisés.</string>
     <string name="setting_never_show_tips_title">Ne jamais afficher les astuces</string>
-    <string name="setting_never_show_tips_summary">Empêche l’affichage des astuces au lancement de l’application.</string>
+    <string name="setting_never_show_tips_summary">Pas d'astuces au lancement.</string>
     <string name="setting_erase_shortcuts_title">Effacer tous les raccourcis</string>
     <string name="setting_erase_shortcuts_summary">Supprime tous les raccourcis de l'écran d'accueil.</string>
     <string name="setting_erase_shortcuts_dialog">Souhaitez-vous vraiment effacer tous les raccourcis existants ?</string>
@@ -145,7 +145,7 @@
     <string name="setting_max_buffer_summary">Tampon maximal avant le début de la lecture.</string>
     <string name="setting_min_buffer_title">Tampon minimal</string>
     <string name="setting_min_buffer_summary">Tampon minimal avant le début de la lecture.</string>
-    <string name="setting_playback_buffer_title">Taille du tampon de lecture (ms)</string>
+    <string name="setting_playback_buffer_title">Tampon de saut</string>
     <string name="setting_playback_buffer_summary">Tampon utilisé après un saut ou une reprise.</string>
     <string name="setting_ready_firsthand_title">Prêt automatiquement</string>
     <string name="setting_ready_firsthand_summary">Activez cette option pour être automatiquement marqué comme prêt en entrant dans une salle.</string>
@@ -165,9 +165,9 @@
     <string name="setting_pause_if_someone_left_summary">Met en pause quand quelqu'un quitte la salle.</string>
     <string name="setting_warn_file_mismatch_title">Alerte de fichier non conforme</string>
     <string name="setting_warn_file_mismatch_summary">Avertit quand votre fichier diffère de celui des autres.</string>
-    <string name="setting_fileinfo_behaviour_name_title">Envoi du nom du fichier</string>
+    <string name="setting_fileinfo_behaviour_name_title">Partager le nom comme</string>
     <string name="setting_fileinfo_behaviour_name_summary">Comment les autres voient le nom de votre fichier.</string>
-    <string name="setting_fileinfo_behaviour_size_title">Envoi de la taille du fichier</string>
+    <string name="setting_fileinfo_behaviour_size_title">Partager la taille comme</string>
     <string name="setting_fileinfo_behaviour_size_summary">Comment les autres voient la taille de votre fichier.</string>
     <string name="setting_fileinfo_behavior_a">Envoyer brut</string>
     <string name="setting_fileinfo_behavior_b">Envoyer haché</string>
@@ -182,8 +182,8 @@
 
     <!-- UI Settings Categories -->
     <string name="uisetting_categ_chat_colors">Couleurs du chat</string>
-    <string name="uisetting_categ_player_settings">Paramètres du lecteur</string>
-    <string name="uisetting_categ_chat_properties">Propriétés du chat</string>
+    <string name="uisetting_categ_player_settings">Lecteur</string>
+    <string name="uisetting_categ_chat_properties">Chat</string>
 
     <!-- UI Settings -->
     <string name="uisetting_timestamp_summary">Affiche l'heure à côté de chaque message.</string>
@@ -203,20 +203,20 @@
     <string name="uisetting_msglife_summary">Durée de disparition progressive des messages reçus.</string>
     <string name="uisetting_timestamp_color_title">Couleur de l’horodatage</string>
     <string name="uisetting_self_color_title">Couleur du tag “vous”</string>
-    <string name="uisetting_self_color_summary">Personnalisez la couleur de votre nom (par défaut : rouge foncé).</string>
+    <string name="uisetting_self_color_summary">Votre propre nom.</string>
     <string name="uisetting_friend_color_title">Couleur des amis</string>
     <string name="uisetting_friend_color_summary">Les noms des autres.</string>
     <string name="uisetting_system_color_title">Couleur des messages système</string>
-    <string name="uisetting_system_color_summary">Personnalisez la couleur des messages du système (par défaut : blanc).</string>
+    <string name="uisetting_system_color_summary">Événements de la salle.</string>
     <string name="uisetting_human_color_title">Couleur des messages utilisateurs</string>
-    <string name="uisetting_human_color_summary">Personnalisez la couleur des messages normaux (par défaut : blanc).</string>
+    <string name="uisetting_human_color_summary">Ce que les gens écrivent.</string>
     <string name="uisetting_error_color_title">Couleur des messages d’erreur</string>
-    <string name="uisetting_error_color_summary">Personnalisez la couleur des messages d’erreur (par défaut : rouge).</string>
+    <string name="uisetting_error_color_summary">Erreurs.</string>
     <string name="uisetting_subtitle_size_title">Taille des sous-titres</string>
     <string name="uisetting_subtitle_size_summary">Taille des sous-titres chargés depuis un fichier.</string>
-    <string name="uisetting_subtitle_delay_title">Décalage des sous-titres (ms)</string>
+    <string name="uisetting_subtitle_delay_title">Décalage des sous-titres</string>
     <string name="uisetting_subtitle_delay_summary">Défaut : 0. Valeurs négatives pour avancer les sous-titres.</string>
-    <string name="uisetting_audio_delay_title">Décalage audio (ms)</string>
+    <string name="uisetting_audio_delay_title">Décalage audio</string>
     <string name="uisetting_audio_delay_summary">Défaut : 0. Valeurs négatives pour avancer la piste audio.</string>
     <string name="uisetting_seek_forward_jump_title">Saut en avant</string>
     <string name="uisetting_seek_forward_jump_summary">Définit le nombre de secondes sautées en avance rapide (par défaut : 10).</string>
@@ -238,7 +238,7 @@
     <string name="ui_setting_mpv_vidsync_summary">Synchroniser sur l'audio ou sur l'écran.</string>
     <string name="ui_setting_mpv_profile_title">Préréglage de rendu</string>
     <string name="ui_setting_mpv_profile_summary">Un préréglage intégré ; fast convient aux téléphones.</string>
-    <string name="uisetting_custom_seek_front_title">Bouton Skip personnalisé sur l’écran principal</string>
+    <string name="uisetting_custom_seek_front_title">Bouton de saut personnalisé</string>
     <string name="uisetting_custom_seek_front_summary">Ajoute un bouton de saut à côté du retour et de l'avance.</string>
     <string name="uisetting_custom_seek_amount_title">Durée du Skip personnalisé</string>
     <string name="uisetting_custom_seek_amount_summary">De combien saute le bouton de saut personnalisé.</string>
@@ -312,7 +312,7 @@
     <string name="uisetting_sync_dont_slow_with_me_summary">Lorsque vous êtes en retard, les autres ne seront ni ralentis ni rembobinés pour correspondre à votre position. Expérimental.</string>
     <string name="uisetting_sync_fastforward_title">Avance rapide si en retard</string>
     <string name="uisetting_sync_fastforward_summary">Lorsque vous êtes en retard par rapport aux autres, votre lecteur avancera rapidement pour rattraper. Recommandé.</string>
-    <string name="uisetting_sync_rewind_title">Rembobiner en cas de désynchronisation majeure</string>
+    <string name="uisetting_sync_rewind_title">Revenir en arrière si en avance</string>
     <string name="uisetting_sync_rewind_summary">Lorsque les autres ont un retard important (12+ secondes), votre lecteur rembobinera pour correspondre à leur position.</string>
     <string name="uisetting_sync_slowdown_title">Ralentir en cas de désynchronisation mineure</string>
     <string name="uisetting_sync_slowdown_summary">Lorsque les autres sont légèrement en retard, votre vitesse de lecture sera réduite pour leur permettre de rattraper.</string>

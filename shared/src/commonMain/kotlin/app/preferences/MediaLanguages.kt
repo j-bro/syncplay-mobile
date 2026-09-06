@@ -2,6 +2,8 @@ package app.preferences
 
 import androidx.compose.runtime.Composable
 import app.i18n.strings
+import androidx.compose.runtime.collectAsState
+import app.i18n.Localization
 import app.utils.localizedLanguageName
 
 /**
@@ -67,8 +69,9 @@ internal val mediaLanguages = listOf(
  */
 @Composable
 internal fun mediaLanguageEntries(): Map<String, String> = buildMap {
+    val appLanguage = Localization.lyricist.state.collectAsState().value.languageTag
     put(strings.settingLanguageNoPreference, "und")
     for (language in mediaLanguages) {
-        put(localizedLanguageName(language.iso6391) ?: language.englishName, language.iso6392)
+        put(localizedLanguageName(language.iso6391, appLanguage) ?: language.englishName, language.iso6392)
     }
 }

@@ -19,15 +19,17 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
+import app.theme.AutoSize
 import app.theme.Type
 import app.theme.palette
 
 /**
- * The sizes a label may take when it has to fit its width: the style's own size down to [min],
- * in steps of about one point. `Text` shrinks first and cuts only when the floor still overflows.
+ * The sizes a label may take when it has to fit its width: [max] down to [min], half a point at a
+ * time. `Text` shrinks first and cuts only when the floor still overflows, so a caller that names
+ * only a maximum gets the guarantee that the label fits unless it cannot fit at [AutoSize.floor].
  */
 @Immutable
-class FontSizeRange(val min: TextUnit, val max: TextUnit)
+class FontSizeRange(val max: TextUnit, val min: TextUnit = AutoSize.floor)
 
 /**
  * The app's text, on the foundation text with the app's roles: `note` unless told otherwise, the
@@ -71,7 +73,7 @@ fun Text(
             softWrap = softWrap,
             maxLines = maxLines,
             minLines = minLines,
-            autoSize = TextAutoSize.StepBased(minFontSize = autoSize.min, maxFontSize = autoSize.max, stepSize = autoSize.min / 11),
+            autoSize = TextAutoSize.StepBased(minFontSize = autoSize.min, maxFontSize = autoSize.max, stepSize = AutoSize.step),
         )
     } else {
         BasicText(

@@ -383,8 +383,9 @@ actual fun reducedMotion(): Boolean = UIAccessibilityIsReduceMotionEnabled()
 /** iOS ships no television target here; tvOS would be its own build. */
 actual fun isTelevision(): Boolean = false
 
-actual fun localizedLanguageName(iso6391: String): String? {
-    val name: String? = NSLocale.currentLocale.displayNameForKey(NSLocaleLanguageCode, iso6391)
+actual fun localizedLanguageName(iso6391: String, inLanguage: String): String? {
+    val displayIn = NSLocale(localeIdentifier = inLanguage)
+    val name: String? = displayIn.displayNameForKey(NSLocaleLanguageCode, iso6391)
     // Foundation hands the code straight back when it has no name for the language.
     if (name.isNullOrBlank() || name.lowercase() == iso6391.lowercase()) return null
     return name.replaceFirstChar { c -> c.uppercaseChar() }

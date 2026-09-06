@@ -101,7 +101,7 @@ private fun SegmentedCell(label: String, active: Boolean, enabled: Boolean, auto
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             // Between the group and value sizes when a label has to fit; cut only past the floor.
-            autoSize = if (autoSize) FontSizeRange(Type.group.fontSize, Type.value.fontSize) else null,
+            autoSize = if (autoSize) FontSizeRange(Type.value.fontSize) else null,
             // A label never touches the cell's hairlines, whatever size it settles at.
             modifier = Modifier.padding(horizontal = Space.gapTight),
         )

@@ -702,7 +702,7 @@ private fun ShortcutKey(onSave: () -> Unit) {
                     color = p.ink,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    autoSize = FontSizeRange(Type.group.fontSize, Type.label.fontSize),
+                    autoSize = FontSizeRange(Type.label.fontSize),
                     modifier = Modifier.weight(1f).alpha(textAlpha).padding(end = Space.gap),
                 )
             }

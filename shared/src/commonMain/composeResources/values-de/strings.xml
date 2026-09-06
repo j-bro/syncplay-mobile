@@ -20,10 +20,10 @@
     <string name="reset_default">Auf Standard zurücksetzen</string>
 
     <!-- Home Screen -->
-    <string name="connect_username">Benutzernamen eingeben</string>
-    <string name="connect_roomname">Raumname eingeben</string>
+    <string name="connect_username">Benutzername</string>
+    <string name="connect_roomname">Raumname</string>
     <string name="connect_server">Server</string>
-    <string name="connect_choose_video_engine">Video-Engine auswählen</string>
+    <string name="connect_choose_video_engine">Video-Engine</string>
     <string name="connect_button_join">Raum beitreten</string>
     <string name="connect_button_saveshortcut">Als Startbildschirm-Verknüpfung speichern</string>
     <string name="connect_username_empty_error">Benutzername sollte nicht leer sein</string>
@@ -133,7 +133,7 @@
     <string name="setting_remember_join_info_title">Beitrittsinfo merken</string>
     <string name="setting_remember_join_info_summary">Merkt sich zuletzt genutzten Namen, Raum und Server.</string>
     <string name="setting_never_show_tips_title">Tipps nie anzeigen</string>
-    <string name="setting_never_show_tips_summary">Verhindert, dass Tipps beim App-Start angezeigt werden.</string>
+    <string name="setting_never_show_tips_summary">Keine Tipps beim Start.</string>
     <string name="setting_erase_shortcuts_title">Alle Startbildschirm-Verknüpfungen löschen</string>
     <string name="setting_erase_shortcuts_summary">Entfernt jede Startbildschirm-Verknüpfung.</string>
     <string name="setting_erase_shortcuts_dialog">Wirklich alle vorhandenen Verknüpfungen löschen?</string>
@@ -147,7 +147,7 @@
     <string name="setting_max_buffer_summary">Größter Puffer, bevor die Wiedergabe startet.</string>
     <string name="setting_min_buffer_title">Minimale Puffergröße</string>
     <string name="setting_min_buffer_summary">Kleinster Puffer, bevor die Wiedergabe startet.</string>
-    <string name="setting_playback_buffer_title">Benutzerdefinierte Wiedergabe-Puffergröße (ms)</string>
+    <string name="setting_playback_buffer_title">Sprungpuffer</string>
     <string name="setting_playback_buffer_summary">Puffer nach einem Sprung oder dem Fortsetzen.</string>
     <string name="setting_ready_firsthand_title">Sofort als bereit setzen</string>
     <string name="setting_ready_firsthand_summary">Aktivieren, wenn Sie automatisch als bereit gesetzt werden möchten, sobald Sie den Raum betreten.</string>
@@ -167,9 +167,9 @@
     <string name="setting_pause_if_someone_left_summary">Pausiert, wenn jemand den Raum verlässt.</string>
     <string name="setting_warn_file_mismatch_title">Datei-Unterschieds-Warnung</string>
     <string name="setting_warn_file_mismatch_summary">Warnt, wenn deine Datei von den anderen abweicht.</string>
-    <string name="setting_fileinfo_behaviour_name_title">Dateinamen-Information senden</string>
+    <string name="setting_fileinfo_behaviour_name_title">Dateiname teilen als</string>
     <string name="setting_fileinfo_behaviour_name_summary">Wie andere den Namen deiner Datei sehen.</string>
-    <string name="setting_fileinfo_behaviour_size_title">Dateigrößen-Information senden</string>
+    <string name="setting_fileinfo_behaviour_size_title">Dateigröße teilen als</string>
     <string name="setting_fileinfo_behaviour_size_summary">Wie andere die Größe deiner Datei sehen.</string>
     <string name="setting_fileinfo_behavior_a">Roh senden</string>
     <string name="setting_fileinfo_behavior_b">Gehasht senden</string>
@@ -184,8 +184,8 @@
     
     <!-- UI Settings Categories -->
     <string name="uisetting_categ_chat_colors">Chat-Farben</string>
-    <string name="uisetting_categ_player_settings">Player-Einstellungen</string>
-    <string name="uisetting_categ_chat_properties">Chat-Eigenschaften</string>
+    <string name="uisetting_categ_player_settings">Player</string>
+    <string name="uisetting_categ_chat_properties">Chat</string>
 
     <!-- UI Settings -->
     <string name="uisetting_timestamp_summary">Zeigt die Uhrzeit neben jeder Nachricht.</string>
@@ -205,20 +205,20 @@
     <string name="uisetting_msglife_summary">Beim Empfang einer Chat- oder Raumnachricht beginnt sie für die unten eingestellte Zeit auszublenden.</string>
     <string name="uisetting_timestamp_color_title">Zeitstempel-Textfarbe</string>
     <string name="uisetting_self_color_title">Eigene Tag-Farbe</string>
-    <string name="uisetting_self_color_summary">Textfarbe Ihres Namens-Tags anpassen (Standard ist Dunkelrot)</string>
+    <string name="uisetting_self_color_summary">Dein eigener Name.</string>
     <string name="uisetting_friend_color_title">Freunde Tag-Textfarbe</string>
     <string name="uisetting_friend_color_summary">Die Namen der anderen.</string>
     <string name="uisetting_system_color_title">Systemnachrichten-Textfarbe</string>
-    <string name="uisetting_system_color_summary">Textfarbe von System-Raumnachrichten anpassen (Standard ist Weiß)</string>
+    <string name="uisetting_system_color_summary">Raumereignisse.</string>
     <string name="uisetting_human_color_title">Benutzernachrichten-Textfarbe</string>
-    <string name="uisetting_human_color_summary">Textfarbe von Benutzernachrichten anpassen (Standard ist Weiß)</string>
+    <string name="uisetting_human_color_summary">Was die anderen schreiben.</string>
     <string name="uisetting_error_color_title">Fehlernachrichten-Textfarbe</string>
-    <string name="uisetting_error_color_summary">Textfarbe von Fehlernachrichten anpassen (Standard ist Rot)</string>
+    <string name="uisetting_error_color_summary">Fehler.</string>
     <string name="uisetting_subtitle_size_title">Untertitel-Größe</string>
     <string name="uisetting_subtitle_size_summary">Größe der aus einer Datei geladenen Untertitel.</string>
-    <string name="uisetting_subtitle_delay_title">Untertitel-Verzögerung (Millisekunden)</string>
+    <string name="uisetting_subtitle_delay_title">Untertitelverzögerung</string>
     <string name="uisetting_subtitle_delay_summary">Standard ist 0. Verzögert oder verschiebt die Untertitelspur vor. Verwenden Sie negative Werte, um sie vorzuverschieben.</string>
-    <string name="uisetting_audio_delay_title">Audiospur-Verzögerung (Millisekunden)</string>
+    <string name="uisetting_audio_delay_title">Tonverzögerung</string>
     <string name="uisetting_audio_delay_summary">Standard ist 0. Verzögert oder verschiebt die Audiospur vor. Verwenden Sie negative Werte, um sie vorzuverschieben.</string>
     <string name="uisetting_seek_forward_jump_title">Sprungweite vorwärts</string>
     <string name="uisetting_seek_forward_jump_summary">Legt fest, wie viele Sekunden ein Vorspulen überspringen soll. Standard ist 10 Sekunden.</string>
@@ -240,7 +240,7 @@
     <string name="ui_setting_mpv_vidsync_summary">Synchron zum Ton oder zum Display.</string>
     <string name="ui_setting_mpv_profile_title">Rendering-Voreinstellung (Profil)</string>
     <string name="ui_setting_mpv_profile_summary">Eine eingebaute Voreinstellung; fast passt zu Handys.</string>
-    <string name="uisetting_custom_seek_front_title">Benutzerdefinierte Überspring-Taste auf Hauptbildschirm anzeigen</string>
+    <string name="uisetting_custom_seek_front_title">Eigene Sprungtaste</string>
     <string name="uisetting_custom_seek_front_summary">Fügt neben Zurück und Vor eine Sprungtaste hinzu.</string>
     <string name="uisetting_custom_seek_amount_title">Benutzerdefinierte Überspring-Dauer</string>
     <string name="uisetting_custom_seek_amount_summary">Wie weit die eigene Sprungtaste springt.</string>
@@ -330,7 +330,7 @@
     <string name="uisetting_sync_fastforward_summary">Wenn Sie hinter anderen zurückliegen, wird Ihr Player vorspulen, um aufzuholen. Empfohlen.</string>
     <string name="uisetting_sync_fastforward_title">Vorspulen bei Rückstand</string>
     <string name="uisetting_sync_rewind_summary">Wenn andere deutlich zurückliegen (12+ Sekunden), wird Ihr Player zurückgespult, um deren Position anzugleichen.</string>
-    <string name="uisetting_sync_rewind_title">Zurückspulen bei großer Desynchronisation</string>
+    <string name="uisetting_sync_rewind_title">Zurückspringen, wenn voraus</string>
     <string name="uisetting_sync_slowdown_summary">Wenn andere leicht zurückliegen, wird Ihre Wiedergabegeschwindigkeit verringert, damit sie aufholen können.</string>
     <string name="uisetting_sync_slowdown_title">Verlangsamen bei geringer Desynchronisation</string>
     <string name="room_roster_duration">Dauer: %1$s</string>

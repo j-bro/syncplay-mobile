@@ -163,7 +163,8 @@ expect fun reducedMotion(): Boolean
 /** The OS and the hardware, one line, for a bug report: "Android 15 (Pixel 7)". */
 expect fun platformDescription(): String
 /**
- * The name of a language in the reader's own language, from a two-letter ISO 639-1 code.
+ * The name of a language written in [inLanguage], from a two-letter ISO 639-1 code. The app picks
+ * its own display language, so the caller passes that rather than letting the OS decide.
  * Returns null when the platform has no name for it, so the caller can fall back to English.
  */
-expect fun localizedLanguageName(iso6391: String): String?
+expect fun localizedLanguageName(iso6391: String, inLanguage: String): String?

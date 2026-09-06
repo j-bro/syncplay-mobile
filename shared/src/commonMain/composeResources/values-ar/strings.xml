@@ -20,10 +20,10 @@
     <string name="reset_default">إعادة التعيين للوضع الافتراضي</string>
 
     <!-- Home Screen -->
-    <string name="connect_username">اكتب اسم المستخدم</string>
-    <string name="connect_roomname">أدخل اسم الغرفة</string>
+    <string name="connect_username">اسم المستخدم</string>
+    <string name="connect_roomname">اسم الغرفة</string>
     <string name="connect_server">الخادم</string>
-    <string name="connect_choose_video_engine">اختر محرك الفيديو</string>
+    <string name="connect_choose_video_engine">محرك الفيديو</string>
     <string name="connect_button_join">الانضمام للغرفة</string>
     <string name="connect_button_saveshortcut">احفظ كاختصار على الشاشة الرئيسية</string>
     <string name="connect_username_empty_error">اسم المستخدم لا يجب أن يكون فارغاً</string>
@@ -133,7 +133,7 @@
     <string name="setting_remember_join_info_title">تذكر معلومات الانضمام</string>
     <string name="setting_remember_join_info_summary">يحفظ آخر اسم وغرفة وخادم استخدمتها.</string>
     <string name="setting_never_show_tips_title">عدم إظهار النصائح أبداً</string>
-    <string name="setting_never_show_tips_summary">سيمنع هذا ظهور النصائح عند تشغيل التطبيق.</string>
+    <string name="setting_never_show_tips_summary">بلا نصائح عند التشغيل.</string>
     <string name="setting_erase_shortcuts_title">مسح جميع اختصارات الشاشة الرئيسية</string>
     <string name="setting_erase_shortcuts_summary">يزيل كل اختصارات الشاشة الرئيسية.</string>
     <string name="setting_erase_shortcuts_dialog">هل تريد حقاً مسح جميع الاختصارات الموجودة؟</string>
@@ -147,7 +147,7 @@
     <string name="setting_max_buffer_summary">أكبر مخزن مؤقت قبل بدء التشغيل.</string>
     <string name="setting_min_buffer_title">أدنى حجم للمخزن المؤقت</string>
     <string name="setting_min_buffer_summary">أصغر مخزن مؤقت قبل بدء التشغيل.</string>
-    <string name="setting_playback_buffer_title">حجم التخزين المؤقت للتشغيل المخصص (ميلي ثانية)</string>
+    <string name="setting_playback_buffer_title">مخزن الانتقال</string>
     <string name="setting_playback_buffer_summary">المخزن المؤقت المستخدم بعد انتقال أو استئناف.</string>
     <string name="setting_ready_firsthand_title">تعيين كجاهز مباشرة</string>
     <string name="setting_ready_firsthand_summary">فعّل هذا إذا كنت تريد أن يتم تعيينك تلقائياً كجاهز بمجرد دخولك الغرفة.</string>
@@ -167,9 +167,9 @@
     <string name="setting_pause_if_someone_left_summary">يوقف التشغيل عندما يغادر أحدهم الغرفة.</string>
     <string name="setting_warn_file_mismatch_title">تحذير عدم تطابق الملف</string>
     <string name="setting_warn_file_mismatch_summary">ينبّهك عندما يختلف ملفك عن ملفات الآخرين.</string>
-    <string name="setting_fileinfo_behaviour_name_title">إرسال معلومات اسم الملف</string>
+    <string name="setting_fileinfo_behaviour_name_title">شارك اسم الملف كـ</string>
     <string name="setting_fileinfo_behaviour_name_summary">كيف يرى الآخرون اسم ملفك.</string>
-    <string name="setting_fileinfo_behaviour_size_title">إرسال معلومات حجم الملف</string>
+    <string name="setting_fileinfo_behaviour_size_title">شارك حجم الملف كـ</string>
     <string name="setting_fileinfo_behaviour_size_summary">كيف يرى الآخرون حجم ملفك.</string>
     <string name="setting_fileinfo_behavior_a">إرسال بدون تشفير</string>
     <string name="setting_fileinfo_behavior_b">إرسال مشفر</string>
@@ -184,8 +184,8 @@
     
     <!-- UI Settings Categories -->
     <string name="uisetting_categ_chat_colors">ألوان المحادثة</string>
-    <string name="uisetting_categ_player_settings">إعدادات المشغل</string>
-    <string name="uisetting_categ_chat_properties">خصائص المحادثة</string>
+    <string name="uisetting_categ_player_settings">المشغّل</string>
+    <string name="uisetting_categ_chat_properties">الدردشة</string>
 
     <!-- UI Settings -->
     <string name="uisetting_timestamp_summary">يعرض الوقت بجانب كل رسالة.</string>
@@ -205,20 +205,20 @@
     <string name="uisetting_msglife_summary">عند تلقي رسالة محادثة أو رسالة غرفة، ستبدأ في التلاشي بعد المدة الزمنية المحددة أدناه.</string>
     <string name="uisetting_timestamp_color_title">لون نص الطابع الزمني</string>
     <string name="uisetting_self_color_title">لون علامة الذات</string>
-    <string name="uisetting_self_color_summary">خصص لون نص علامة اسمك (الافتراضي هو الأحمر الداكن)</string>
+    <string name="uisetting_self_color_summary">اسمك أنت.</string>
     <string name="uisetting_friend_color_title">لون نص علامة الصديق</string>
     <string name="uisetting_friend_color_summary">أسماء الآخرين.</string>
     <string name="uisetting_system_color_title">لون نص رسالة النظام</string>
-    <string name="uisetting_system_color_summary">خصص لون نص رسائل نظام الغرفة (الافتراضي هو الأبيض)</string>
+    <string name="uisetting_system_color_summary">أحداث الغرفة.</string>
     <string name="uisetting_human_color_title">لون نص رسالة المستخدم</string>
-    <string name="uisetting_human_color_summary">خصص لون نص رسائل المستخدم (الافتراضي هو الأبيض)</string>
+    <string name="uisetting_human_color_summary">ما يكتبه الناس.</string>
     <string name="uisetting_error_color_title">لون نص رسالة الخطأ</string>
-    <string name="uisetting_error_color_summary">خصص لون نص رسائل الخطأ (الافتراضي هو الأحمر)</string>
+    <string name="uisetting_error_color_summary">الأخطاء.</string>
     <string name="uisetting_subtitle_size_title">حجم الترجمة</string>
     <string name="uisetting_subtitle_size_summary">حجم الترجمات المحمّلة من ملف.</string>
-    <string name="uisetting_subtitle_delay_title">تأخير الترجمة (ميلي ثانية)</string>
+    <string name="uisetting_subtitle_delay_title">تأخير الترجمة</string>
     <string name="uisetting_subtitle_delay_summary">الافتراضي هو 0. سيؤخر أو يقدم مسار الترجمة. استخدم قيماً سالبة لتقديمها.</string>
-    <string name="uisetting_audio_delay_title">تأخير مسار الصوت (ميلي ثانية)</string>
+    <string name="uisetting_audio_delay_title">تأخير الصوت</string>
     <string name="uisetting_audio_delay_summary">الافتراضي هو 0. سيؤخر أو يقدم مسار الصوت. استخدم قيماً سالبة لتقديمه.</string>
     <string name="uisetting_seek_forward_jump_title">مدة القفز للأمام</string>
     <string name="uisetting_seek_forward_jump_summary">يحدد عدد الثواني التي يجب تخطيها عند التقديم للأمام. الافتراضي هو 10 ثوانٍ.</string>
@@ -240,7 +240,7 @@
     <string name="ui_setting_mpv_vidsync_summary">زامن مع الصوت أو مع الشاشة.</string>
     <string name="ui_setting_mpv_profile_title">إعداد مسبق للعرض (ملف تعريف)</string>
     <string name="ui_setting_mpv_profile_summary">إعداد مسبق مدمج؛ وfast يناسب الهواتف.</string>
-    <string name="uisetting_custom_seek_front_title">إظهار زر التخطي المخصص على الشاشة الرئيسية</string>
+    <string name="uisetting_custom_seek_front_title">زر تخطٍّ مخصص</string>
     <string name="uisetting_custom_seek_front_summary">يضيف زر تخطٍّ بجانب الإرجاع والتقديم.</string>
     <string name="uisetting_custom_seek_amount_title">مدة التخطي المخصصة</string>
     <string name="uisetting_custom_seek_amount_summary">مقدار قفزة زر التخطي المخصص.</string>
@@ -331,7 +331,7 @@
     <string name="uisetting_sync_fastforward_summary">عندما تكون متأخراً عن الآخرين، سيقوم المشغل بالتقديم السريع للحاق بهم. موصى به.</string>
     <string name="uisetting_sync_fastforward_title">التقديم السريع عند التأخر</string>
     <string name="uisetting_sync_rewind_summary">عندما يكون الآخرون متأخرين بشكل كبير (أكثر من 12 ثانية)، سيقوم المشغل بالترجيع لمطابقة موضعهم.</string>
-    <string name="uisetting_sync_rewind_title">الترجيع عند عدم التزامن الكبير</string>
+    <string name="uisetting_sync_rewind_title">أرجِع عند السبق</string>
     <string name="uisetting_sync_slowdown_summary">عندما يكون الآخرون متأخرين قليلاً، سيتم تقليل سرعة التشغيل للسماح لهم باللحاق.</string>
     <string name="uisetting_sync_slowdown_title">الإبطاء عند عدم التزامن البسيط</string>
 

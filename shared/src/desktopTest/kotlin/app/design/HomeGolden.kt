@@ -180,17 +180,6 @@ class HomeGolden {
         saveJoin(official)
     }
 
-    private class FakeEngine(
-        override val name: String,
-        override val img: DrawableResource,
-        override val isDefault: Boolean = false,
-        override val isSystem: Boolean = false,
-        override val isExperimental: Boolean = false,
-    ) : PlayerEngine {
-        override val isAvailable: Boolean get() = true
-        override fun createImpl(viewmodel: RoomViewmodel): PlayerImpl = error("golden")
-    }
-
     /**
      * The three-engine picker Android shows, which the desktop harness never composes on its
      * own. 284dp is the narrowest column the split form makes; 320dp phones get 284 too.
@@ -254,4 +243,16 @@ class HomeGolden {
     private companion object {
         const val JOIN_LABEL = "Join room"
     }
+}
+
+/** An engine with no implementation behind it, so the picker can be drawn without a device. */
+internal class FakeEngine(
+    override val name: String,
+    override val img: DrawableResource,
+    override val isDefault: Boolean = false,
+    override val isSystem: Boolean = false,
+    override val isExperimental: Boolean = false,
+) : PlayerEngine {
+    override val isAvailable: Boolean get() = true
+    override fun createImpl(viewmodel: RoomViewmodel): PlayerImpl = error("golden")
 }

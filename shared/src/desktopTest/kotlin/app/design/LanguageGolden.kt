@@ -7,7 +7,15 @@ import app.preferences.settings.INROOM_SYNC
 import app.preferences.settings.SettingsCategoryBody
 import app.preferences.settings.SettingsCategoryList
 import app.preferences.settings.SETTINGS_ROOM
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.Modifier
+import app.home.components.HomeEnginePicker
 import app.home.components.PopupAPropos
+import syncplaymobile.shared.generated.resources.Res
+import syncplaymobile.shared.generated.resources.exoplayer
+import syncplaymobile.shared.generated.resources.kiteplayer
+import syncplaymobile.shared.generated.resources.mpv
 import kotlin.test.Test
 
 /**
@@ -47,6 +55,26 @@ class LanguageGolden {
                 heightDp = 600,
                 language = language,
             ) { SettingsCategoryList(SETTINGS_ROOM, columns = 2) {} }.assertAllTextFits()
+        }
+    }
+
+    /** The engine picker is the tightest row on the home screen: three cells, each with a badge. */
+    @Test
+    fun theEnginePickerSurvivesEveryLanguage() {
+        DesignHarness.initDatastore()
+        val engines = listOf(
+            FakeEngine("ExoPlayer", Res.drawable.exoplayer, isSystem = true),
+            FakeEngine("mpv", Res.drawable.mpv, isDefault = true),
+            FakeEngine("KitePlayer", Res.drawable.kiteplayer, isExperimental = true),
+        )
+        for (language in languages) {
+            for (w in listOf(284, 393)) {
+                DesignHarness.render("lang-engine-picker", w, heightDp = 280, language = language) {
+                    Box(Modifier.fillMaxWidth()) {
+                        HomeEnginePicker(engines = engines, selectedEngine = "mpv", onSelectEngine = {}, compact = false)
+                    }
+                }.assertAllTextFits()
+            }
         }
     }
 

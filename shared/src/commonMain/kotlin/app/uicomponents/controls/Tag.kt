@@ -84,7 +84,7 @@ fun Tag(
                 color = if (filled) p.inkOn(color) else color,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                autoSize = if (autoSize) FontSizeRange(Type.group.fontSize, Type.value.fontSize) else null,
+                autoSize = if (autoSize) FontSizeRange(Type.value.fontSize) else null,
             )
         }
     }

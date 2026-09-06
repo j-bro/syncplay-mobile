@@ -20,10 +20,10 @@
     <string name="reset_default">Przywróć domyślne</string>
 
     <!-- Home Screen -->
-    <string name="connect_username">Wpisz swoją nazwę użytkownika</string>
-    <string name="connect_roomname">Wprowadź nazwę pokoju</string>
+    <string name="connect_username">Nazwa użytkownika</string>
+    <string name="connect_roomname">Nazwa pokoju</string>
     <string name="connect_server">Serwer</string>
-    <string name="connect_choose_video_engine">Wybierz silnik wideo</string>
+    <string name="connect_choose_video_engine">Silnik wideo</string>
     <string name="connect_button_join">Dołącz do pokoju</string>
     <string name="connect_button_saveshortcut">Zapisz jako skrót</string>
     <string name="connect_username_empty_error">Nazwa użytkownika nie może być pusta</string>
@@ -133,7 +133,7 @@
     <string name="setting_remember_join_info_title">Zapamiętuj informacje o dołączaniu</string>
     <string name="setting_remember_join_info_summary">Zapamiętuje ostatnią nazwę, pokój i serwer.</string>
     <string name="setting_never_show_tips_title">Nigdy nie pokazuj wskazówek</string>
-    <string name="setting_never_show_tips_summary">Zapobiega wyświetlaniu wskazówek przy uruchamianiu aplikacji.</string>
+    <string name="setting_never_show_tips_summary">Bez porad przy starcie.</string>
     <string name="setting_erase_shortcuts_title">Usuń wszystkie skróty</string>
     <string name="setting_erase_shortcuts_summary">Usuwa wszystkie skróty z ekranu głównego.</string>
     <string name="setting_erase_shortcuts_dialog">Czy na pewno chcesz usunąć wszystkie istniejące skróty?</string>
@@ -147,7 +147,7 @@
     <string name="setting_max_buffer_summary">Największy bufor przed startem odtwarzania.</string>
     <string name="setting_min_buffer_title">Minimalny bufor</string>
     <string name="setting_min_buffer_summary">Najmniejszy bufor przed startem odtwarzania.</string>
-    <string name="setting_playback_buffer_title">Niestandardowy rozmiar bufora odtwarzania (ms)</string>
+    <string name="setting_playback_buffer_title">Bufor przewijania</string>
     <string name="setting_playback_buffer_summary">Bufor używany po przewinięciu lub wznowieniu.</string>
     <string name="setting_ready_firsthand_title">Ustaw jako gotowy od razu</string>
     <string name="setting_ready_firsthand_summary">Włącz to, jeśli chcesz być automatycznie ustawiany jako gotowy po wejściu do pokoju.</string>
@@ -167,9 +167,9 @@
     <string name="setting_pause_if_someone_left_summary">Pauzuje, gdy ktoś opuści pokój.</string>
     <string name="setting_warn_file_mismatch_title">Ostrzeżenie o niezgodności plików</string>
     <string name="setting_warn_file_mismatch_summary">Ostrzega, gdy twój plik różni się od plików innych.</string>
-    <string name="setting_fileinfo_behaviour_name_title">Wysyłanie informacji o nazwie pliku</string>
+    <string name="setting_fileinfo_behaviour_name_title">Udostępniaj nazwę jako</string>
     <string name="setting_fileinfo_behaviour_name_summary">Jak inni widzą nazwę twojego pliku.</string>
-    <string name="setting_fileinfo_behaviour_size_title">Wysyłanie informacji o rozmiarze pliku</string>
+    <string name="setting_fileinfo_behaviour_size_title">Udostępniaj rozmiar jako</string>
     <string name="setting_fileinfo_behaviour_size_summary">Jak inni widzą rozmiar twojego pliku.</string>
     <string name="setting_fileinfo_behavior_a">Wyślij surowe</string>
     <string name="setting_fileinfo_behavior_b">Wyślij zahaszowane</string>
@@ -184,8 +184,8 @@
     
     <!-- UI Settings Categories -->
     <string name="uisetting_categ_chat_colors">Kolory czatu</string>
-    <string name="uisetting_categ_player_settings">Ustawienia odtwarzacza</string>
-    <string name="uisetting_categ_chat_properties">Właściwości czatu</string>
+    <string name="uisetting_categ_player_settings">Odtwarzacz</string>
+    <string name="uisetting_categ_chat_properties">Czat</string>
 
     <!-- UI Settings -->
     <string name="uisetting_timestamp_summary">Pokazuje godzinę obok każdej wiadomości.</string>
@@ -205,20 +205,20 @@
     <string name="uisetting_msglife_summary">Po otrzymaniu wiadomości czatu lub pokojowej, zacznie ona zanikać po ustawionym poniżej czasie.</string>
     <string name="uisetting_timestamp_color_title">Kolor tekstu znacznika czasu</string>
     <string name="uisetting_self_color_title">Kolor twojej etykiety</string>
-    <string name="uisetting_self_color_summary">Dostosuj kolor tekstu twojej etykiety nazwy (Domyślnie Ciemny Czerwony)</string>
+    <string name="uisetting_self_color_summary">Twoja własna nazwa.</string>
     <string name="uisetting_friend_color_title">Kolor tekstu etykiety przyjaciela</string>
     <string name="uisetting_friend_color_summary">Nazwy innych osób.</string>
     <string name="uisetting_system_color_title">Kolor tekstu wiadomości systemowej</string>
-    <string name="uisetting_system_color_summary">Dostosuj kolor tekstu systemowych wiadomości pokojowych (Domyślnie Biały)</string>
+    <string name="uisetting_system_color_summary">Zdarzenia pokoju.</string>
     <string name="uisetting_human_color_title">Kolor tekstu wiadomości użytkownika</string>
-    <string name="uisetting_human_color_summary">Dostosuj kolor tekstu wiadomości użytkowników (Domyślnie Biały)</string>
+    <string name="uisetting_human_color_summary">To, co piszą inni.</string>
     <string name="uisetting_error_color_title">Kolor tekstu wiadomości błędu</string>
-    <string name="uisetting_error_color_summary">Dostosuj kolor tekstu wiadomości błędów (Domyślnie Czerwony)</string>
+    <string name="uisetting_error_color_summary">Błędy.</string>
     <string name="uisetting_subtitle_size_title">Rozmiar napisów</string>
     <string name="uisetting_subtitle_size_summary">Rozmiar napisów wczytanych z pliku.</string>
-    <string name="uisetting_subtitle_delay_title">Opóźnienie napisów (milisekundy)</string>
+    <string name="uisetting_subtitle_delay_title">Opóźnienie napisów</string>
     <string name="uisetting_subtitle_delay_summary">Domyślnie 0. Opóźni lub przyspieszy ścieżkę napisów. Użyj wartości ujemnych, aby przyspieszyć.</string>
-    <string name="uisetting_audio_delay_title">Opóźnienie ścieżki dźwiękowej (milisekundy)</string>
+    <string name="uisetting_audio_delay_title">Opóźnienie dźwięku</string>
     <string name="uisetting_audio_delay_summary">Domyślnie 0. Opóźni lub przyspieszy ścieżkę dźwiękową. Użyj wartości ujemnych, aby przyspieszyć.</string>
     <string name="uisetting_seek_forward_jump_title">Skok do przodu</string>
     <string name="uisetting_seek_forward_jump_summary">Określa, ile sekund powinien przeskoczyć skok do przodu. Domyślnie 10 sekund.</string>
@@ -240,7 +240,7 @@
     <string name="ui_setting_mpv_vidsync_summary">Synchronizuj z dźwiękiem albo z ekranem.</string>
     <string name="ui_setting_mpv_profile_title">Preset renderowania (profil)</string>
     <string name="ui_setting_mpv_profile_summary">Wbudowany zestaw ustawień; fast pasuje do telefonów.</string>
-    <string name="uisetting_custom_seek_front_title">Pokaż niestandardowy przycisk pomijania na ekranie głównym</string>
+    <string name="uisetting_custom_seek_front_title">Własny przycisk przeskoku</string>
     <string name="uisetting_custom_seek_front_summary">Dodaje przycisk przeskoku obok cofania i przewijania.</string>
     <string name="uisetting_custom_seek_amount_title">Niestandardowy czas pomijania</string>
     <string name="uisetting_custom_seek_amount_summary">Jak daleko skacze własny przycisk przeskoku.</string>
@@ -330,7 +330,7 @@
     <string name="uisetting_sync_fastforward_summary">Gdy jesteś za innymi, odtwarzacz przewinie do przodu, aby nadrobić. Zalecane.</string>
     <string name="uisetting_sync_slowdown_title">Zwolnij przy niewielkiej desynchronizacji</string>
     <string name="uisetting_sync_slowdown_summary">Gdy inni są nieco w tyle, prędkość odtwarzania zostanie zmniejszona, aby mogli nadrobić.</string>
-    <string name="uisetting_sync_rewind_title">Przewiń przy dużej desynchronizacji</string>
+    <string name="uisetting_sync_rewind_title">Cofaj, gdy wyprzedzasz</string>
     <string name="uisetting_sync_rewind_summary">Gdy inni są znacząco w tyle (12+ sekund), odtwarzacz przewinie do ich pozycji.</string>
     <string name="uisetting_sync_dont_slow_with_me_title">Nigdy nie zwalniaj ani nie przewijaj innych</string>
     <string name="uisetting_sync_dont_slow_with_me_summary">Gdy jesteś w tyle, inni nie będą zwalniani ani przewijani, aby do ciebie dopasować. Eksperymentalne.</string>

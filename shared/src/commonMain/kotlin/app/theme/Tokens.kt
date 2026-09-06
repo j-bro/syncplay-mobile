@@ -107,6 +107,20 @@ class TypeRoles(
     }
 }
 
+/**
+ * What auto-sizing is allowed to do to a label that will not fit its width.
+ *
+ * A control rarely owns its width: an engine badge gets a third of the picker, a segment gets its
+ * share of the row. English writes short words there and other languages do not, so the range has
+ * to be wide enough to actually rescue one. [floor] is the guarantee: nothing is ever cut above
+ * it, and nothing is ever drawn below it.
+ */
+object AutoSize {
+    val floor = 5.sp
+    /** Half a point at a time, so the fitted size never looks chosen by luck. */
+    val step = 0.5.sp
+}
+
 /** Defaults to the system family so a composable rendered outside AdamScreen still lays out. */
 val LocalType = staticCompositionLocalOf { TypeRoles.from(FontFamily.Default) }
 

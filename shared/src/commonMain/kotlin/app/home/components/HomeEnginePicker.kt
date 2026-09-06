@@ -249,7 +249,7 @@ private fun EngineCell(engine: PlayerEngine, active: Boolean, compact: Boolean, 
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             // A name wider than its cell steps down toward the group size before it is cut.
-            autoSize = FontSizeRange(Type.group.fontSize, Type.label.fontSize),
+            autoSize = FontSizeRange(Type.label.fontSize),
         )
         if (badge != null) {
             Spacer(Modifier.height(Space.gapTight))

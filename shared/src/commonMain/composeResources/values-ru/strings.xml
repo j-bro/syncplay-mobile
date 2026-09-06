@@ -14,10 +14,10 @@
     <string name="reset_default">Сбросить по умолчанию</string>
 
     <!-- Home Screen -->
-    <string name="connect_username">Введите ваше имя пользователя</string>
-    <string name="connect_roomname">Введите название комнаты</string>
+    <string name="connect_username">Имя пользователя</string>
+    <string name="connect_roomname">Название комнаты</string>
     <string name="connect_server">Сервер</string>
-    <string name="connect_choose_video_engine">Выберите ваш видео движок</string>
+    <string name="connect_choose_video_engine">Видеодвижок</string>
     <string name="connect_button_join">Присоединиться к комнате</string>
     <string name="connect_button_saveshortcut">Сохранить как ярлык</string>
     <string name="connect_username_empty_error">Имя пользователя не должно быть пустым</string>
@@ -122,7 +122,7 @@
     <string name="setting_remember_join_info_title">Запомнить информацию о присоединении</string>
     <string name="setting_remember_join_info_summary">Запоминает последние имя, комнату и сервер.</string>
     <string name="setting_never_show_tips_title">Никогда не показывать подсказки</string>
-    <string name="setting_never_show_tips_summary">Это предотвратит появление подсказок при запуске приложения.</string>
+    <string name="setting_never_show_tips_summary">Без подсказок при запуске.</string>
     <string name="setting_erase_shortcuts_title">Удалить все ярлыки домашнего экрана</string>
     <string name="setting_erase_shortcuts_summary">Удаляет все ярлыки с главного экрана.</string>
     <string name="setting_erase_shortcuts_dialog">Вы действительно хотите удалить все существующие ярлыки?</string>
@@ -136,7 +136,7 @@
     <string name="setting_max_buffer_summary">Наибольший буфер до начала воспроизведения.</string>
     <string name="setting_min_buffer_title">Минимальный буфер</string>
     <string name="setting_min_buffer_summary">Наименьший буфер до начала воспроизведения.</string>
-    <string name="setting_playback_buffer_title">Пользовательский размер буфера воспроизведения (мс)</string>
+    <string name="setting_playback_buffer_title">Буфер перемотки</string>
     <string name="setting_playback_buffer_summary">Буфер после перемотки или снятия с паузы.</string>
     <string name="setting_ready_firsthand_title">Устанавливать готовность первым</string>
     <string name="setting_ready_firsthand_summary">Включите это, если хотите, чтобы вас автоматически устанавливали в режим готовности сразу после входа в комнату.</string>
@@ -156,9 +156,9 @@
     <string name="setting_pause_if_someone_left_summary">Ставит на паузу, когда кто-то выходит из комнаты.</string>
     <string name="setting_warn_file_mismatch_title">Предупреждение о несоответствии файлов</string>
     <string name="setting_warn_file_mismatch_summary">Предупреждает, когда ваш файл отличается от чужих.</string>
-    <string name="setting_fileinfo_behaviour_name_title">Отправка информации о имени файла</string>
+    <string name="setting_fileinfo_behaviour_name_title">Показывать имя файла как</string>
     <string name="setting_fileinfo_behaviour_name_summary">Как другие видят имя вашего файла.</string>
-    <string name="setting_fileinfo_behaviour_size_title">Отправка информации о размере файла</string>
+    <string name="setting_fileinfo_behaviour_size_title">Показывать размер файла как</string>
     <string name="setting_fileinfo_behaviour_size_summary">Как другие видят размер вашего файла.</string>
     <string name="setting_fileinfo_behavior_a">Отправить как есть</string>
     <string name="setting_fileinfo_behavior_b">Отправить в виде хеша</string>
@@ -173,8 +173,8 @@
 
     <!-- UI Settings Categories -->
     <string name="uisetting_categ_chat_colors">Цвета чата</string>
-    <string name="uisetting_categ_player_settings">Настройки плеера</string>
-    <string name="uisetting_categ_chat_properties">Свойства чата</string>
+    <string name="uisetting_categ_player_settings">Плеер</string>
+    <string name="uisetting_categ_chat_properties">Чат</string>
 
     <!-- UI Settings -->
     <string name="uisetting_timestamp_summary">Показывает время рядом с каждым сообщением.</string>
@@ -194,20 +194,20 @@
     <string name="uisetting_msglife_summary">При получении сообщения в чат или в комнату, сообщение начнет исчезать в течение заданного времени.</string>
     <string name="uisetting_timestamp_color_title">Цвет текста временных меток</string>
     <string name="uisetting_self_color_title">Цвет подписи вашего имени</string>
-    <string name="uisetting_self_color_summary">Настройка цвета текста подписи вашего имени (по умолчанию - темно-красный)</string>
+    <string name="uisetting_self_color_summary">Ваше собственное имя.</string>
     <string name="uisetting_friend_color_title">Цвет текста подписей друзей</string>
     <string name="uisetting_friend_color_summary">Имена остальных.</string>
     <string name="uisetting_system_color_title">Цвет текста системных сообщений</string>
-    <string name="uisetting_system_color_summary">Настройка цвета текста системных сообщений комнаты (по умолчанию - белый)</string>
+    <string name="uisetting_system_color_summary">События комнаты.</string>
     <string name="uisetting_human_color_title">Цвет текста пользовательских сообщений</string>
-    <string name="uisetting_human_color_summary">Настройка цвета текста пользовательских сообщений (по умолчанию - белый)</string>
+    <string name="uisetting_human_color_summary">То, что пишут люди.</string>
     <string name="uisetting_error_color_title">Цвет текста сообщений об ошибках</string>
-    <string name="uisetting_error_color_summary">Настройка цвета текста сообщений об ошибках (по умолчанию - красный)</string>
+    <string name="uisetting_error_color_summary">Ошибки.</string>
     <string name="uisetting_subtitle_size_title">Размер субтитров</string>
     <string name="uisetting_subtitle_size_summary">Размер субтитров, загруженных из файла.</string>
-    <string name="uisetting_subtitle_delay_title">Задержка субтитров (миллисекунды)</string>
+    <string name="uisetting_subtitle_delay_title">Задержка субтитров</string>
     <string name="uisetting_subtitle_delay_summary">По умолчанию 0. Это значение сместит субтитры назад или в перёд. Используйте отрицательные значения для ускорения.</string>
-    <string name="uisetting_audio_delay_title">Задержка звуковой дорожки (миллисекунды)</string>
+    <string name="uisetting_audio_delay_title">Задержка звука</string>
     <string name="uisetting_audio_delay_summary">По умолчанию 0. Это значение сместит звуковую дорожку назад или вперёд. Используйте отрицательные значения для сдвига вперёд.</string>
     <string name="uisetting_seek_forward_jump_title">Шаг перемотки вперёд</string>
     <string name="uisetting_seek_forward_jump_summary">Указывает, сколько секунд промотается при перемотке вперед. По умолчанию 10 секунд.</string>
@@ -229,7 +229,7 @@
     <string name="ui_setting_mpv_vidsync_summary">Синхронизация со звуком или с экраном.</string>
     <string name="ui_setting_mpv_profile_title">Предустановка рендеринга (профиль)</string>
     <string name="ui_setting_mpv_profile_summary">Встроенный пресет; fast подходит телефонам.</string>
-    <string name="uisetting_custom_seek_front_title">Показать кнопку пропуска на главном экране</string>
+    <string name="uisetting_custom_seek_front_title">Своя кнопка пропуска</string>
     <string name="uisetting_custom_seek_front_summary">Добавляет кнопку пропуска рядом с перемоткой назад и вперёд.</string>
     <string name="uisetting_custom_seek_amount_title">Продолжительность пропуска</string>
     <string name="uisetting_custom_seek_amount_summary">На сколько прыгает своя кнопка пропуска.</string>
@@ -319,7 +319,7 @@
     <string name="uisetting_sync_dont_slow_with_me_summary">Когда вы отстаёте, другие не будут замедлены или перемотаны для соответствия. Экспериментально.</string>
     <string name="uisetting_sync_fastforward_title">Ускорение при отставании</string>
     <string name="uisetting_sync_fastforward_summary">Когда вы отстаёте от других, плеер ускорится, чтобы догнать. Рекомендуется.</string>
-    <string name="uisetting_sync_rewind_title">Перемотка при значительном рассинхроне</string>
+    <string name="uisetting_sync_rewind_title">Откат при опережении</string>
     <string name="uisetting_sync_rewind_summary">Когда другие значительно отстают (12+ секунд), ваш плеер перемотает назад до их позиции.</string>
     <string name="uisetting_sync_slowdown_title">Замедление при незначительном рассинхроне</string>
     <string name="uisetting_sync_slowdown_summary">Когда другие немного отстают, скорость воспроизведения будет снижена, чтобы дать им догнать.</string>

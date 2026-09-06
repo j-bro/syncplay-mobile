@@ -287,10 +287,11 @@ actual fun reducedMotion(): Boolean = runCatching {
     android.provider.Settings.Global.getFloat(contextObtainer().contentResolver, android.provider.Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
 }.getOrDefault(false)
 
-actual fun localizedLanguageName(iso6391: String): String? {
+actual fun localizedLanguageName(iso6391: String, inLanguage: String): String? {
+    val displayIn = java.util.Locale.forLanguageTag(inLanguage)
     val locale = java.util.Locale.forLanguageTag(iso6391)
-    val name = locale.getDisplayLanguage(java.util.Locale.getDefault())
+    val name = locale.getDisplayLanguage(displayIn)
     // The JDK echoes the code back when it does not know the language.
     if (name.isBlank() || name.equals(iso6391, ignoreCase = true)) return null
-    return name.replaceFirstChar { it.titlecase(java.util.Locale.getDefault()) }
+    return name.replaceFirstChar { it.titlecase(displayIn) }
 }

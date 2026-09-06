@@ -14,10 +14,10 @@
     <string name="reset_default">Restablecer predeterminado</string>
 
     <!-- Home Screen -->
-    <string name="connect_username">Escribe tu nombre de usuario</string>
-    <string name="connect_roomname">Ingresa el nombre de la sala</string>
+    <string name="connect_username">Nombre de usuario</string>
+    <string name="connect_roomname">Nombre de sala</string>
     <string name="connect_server">Servidor</string>
-    <string name="connect_choose_video_engine">Elige tu motor de video</string>
+    <string name="connect_choose_video_engine">Motor de vídeo</string>
     <string name="connect_button_join">Unirse a la sala</string>
     <string name="connect_button_saveshortcut">Guardar como acceso directo</string>
     <string name="connect_username_empty_error">El nombre de usuario no debe estar vacío</string>
@@ -122,7 +122,7 @@
     <string name="setting_remember_join_info_title">Recordar información de unión</string>
     <string name="setting_remember_join_info_summary">Guarda el último nombre, sala y servidor usados.</string>
     <string name="setting_never_show_tips_title">Nunca mostrar consejos</string>
-    <string name="setting_never_show_tips_summary">Esto evitará que se muestren consejos al iniciar la aplicación.</string>
+    <string name="setting_never_show_tips_summary">Sin consejos al abrir.</string>
     <string name="setting_erase_shortcuts_title">Eliminar todos los accesos directos de inicio</string>
     <string name="setting_erase_shortcuts_summary">Elimina todos los accesos directos de la pantalla de inicio.</string>
     <string name="setting_erase_shortcuts_dialog">¿Realmente deseas eliminar todos los accesos directos existentes?</string>
@@ -136,7 +136,7 @@
     <string name="setting_max_buffer_summary">El búfer máximo antes de empezar a reproducir.</string>
     <string name="setting_min_buffer_title">Búfer mínimo</string>
     <string name="setting_min_buffer_summary">El búfer mínimo antes de empezar a reproducir.</string>
-    <string name="setting_playback_buffer_title">Tamaño de búfer de reproducción personalizado (ms)</string>
+    <string name="setting_playback_buffer_title">Búfer de salto</string>
     <string name="setting_playback_buffer_summary">El búfer usado tras un salto o al reanudar.</string>
     <string name="setting_ready_firsthand_title">Establecer como listo de inmediato</string>
     <string name="setting_ready_firsthand_summary">Activa esto si quieres que se te establezca automáticamente como listo una vez que ingreses a la sala.</string>
@@ -156,9 +156,9 @@
     <string name="setting_pause_if_someone_left_summary">Pausa cuando alguien sale de la sala.</string>
     <string name="setting_warn_file_mismatch_title">Advertencia de discrepancia de archivos</string>
     <string name="setting_warn_file_mismatch_summary">Avisa cuando tu archivo es distinto al de los demás.</string>
-    <string name="setting_fileinfo_behaviour_name_title">Envío de información del nombre del archivo</string>
+    <string name="setting_fileinfo_behaviour_name_title">Compartir el nombre como</string>
     <string name="setting_fileinfo_behaviour_name_summary">Cómo ven los demás el nombre de tu archivo.</string>
-    <string name="setting_fileinfo_behaviour_size_title">Envío de información del tamaño del archivo</string>
+    <string name="setting_fileinfo_behaviour_size_title">Compartir el tamaño como</string>
     <string name="setting_fileinfo_behaviour_size_summary">Cómo ven los demás el tamaño de tu archivo.</string>
     <string name="setting_fileinfo_behavior_a">Enviar sin procesar</string>
     <string name="setting_fileinfo_behavior_b">Enviar codificado</string>
@@ -173,8 +173,8 @@
 
     <!-- UI Settings Categories -->
     <string name="uisetting_categ_chat_colors">Colores del chat</string>
-    <string name="uisetting_categ_player_settings">Configuración del reproductor</string>
-    <string name="uisetting_categ_chat_properties">Propiedades del chat</string>
+    <string name="uisetting_categ_player_settings">Reproductor</string>
+    <string name="uisetting_categ_chat_properties">Chat</string>
 
     <!-- UI Settings -->
     <string name="uisetting_timestamp_summary">Muestra la hora junto a cada mensaje.</string>
@@ -194,20 +194,20 @@
     <string name="uisetting_msglife_summary">Cuando recibes un mensaje de chat o mensaje de sala, comenzará a desvanecerse durante el tiempo establecido a continuación.</string>
     <string name="uisetting_timestamp_color_title">Color del texto de marcas de tiempo</string>
     <string name="uisetting_self_color_title">Color de la etiqueta propia</string>
-    <string name="uisetting_self_color_summary">Personaliza el color del texto de tu etiqueta de nombre (Predeterminado es Rojo Oscuro).</string>
+    <string name="uisetting_self_color_summary">Tu propio nombre.</string>
     <string name="uisetting_friend_color_title">Color del texto de la etiqueta de amigos</string>
     <string name="uisetting_friend_color_summary">Los nombres de los demás.</string>
     <string name="uisetting_system_color_title">Color del texto de mensajes del sistema</string>
-    <string name="uisetting_system_color_summary">Personaliza el color del texto de los mensajes del sistema de la sala (Predeterminado es Blanco).</string>
+    <string name="uisetting_system_color_summary">Eventos de la sala.</string>
     <string name="uisetting_human_color_title">Color del texto de mensajes de usuario</string>
-    <string name="uisetting_human_color_summary">Personaliza el color del texto de los mensajes de usuario (Predeterminado es Blanco).</string>
+    <string name="uisetting_human_color_summary">Lo que escribe la gente.</string>
     <string name="uisetting_error_color_title">Color del texto de mensajes de error</string>
-    <string name="uisetting_error_color_summary">Personaliza el color del texto de los mensajes de error (Predeterminado es Rojo).</string>
+    <string name="uisetting_error_color_summary">Errores.</string>
     <string name="uisetting_subtitle_size_title">Tamaño de subtítulos</string>
     <string name="uisetting_subtitle_size_summary">Tamaño de los subtítulos cargados desde un archivo.</string>
-    <string name="uisetting_subtitle_delay_title">Retardo de subtítulos (milisegundos)</string>
+    <string name="uisetting_subtitle_delay_title">Retardo de subtítulos</string>
     <string name="uisetting_subtitle_delay_summary">El valor predeterminado es 0. Esto retrasará o adelantará la pista de subtítulos. Usa valores negativos para adelantarlo.</string>
-    <string name="uisetting_audio_delay_title">Retardo de pista de audio (milisegundos)</string>
+    <string name="uisetting_audio_delay_title">Retardo de audio</string>
     <string name="uisetting_audio_delay_summary">El valor predeterminado es 0. Esto retrasará o adelantará la pista de audio. Usa valores negativos para adelantarlo.</string>
     <string name="uisetting_seek_forward_jump_title">Salto hacia adelante</string>
     <string name="uisetting_seek_forward_jump_summary">Especifica cuántos segundos debería saltar una búsqueda hacia adelante. El valor predeterminado es 10 segundos.</string>
@@ -229,7 +229,7 @@
     <string name="ui_setting_mpv_vidsync_summary">Sincroniza con el audio o con la pantalla.</string>
     <string name="ui_setting_mpv_profile_title">Preajuste de renderizado (perfil)</string>
     <string name="ui_setting_mpv_profile_summary">Un preajuste integrado; fast va bien en móviles.</string>
-    <string name="uisetting_custom_seek_front_title">Mostrar botón de salto personalizado en la pantalla principal</string>
+    <string name="uisetting_custom_seek_front_title">Botón de salto propio</string>
     <string name="uisetting_custom_seek_front_summary">Añade un botón de salto junto a rebobinar y avanzar.</string>
     <string name="uisetting_custom_seek_amount_title">Duración de salto personalizada</string>
     <string name="uisetting_custom_seek_amount_summary">Cuánto salta el botón de salto personalizado.</string>
@@ -319,7 +319,7 @@
     <string name="uisetting_sync_dont_slow_with_me_summary">Cuando estés retrasado, los demás no serán ralentizados ni rebobinados para igualarte. Experimental.</string>
     <string name="uisetting_sync_fastforward_title">Avance rápido si estás retrasado</string>
     <string name="uisetting_sync_fastforward_summary">Cuando estés retrasado respecto a los demás, tu reproductor avanzará rápidamente para alcanzarlos. Recomendado.</string>
-    <string name="uisetting_sync_rewind_title">Rebobinar en desincronización mayor</string>
+    <string name="uisetting_sync_rewind_title">Retroceder si vas por delante</string>
     <string name="uisetting_sync_rewind_summary">Cuando los demás estén significativamente retrasados (12+ segundos), tu reproductor rebobinará para igualar su posición.</string>
     <string name="uisetting_sync_slowdown_title">Ralentizar en desincronización menor</string>
     <string name="uisetting_sync_slowdown_summary">Cuando los demás estén ligeramente retrasados, tu velocidad de reproducción se reducirá para dejarlos alcanzarte.</string>
@@ -364,7 +364,7 @@
     <string name="connect_custom_tip">La dirección y el puerto que te dio quien aloja. Los servidores oficiales son syncplay.pl en los puertos 8995 a 8999; un amigo que aloja desde esta app comparte una dirección como 192.168.1.20:8999. Pon la contraseña solo si la ha puesto quien aloja.</string>
     <string name="connect_engine_badge_default">Predeterminado</string>
     <string name="connect_engine_badge_experimental">Experimental</string>
-    <string name="connect_engine_badge_system">Del sistema</string>
+    <string name="connect_engine_badge_system">Sistema</string>
     <string name="connect_engine_badge_unavailable">No disponible</string>
     <string name="connect_host_join_note">Entrar te lleva a tu propio servidor en %1$s.</string>
     <string name="connect_host_mine">Alojar yo</string>

@@ -14,10 +14,10 @@
     <string name="reset_default">重置默认</string>
 
     <!-- Home Screen -->
-    <string name="connect_username">输入您的用户名</string>
-    <string name="connect_roomname">输入房间名称</string>
+    <string name="connect_username">用户名</string>
+    <string name="connect_roomname">房间名</string>
     <string name="connect_server">服务器</string>
-    <string name="connect_choose_video_engine">选择您的视频引擎</string>
+    <string name="connect_choose_video_engine">视频引擎</string>
     <string name="connect_button_join">加入房间</string>
     <string name="connect_button_saveshortcut">存为主屏幕快捷方式</string>
     <string name="connect_username_empty_error">用户名不能为空</string>
@@ -122,7 +122,7 @@
     <string name="setting_remember_join_info_title">记住加入信息</string>
     <string name="setting_remember_join_info_summary">记住你上次使用的名称、房间和服务器。</string>
     <string name="setting_never_show_tips_title">永不显示提示</string>
-    <string name="setting_never_show_tips_summary">这将防止在应用启动时显示提示。</string>
+    <string name="setting_never_show_tips_summary">启动时不显示提示。</string>
     <string name="setting_erase_shortcuts_title">删除所有主屏幕快捷方式</string>
     <string name="setting_erase_shortcuts_summary">移除所有主屏幕快捷方式。</string>
     <string name="setting_erase_shortcuts_dialog">您真的要删除所有现有的快捷方式吗？</string>
@@ -136,7 +136,7 @@
     <string name="setting_max_buffer_summary">开始播放前的最大缓冲。</string>
     <string name="setting_min_buffer_title">最小缓冲</string>
     <string name="setting_min_buffer_summary">开始播放前的最小缓冲。</string>
-    <string name="setting_playback_buffer_title">自定义播放缓冲区大小（毫秒）</string>
+    <string name="setting_playback_buffer_title">跳转缓冲</string>
     <string name="setting_playback_buffer_summary">跳转或继续播放后使用的缓冲。</string>
     <string name="setting_ready_firsthand_title">自动设为准备就绪</string>
     <string name="setting_ready_firsthand_summary">如果您想在进入房间后自动设置为准备就绪，请启用此选项。</string>
@@ -156,9 +156,9 @@
     <string name="setting_pause_if_someone_left_summary">有人离开房间时暂停。</string>
     <string name="setting_warn_file_mismatch_title">文件不匹配警告</string>
     <string name="setting_warn_file_mismatch_summary">当你的文件和别人不同时提醒你。</string>
-    <string name="setting_fileinfo_behaviour_name_title">文件名信息发送</string>
+    <string name="setting_fileinfo_behaviour_name_title">文件名以何种方式共享</string>
     <string name="setting_fileinfo_behaviour_name_summary">别人看到的你的文件名。</string>
-    <string name="setting_fileinfo_behaviour_size_title">文件大小信息发送</string>
+    <string name="setting_fileinfo_behaviour_size_title">文件大小以何种方式共享</string>
     <string name="setting_fileinfo_behaviour_size_summary">别人看到的你的文件大小。</string>
     <string name="setting_fileinfo_behavior_a">发送原始信息</string>
     <string name="setting_fileinfo_behavior_b">发送哈希值</string>
@@ -173,8 +173,8 @@
     
     <!-- UI Settings Categories -->
     <string name="uisetting_categ_chat_colors">聊天颜色</string>
-    <string name="uisetting_categ_player_settings">播放器设置</string>
-    <string name="uisetting_categ_chat_properties">聊天属性</string>
+    <string name="uisetting_categ_player_settings">播放器</string>
+    <string name="uisetting_categ_chat_properties">聊天</string>
 
     <!-- UI Settings -->
     <string name="uisetting_timestamp_summary">在每条消息旁显示时间。</string>
@@ -194,20 +194,20 @@
     <string name="uisetting_msglife_summary">当收到聊天消息或房间消息时，它将在下面设置的时间内开始淡出。</string>
     <string name="uisetting_timestamp_color_title">时间戳文本颜色</string>
     <string name="uisetting_self_color_title">自我标签颜色</string>
-    <string name="uisetting_self_color_summary">自定义您的名称标签的文本颜色（默认为深红色）</string>
+    <string name="uisetting_self_color_summary">你自己的名字。</string>
     <string name="uisetting_friend_color_title">朋友标签文本颜色</string>
     <string name="uisetting_friend_color_summary">其他人的名字。</string>
     <string name="uisetting_system_color_title">系统消息文本颜色</string>
-    <string name="uisetting_system_color_summary">自定义系统房间消息的文本颜色（默认为白色）</string>
+    <string name="uisetting_system_color_summary">房间事件。</string>
     <string name="uisetting_human_color_title">用户消息文本颜色</string>
-    <string name="uisetting_human_color_summary">自定义用户消息的文本颜色（默认为白色）</string>
+    <string name="uisetting_human_color_summary">大家发的内容。</string>
     <string name="uisetting_error_color_title">错误消息文本颜色</string>
-    <string name="uisetting_error_color_summary">自定义错误消息的文本颜色（默认为红色）</string>
+    <string name="uisetting_error_color_summary">错误。</string>
     <string name="uisetting_subtitle_size_title">字幕大小</string>
     <string name="uisetting_subtitle_size_summary">从文件加载的字幕大小。</string>
-    <string name="uisetting_subtitle_delay_title">字幕延迟（毫秒）</string>
+    <string name="uisetting_subtitle_delay_title">字幕延迟</string>
     <string name="uisetting_subtitle_delay_summary">默认为0。这将延迟或提前字幕轨道。使用负值来提前它。</string>
-    <string name="uisetting_audio_delay_title">音频轨道延迟（毫秒）</string>
+    <string name="uisetting_audio_delay_title">音频延迟</string>
     <string name="uisetting_audio_delay_summary">默认为0。这将延迟或提前音频轨道。使用负值来提前它。</string>
     <string name="uisetting_seek_forward_jump_title">快进步长</string>
     <string name="uisetting_seek_forward_jump_summary">指定向前跳转应跳过多少秒。默认为10秒。</string>
@@ -229,7 +229,7 @@
     <string name="ui_setting_mpv_vidsync_summary">与音频同步，或与显示器同步。</string>
     <string name="ui_setting_mpv_profile_title">渲染预设（配置文件）</string>
     <string name="ui_setting_mpv_profile_summary">内置预设；fast 适合手机。</string>
-    <string name="uisetting_custom_seek_front_title">在主屏幕上显示自定义跳过按钮</string>
+    <string name="uisetting_custom_seek_front_title">自定义跳过按钮</string>
     <string name="uisetting_custom_seek_front_summary">在快退和快进旁边加一个跳过按钮。</string>
     <string name="uisetting_custom_seek_amount_title">自定义跳过时长</string>
     <string name="uisetting_custom_seek_amount_summary">自定义跳过按钮一次跳多远。</string>
@@ -320,7 +320,7 @@
     <string name="uisetting_sync_fastforward_summary">当您落后于其他人时，您的播放器将快进以追赶进度。推荐启用。</string>
     <string name="uisetting_sync_fastforward_title">落后时快进</string>
     <string name="uisetting_sync_rewind_summary">当其他人严重落后（12秒以上）时，您的播放器将回退到他们的位置。</string>
-    <string name="uisetting_sync_rewind_title">严重不同步时回退</string>
+    <string name="uisetting_sync_rewind_title">领先时回退</string>
     <string name="uisetting_sync_slowdown_summary">当其他人稍微落后时，您的播放速度将降低以让他们追上。</string>
     <string name="uisetting_sync_slowdown_title">轻微不同步时减速</string>
     <string name="room_roster_duration">时长：%1$s</string>
